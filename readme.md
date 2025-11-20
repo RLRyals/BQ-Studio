@@ -153,10 +153,10 @@ See [.claude/docs/plugin-guide.md](.claude/docs/plugin-guide.md) for complete gu
 3. 🔨 **Penname Manager** - Author identity management
 
 ### Phase 2: Production & Publishing
-4. **Formatting Pipeline** - EPUB, MOBI, print-ready PDF
-5. **ISBN Manager** - Track and assign ISBNs
-6. **Publishing Dashboard** - KDP, IngramSpark integration
-7. **Metadata Manager** - BISAC codes, keywords
+4. **Formatting Pipeline** - EPUB, print-ready PDF (Amazon KPF auto-generated)
+5. **ISBN Manager** - Track and assign ISBNs (optional for Amazon)
+6. **Publishing Dashboard** - KDP, IngramSpark, Draft2Digital integration
+7. **Metadata Manager** - Amazon categories, keywords, series data, A+ Content
 
 ### Phase 3: Marketing & Sales
 8. **Marketing Planner** - Launch campaigns, ads
