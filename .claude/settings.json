@@ -1,0 +1,78 @@
+{
+  "projectInfo": {
+    "name": "BQ Studio",
+    "description": "AI-Powered Publishing House ERP with Plugin Architecture",
+    "type": "Electron Desktop Application",
+    "stack": ["Electron", "React", "TypeScript", "SQLite", "Node.js"]
+  },
+  "conventions": {
+    "typescript": {
+      "strictMode": true,
+      "style": "functional-components-with-hooks"
+    },
+    "react": {
+      "componentStyle": "functional",
+      "stateManagement": "zustand",
+      "styling": "tailwind-css"
+    },
+    "fileNaming": {
+      "components": "PascalCase.tsx",
+      "utilities": "camelCase.ts",
+      "hooks": "useCamelCase.ts",
+      "types": "PascalCase.types.ts"
+    },
+    "directories": {
+      "components": "src/renderer/components",
+      "plugins": "src/plugins",
+      "services": "src/core/services",
+      "hooks": "src/renderer/hooks",
+      "types": "src/types"
+    }
+  },
+  "architecture": {
+    "pattern": "plugin-based-modular",
+    "coreServices": [
+      "PluginManager - Loads and manages plugins",
+      "AIService - Multi-provider AI orchestration (Anthropic, OpenAI)",
+      "DatabaseService - SQLite persistence layer",
+      "FileService - File operations and templates",
+      "WorkflowEngine - Stage-based workflow management",
+      "EventBus - Plugin communication",
+      "ExportService - Multi-format exports (MD, DOCX, PDF)"
+    ],
+    "pluginStructure": {
+      "required": ["plugin.json", "index.ts"],
+      "optional": ["ui/", "services/", "workflows/", "schemas/", "templates/"]
+    }
+  },
+  "development": {
+    "mainBranch": "main",
+    "featureBranches": "feature/{issue-number}-{brief-description}",
+    "commitConvention": "conventional-commits",
+    "testingRequired": true
+  },
+  "contextFiles": [
+    "readme.md - Project overview and vision",
+    "series-architect-2/ - First plugin reference implementation",
+    ".claude/docs/architecture.md - System architecture details",
+    ".claude/docs/plugin-guide.md - Plugin development guide"
+  ],
+  "quickstart": {
+    "install": "npm install",
+    "dev": "npm run dev",
+    "build": "npm run build",
+    "test": "npm test"
+  },
+  "aiContext": {
+    "primaryGoal": "Build modular publishing house ERP for managing AI-powered pennames and genre fiction book production",
+    "firstPlugin": "Series Architect - 5-book series planning system (already exists in series-architect-2/)",
+    "targetUsers": "Small publishers managing multiple AI-powered author pennames",
+    "keyFeatures": [
+      "Plugin architecture for extensibility",
+      "AI-powered content creation workflows",
+      "Multi-penname management",
+      "Series planning to manuscript generation",
+      "Publishing and marketing automation"
+    ]
+  }
+}

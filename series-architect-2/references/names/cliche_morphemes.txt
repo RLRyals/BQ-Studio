@@ -1,0 +1,140 @@
+# Cross-genre overused/cliché morphemes (lowercase)
+# Format: one morpheme per line
+# Used by evaluate_names.py to flag overused name elements
+# Penalty: -2 points per occurrence
+
+## Color/Darkness Terms
+blood
+moon
+night
+shadow
+raven
+dark
+black
+crimson
+scarlet
+void
+noir
+sable
+obsidian
+onyx
+silver
+gold
+grey
+gray
+
+## Nature/Weather
+thorn
+wolf
+storm
+frost
+ember
+ash
+flame
+ice
+snow
+thunder
+lightning
+
+## Edgy/Dark Terms
+blade
+skull
+hell
+death
+doom
+grave
+bone
+venom
+poison
+claw
+fang
+
+## Power/Royal Terms
+king
+queen
+lord
+knight
+prince
+throne
+crown
+reign
+
+## Mystical Terms
+aether
+nova
+nyx
+zephyr
+dragon
+phoenix
+serpent
+rune
+arcane
+fae
+shade
+
+## Overused Suffixes (fantasy)
+-aeron
+-ael
+-aela
+-aeris
+-anor
+-arion
+-dor
+-ion
+-ior
+-lyn
+-thore
+-wyn
+-riel
+-andra
+-aria
+
+## Overused Prefixes
+raven-
+shade-
+storm-
+blood-
+night-
+shadow-
+
+## Contemporary Romance Clichés
+steel
+grey (surname)
+stone (surname)
+-son (generic surnames)
+
+## Place Name Clichés
+-dal
+-dor
+-drim
+-gard
+-helm
+-mere
+-mor
+-oth
+-rim
+-sil
+-vale
+-shire
+-wood
+-haven
+-keep
+
+## Compound Patterns
+-bane
+-born
+-bringer
+-caller
+-heart
+-seeker
+-slayer
+-walker
+
+## Modern Trends (2020s+)
+-ayla
+-ella
+-lyn
+-lynn
+-aria
+-fae
+-thea

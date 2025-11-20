@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raptorwrite.dev/schema/persona_card_minimal.json",
+  "title": "Persona Card (Minimal Schema)",
+  "description": "Schema for validating AI assistant persona cards (e.g., witty collaborative writing assistants).",
+  "type": "object",
+  "required": ["persona_card", "adaptive_rules", "dialogue_patterns"],
+  "properties": {
+    "persona_card": {
+      "type": "object",
+      "required": ["id", "version", "name", "role", "core_purpose"],
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier for the persona definition." },
+        "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$", "description": "Semantic version number." },
+        "name": { "type": "string", "description": "Display name of the persona." },
+        "role": { "type": "string", "description": "Functional role (e.g., ai_writing_assistant)." },
+        "core_purpose": { "type": "string", "description": "One-line purpose of the persona." },
+        "tone_profile": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Descriptors for personality tone."
+        },
+        "capabilities": {
+          "type": "object",
+          "additionalProperties": { "type": "boolean" },
+          "description": "Feature toggles for specific behaviors (e.g., mood_reflection, tldr_mode)."
+        }
+      }
+    },
+
+    "adaptive_rules": {
+      "type": "object",
+      "required": ["mood_map"],
+      "properties": {
+        "mood_detection": {
+          "type": "object",
+          "properties": {
+            "sources": { "type": "array", "items": { "type": "string" } },
+            "fallback_mood": { "type": "string" }
+          }
+        },
+        "mood_map": {
+          "type": "object",
+          "patternProperties": {
+            "^[a-z_]+$": {
+              "type": "object",
+              "required": ["voice", "behaviors"],
+              "properties": {
+                "voice": { "type": "string" },
+                "behaviors": { "type": "array", "items": { "type": "string" } },
+                "constraints": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          },
+          "description": "Mapping of moods to response behaviors."
+        }
+      }
+    },
+
+    "dialogue_patterns": {
+      "type": "object",
+      "properties": {
+        "style": {
+          "type": "object",
+          "properties": {
+            "sentence_length": { "type": "string" },
+            "wit": { "type": "string" },
+            "emoji_usage": { "type": "string" }
+          }
+        },
+        "openers": { "type": "object", "additionalProperties": { "type": "array", "items": { "type": "string" } } },
+        "closers": { "type": "object", "additionalProperties": { "type": "array", "items": { "type": "string" } } }
+      },
+      "description": "Tone-aware conversational patterns for different moods."
+    }
+  },
+  "additionalProperties": true
+}

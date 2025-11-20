@@ -1,0 +1,152 @@
+{
+  "epics": [
+    {
+      "title": "Epic: Core Framework Infrastructure",
+      "body": "# Epic: Core Framework Infrastructure\n\n## Overview\nBuild the foundational architecture for BQ Studio, including the Electron app shell, plugin system, and core services.\n\n## Goals\n- Set up Electron + React + TypeScript project\n- Implement plugin loading system\n- Create core services (AI, Database, File, Workflow)\n- Build UI framework (Dashboard, Workspace)\n- Set up event-driven architecture\n\n## Success Criteria\n- [ ] Electron app launches successfully\n- [ ] Plugin system can discover and load plugins\n- [ ] Core services accessible to plugins\n- [ ] Basic UI shell renders\n- [ ] Event bus working for plugin communication\n- [ ] SQLite database initialized\n\n## Dependencies\nNone - this is the foundation\n\n## Sub-Issues\nSee linked issues below\n\n## Estimated Effort\n4 weeks\n\n## Labels\n`epic`, `core`, `infrastructure`, `priority-high`\n\n## Related Documentation\n- [Architecture Overview](.claude/docs/architecture.md)\n- [Plugin Guide](.claude/docs/plugin-guide.md)",
+      "labels": ["epic", "core", "infrastructure", "priority-high"]
+    },
+    {
+      "title": "Epic: Series Architect Plugin",
+      "body": "# Epic: Series Architect Plugin\n\n## Overview\nPort the existing Series Architect skill (series-architect-2/) into a BQ Studio plugin. This is the flagship content creation plugin for planning 5-book series.\n\n## Goals\n- Create plugin structure following plugin-guide.md\n- Port 6-stage workflow into plugin\n- Build UI for each workflow stage\n- Integrate beat sheet library\n- Implement template system\n- Add export pipeline (MD, DOCX, PDF)\n\n## Success Criteria\n- [ ] Plugin loads in BQ Studio\n- [ ] All 6 workflow stages functional\n- [ ] Beat sheets selectable and applied\n- [ ] Templates rendered correctly\n- [ ] Can complete full series planning end-to-end\n- [ ] Export to all formats working\n- [ ] Session resume capability\n\n## Dependencies\n- Epic: Core Framework Infrastructure (must be complete)\n\n## Reference Implementation\n`series-architect-2/` - existing skill to port\n\n## Sub-Issues\nSee linked issues below\n\n## Estimated Effort\n4 weeks\n\n## Labels\n`epic`, `plugin`, `series-architect`, `priority-high`",
+      "labels": ["epic", "plugin", "series-architect", "priority-high"]
+    },
+    {
+      "title": "Epic: Penname Manager Plugin",
+      "body": "# Epic: Penname Manager Plugin\n\n## Overview\nCreate plugin for managing multiple AI-powered author pennames, including brand guidelines, voice profiles, and cross-plugin penname selection.\n\n## Goals\n- Create penname CRUD operations\n- Build brand guideline storage\n- Implement voice profile system\n- Add social media profile tracking\n- Enable cross-plugin penname selection\n\n## Success Criteria\n- [ ] Can create/edit/delete pennames\n- [ ] Brand guidelines stored per penname\n- [ ] Voice profiles accessible to AI service\n- [ ] Dashboard widget shows active pennames\n- [ ] Other plugins can query penname data\n\n## Dependencies\n- Epic: Core Framework Infrastructure\n\n## Sub-Issues\nSee linked issues below\n\n## Estimated Effort\n2 weeks\n\n## Labels\n`epic`, `plugin`, `penname-manager`, `priority-medium`",
+      "labels": ["epic", "plugin", "penname-manager", "priority-medium"]
+    },
+    {
+      "title": "Epic: Manuscript Writer Plugin",
+      "body": "# Epic: Manuscript Writer Plugin\n\n## Overview\nCreate plugin for AI-assisted manuscript writing, consuming book dossiers from Series Architect and generating prose chapter-by-chapter.\n\n## Goals\n- Import book dossiers from Series Architect\n- Generate prose from beat outlines\n- Chapter-by-chapter workflow\n- Voice consistency checking\n- Real-time word count tracking\n- Export to Google Docs/Scrivener\n\n## Success Criteria\n- [ ] Can import Series Architect dossiers\n- [ ] AI generates prose from beats\n- [ ] Chapter progression tracked\n- [ ] Word count accurate\n- [ ] Export to external tools working\n- [ ] Voice consistency maintained\n\n## Dependencies\n- Epic: Core Framework Infrastructure\n- Epic: Series Architect Plugin (to consume dossiers)\n- Epic: Penname Manager Plugin (for voice profiles)\n\n## Sub-Issues\nSee linked issues below\n\n## Estimated Effort\n3 weeks\n\n## Labels\n`epic`, `plugin`, `manuscript-writer`, `priority-medium`",
+      "labels": ["epic", "plugin", "manuscript-writer", "priority-medium"]
+    }
+  ],
+  "issues": [
+    {
+      "epic": "Epic: Core Framework Infrastructure",
+      "title": "[Core] Set up Electron + React + TypeScript project",
+      "body": "## Description\nInitialize the BQ Studio project with Electron, React, and TypeScript.\n\n## Tasks\n- [ ] Initialize npm project with package.json\n- [ ] Install Electron, React, Vite dependencies\n- [ ] Configure TypeScript (tsconfig.json for main/renderer)\n- [ ] Set up Vite for renderer process\n- [ ] Create main process entry (src/main/app.ts)\n- [ ] Create renderer entry (src/renderer/App.tsx)\n- [ ] Configure Electron builder\n- [ ] Test app launches with blank window\n\n## Acceptance Criteria\n- App launches successfully on Windows/Mac/Linux\n- Hot reload working in dev mode\n- TypeScript compiling without errors\n- Can build production executable\n\n## Technical Notes\n- Use Vite for fast HMR\n- Separate tsconfig for main/renderer processes\n- Follow structure in .claude/docs/architecture.md\n\n## Files to Create\n- `src/main/app.ts`\n- `src/main/preload.ts`\n- `src/renderer/App.tsx`\n- `src/renderer/main.tsx`\n- `tsconfig.json`\n- `tsconfig.main.json`\n- `vite.config.ts`\n- `electron-builder.json`\n\n## Resources\n- package.json (already created)\n- .claude/docs/architecture.md\n\n## Labels\n`core`, `infrastructure`, `priority-high`, `good-first-issue`\n\n## Estimated Effort\n4-6 hours",
+      "labels": ["core", "infrastructure", "priority-high", "good-first-issue"]
+    },
+    {
+      "epic": "Epic: Core Framework Infrastructure",
+      "title": "[Core] Implement Plugin Manager",
+      "body": "## Description\nCreate the plugin loading and lifecycle management system.\n\n## Tasks\n- [ ] Create PluginManager class\n- [ ] Implement plugin discovery (scan src/plugins/)\n- [ ] Plugin manifest validation (plugin.json)\n- [ ] Plugin lifecycle (onActivate, onDeactivate)\n- [ ] Plugin context creation (access to core services)\n- [ ] Plugin sandboxing/isolation\n- [ ] Error handling for plugin failures\n\n## Acceptance Criteria\n- PluginManager discovers plugins in src/plugins/\n- Validates plugin.json schemas\n- Activates plugins successfully\n- Provides PluginContext with core services\n- Handles plugin errors gracefully\n- Can list all loaded plugins\n\n## Technical Notes\n- Plugins should be isolated from each other\n- Use dependency injection for core services\n- Each plugin gets own context\n\n## Files to Create\n- `src/core/plugin-manager/PluginManager.ts`\n- `src/core/plugin-manager/PluginContext.ts`\n- `src/core/plugin-manager/types.ts`\n- `src/core/plugin-manager/validator.ts`\n\n## Dependencies\n- Issue: Set up Electron + React project\n\n## Resources\n- .claude/docs/architecture.md\n- .claude/docs/plugin-guide.md\n\n## Labels\n`core`, `plugin-system`, `priority-high`\n\n## Estimated Effort\n8-12 hours",
+      "labels": ["core", "plugin-system", "priority-high"]
+    },
+    {
+      "epic": "Epic: Core Framework Infrastructure",
+      "title": "[Core] Implement AI Service",
+      "body": "## Description\nCreate multi-provider AI service for Anthropic Claude and OpenAI.\n\n## Tasks\n- [ ] Create AIService class\n- [ ] Implement Anthropic SDK integration\n- [ ] Implement OpenAI SDK integration\n- [ ] Provider selection logic\n- [ ] Streaming support\n- [ ] Token usage tracking\n- [ ] Cost calculation\n- [ ] Rate limiting\n- [ ] Error handling and retries\n- [ ] Prompt template system\n\n## Acceptance Criteria\n- Can make requests to Claude (Anthropic)\n- Can make requests to GPT (OpenAI)\n- Streaming responses work\n- Token usage logged to database\n- Cost tracked per request\n- Rate limits respected\n- Graceful error handling\n\n## Technical Notes\n- Store API keys in encrypted storage (electron-store)\n- Log all interactions for debugging\n- Support both streaming and non-streaming\n\n## Files to Create\n- `src/core/ai-service/AIService.ts`\n- `src/core/ai-service/providers/AnthropicProvider.ts`\n- `src/core/ai-service/providers/OpenAIProvider.ts`\n- `src/core/ai-service/types.ts`\n- `src/core/ai-service/TokenTracker.ts`\n\n## Dependencies\n- Issue: Set up Electron + React project\n\n## Resources\n- @anthropic-ai/sdk npm package\n- openai npm package\n\n## Labels\n`core`, `ai-service`, `priority-high`\n\n## Estimated Effort\n12-16 hours",
+      "labels": ["core", "ai-service", "priority-high"]
+    },
+    {
+      "epic": "Epic: Core Framework Infrastructure",
+      "title": "[Core] Implement Database Service",
+      "body": "## Description\nCreate SQLite database service with schema, migrations, and query interface.\n\n## Tasks\n- [ ] Create DatabaseService class\n- [ ] Set up better-sqlite3\n- [ ] Define core schema (projects, pennames, workflows, files, ai_interactions)\n- [ ] Implement migration system\n- [ ] Create type-safe query builder\n- [ ] Add transaction support\n- [ ] Implement plugin schema extensions\n- [ ] Add indexes for performance\n\n## Acceptance Criteria\n- Database initialized on first run\n- Core tables created\n- Can execute queries\n- Migrations run automatically\n- Transactions work correctly\n- Plugins can extend schema\n- Type-safe queries\n\n## Technical Notes\n- Use better-sqlite3 for synchronous API\n- Store database in user data directory\n- Support backup/restore\n\n## Files to Create\n- `src/core/database-service/DatabaseService.ts`\n- `src/core/database-service/migrations/001_initial.sql`\n- `src/core/database-service/types.ts`\n- `database/schema.sql`\n\n## Dependencies\n- Issue: Set up Electron + React project\n\n## Labels\n`core`, `database`, `priority-high`\n\n## Estimated Effort\n10-14 hours",
+      "labels": ["core", "database", "priority-high"]
+    },
+    {
+      "epic": "Epic: Core Framework Infrastructure",
+      "title": "[Core] Implement File Service",
+      "body": "## Description\nCreate file operations service for reading, writing, templates, and multi-format exports.\n\n## Tasks\n- [ ] Create FileService class\n- [ ] Implement read/write operations\n- [ ] Template loading system\n- [ ] Template variable substitution\n- [ ] Markdown to DOCX conversion\n- [ ] Markdown to PDF conversion\n- [ ] Directory management\n- [ ] File watching for changes\n\n## Acceptance Criteria\n- Can read/write files safely\n- Template system works\n- Variable substitution in templates\n- Export to DOCX functional\n- Export to PDF functional\n- Proper error handling\n\n## Technical Notes\n- Use Node.js fs/promises for async operations\n- Sandbox file access to workspace directory\n- Use docx npm package for Word exports\n\n## Files to Create\n- `src/core/file-service/FileService.ts`\n- `src/core/file-service/TemplateEngine.ts`\n- `src/core/file-service/exporters/DocxExporter.ts`\n- `src/core/file-service/exporters/PdfExporter.ts`\n- `src/core/file-service/types.ts`\n\n## Dependencies\n- Issue: Set up Electron + React project\n\n## Labels\n`core`, `file-service`, `priority-high`\n\n## Estimated Effort\n10-14 hours",
+      "labels": ["core", "file-service", "priority-high"]
+    },
+    {
+      "epic": "Epic: Core Framework Infrastructure",
+      "title": "[Core] Implement Workflow Engine",
+      "body": "## Description\nCreate stage-based workflow orchestration system with validation and resume capability.\n\n## Tasks\n- [ ] Create WorkflowEngine class\n- [ ] Workflow definition structure\n- [ ] Stage validation system\n- [ ] Progress tracking\n- [ ] State persistence\n- [ ] Resume capability\n- [ ] Event emission on stage changes\n- [ ] Workflow visualization data\n\n## Acceptance Criteria\n- Can create workflows with stages\n- Stage validation works\n- Progress saved to database\n- Can resume from saved state\n- Events emitted on stage changes\n- Multiple workflows supported\n\n## Technical Notes\n- Store workflow state in database\n- Support linear and branching workflows\n- Validation functions per stage\n\n## Files to Create\n- `src/core/workflow-engine/WorkflowEngine.ts`\n- `src/core/workflow-engine/Workflow.ts`\n- `src/core/workflow-engine/Stage.ts`\n- `src/core/workflow-engine/types.ts`\n\n## Dependencies\n- Issue: Implement Database Service\n\n## Labels\n`core`, `workflow`, `priority-high`\n\n## Estimated Effort\n8-12 hours",
+      "labels": ["core", "workflow", "priority-high"]
+    },
+    {
+      "epic": "Epic: Core Framework Infrastructure",
+      "title": "[Core] Implement Event Bus",
+      "body": "## Description\nCreate event-driven communication system for plugins.\n\n## Tasks\n- [ ] Create EventBus class\n- [ ] Event subscription (on/once)\n- [ ] Event emission\n- [ ] Unsubscribe functionality\n- [ ] Wildcard event matching\n- [ ] Event history/logging\n- [ ] Type-safe events with TypeScript\n\n## Acceptance Criteria\n- Plugins can subscribe to events\n- Plugins can emit events\n- Wildcard patterns work (e.g., 'book.*')\n- Can unsubscribe from events\n- Events logged for debugging\n- Type-safe event payloads\n\n## Technical Notes\n- Use EventEmitter pattern\n- Support async event handlers\n- Prevent memory leaks from subscriptions\n\n## Files to Create\n- `src/core/event-bus/EventBus.ts`\n- `src/core/event-bus/types.ts`\n- `src/core/event-bus/EventLogger.ts`\n\n## Dependencies\n- Issue: Set up Electron + React project\n\n## Labels\n`core`, `event-system`, `priority-medium`\n\n## Estimated Effort\n6-8 hours",
+      "labels": ["core", "event-system", "priority-medium"]
+    },
+    {
+      "epic": "Epic: Core Framework Infrastructure",
+      "title": "[UI] Create Dashboard Layout",
+      "body": "## Description\nBuild the main dashboard UI with widget system and navigation.\n\n## Tasks\n- [ ] Create Dashboard component\n- [ ] Widget grid system\n- [ ] Sidebar navigation\n- [ ] Plugin-contributed menu items\n- [ ] Quick actions area\n- [ ] Recent projects widget\n- [ ] Responsive layout\n- [ ] Dark/light theme support\n\n## Acceptance Criteria\n- Dashboard renders successfully\n- Widgets display in grid\n- Sidebar navigation works\n- Plugins can contribute widgets\n- Responsive on different screen sizes\n- Theme switching works\n\n## Technical Notes\n- Use Tailwind CSS for styling\n- Use React Grid Layout for widgets\n- Store widget positions in localStorage\n\n## Files to Create\n- `src/renderer/layouts/Dashboard.tsx`\n- `src/renderer/components/Widget.tsx`\n- `src/renderer/components/Sidebar.tsx`\n- `src/renderer/components/QuickActions.tsx`\n\n## Dependencies\n- Issue: Set up Electron + React project\n\n## Labels\n`ui`, `dashboard`, `priority-high`\n\n## Estimated Effort\n10-14 hours",
+      "labels": ["ui", "dashboard", "priority-high"]
+    },
+    {
+      "epic": "Epic: Core Framework Infrastructure",
+      "title": "[UI] Create Workspace Layout",
+      "body": "## Description\nBuild the multi-tab workspace where plugins render their main views.\n\n## Tasks\n- [ ] Create Workspace component\n- [ ] Tab system for multiple views\n- [ ] Plugin view rendering\n- [ ] Tab persistence (remember open tabs)\n- [ ] Keyboard shortcuts (Ctrl+Tab, etc.)\n- [ ] Close/reorder tabs\n- [ ] Breadcrumb navigation\n\n## Acceptance Criteria\n- Can open multiple tabs\n- Plugin views render in tabs\n- Tab switching works smoothly\n- Tabs persist across app restarts\n- Keyboard shortcuts functional\n- Can close and reorder tabs\n\n## Technical Notes\n- Use React Router for view routing\n- Store tab state in zustand\n- Lazy load plugin views\n\n## Files to Create\n- `src/renderer/layouts/Workspace.tsx`\n- `src/renderer/components/TabBar.tsx`\n- `src/renderer/components/PluginView.tsx`\n\n## Dependencies\n- Issue: Set up Electron + React project\n- Issue: Implement Plugin Manager\n\n## Labels\n`ui`, `workspace`, `priority-high`\n\n## Estimated Effort\n8-12 hours",
+      "labels": ["ui", "workspace", "priority-high"]
+    },
+    {
+      "epic": "Epic: Core Framework Infrastructure",
+      "title": "[Testing] Set up Testing Infrastructure",
+      "body": "## Description\nSet up Vitest, React Testing Library, and establish testing patterns.\n\n## Tasks\n- [ ] Configure Vitest\n- [ ] Set up React Testing Library\n- [ ] Create test utilities\n- [ ] Mock core services\n- [ ] Example unit tests\n- [ ] Example component tests\n- [ ] CI/CD pipeline (GitHub Actions)\n- [ ] Coverage reporting\n\n## Acceptance Criteria\n- Tests run with `npm test`\n- Component testing works\n- Mock services available\n- CI runs tests on PR\n- Coverage report generated\n- Passing test examples exist\n\n## Technical Notes\n- Use Vitest for speed\n- Mock Electron APIs\n- Test utilities for common patterns\n\n## Files to Create\n- `vitest.config.ts`\n- `src/tests/setup.ts`\n- `src/tests/mocks/`\n- `src/tests/utils.tsx`\n- `.github/workflows/test.yml`\n\n## Labels\n`testing`, `infrastructure`, `priority-medium`\n\n## Estimated Effort\n6-8 hours",
+      "labels": ["testing", "infrastructure", "priority-medium"]
+    },
+    {
+      "epic": "Epic: Series Architect Plugin",
+      "title": "[Series Architect] Create Plugin Structure",
+      "body": "## Description\nSet up the Series Architect plugin directory structure and manifest.\n\n## Tasks\n- [ ] Create plugin directory: src/plugins/series-architect/\n- [ ] Create plugin.json manifest\n- [ ] Create index.ts entry point\n- [ ] Set up plugin directories (ui/, services/, workflows/)\n- [ ] Copy reference files from series-architect-2/\n- [ ] Register plugin with PluginManager\n\n## Acceptance Criteria\n- Plugin directory structure matches plugin-guide.md\n- plugin.json valid and complete\n- Plugin loads in BQ Studio\n- Shows in plugin list\n- Can activate/deactivate\n\n## Technical Notes\n- Follow structure in .claude/docs/plugin-guide.md\n- Reference implementation in series-architect-2/\n\n## Files to Create\n- `src/plugins/series-architect/plugin.json`\n- `src/plugins/series-architect/index.ts`\n- `src/plugins/series-architect/README.md`\n\n## Dependencies\n- Epic: Core Framework Infrastructure (complete)\n\n## Labels\n`plugin`, `series-architect`, `priority-high`, `good-first-issue`\n\n## Estimated Effort\n2-4 hours",
+      "labels": ["plugin", "series-architect", "priority-high", "good-first-issue"]
+    },
+    {
+      "epic": "Epic: Series Architect Plugin",
+      "title": "[Series Architect] Port Beat Sheet Library",
+      "body": "## Description\nPort the 10 beat sheet frameworks from series-architect-2/beat_sheet_library/ into the plugin.\n\n## Tasks\n- [ ] Create beat sheets directory structure\n- [ ] Port all 10 beat sheet files\n- [ ] Create beat sheet registry\n- [ ] Implement beat sheet selector UI\n- [ ] Add beat sheet preview\n- [ ] Implement beat sheet application logic\n\n## Acceptance Criteria\n- All 10 beat sheets available\n- UI to browse beat sheets\n- Can preview beat sheet structure\n- Can select beat sheet for project\n- Beat sheet applied to outline\n\n## Files to Port\n- three_act_structure.md\n- romance_beat_sheet.md\n- romantasy_20_beats.md\n- A-E trauma-informed frameworks\n- Dark romance frameworks\n\n## Files to Create\n- `src/plugins/series-architect/beat-sheets/`\n- `src/plugins/series-architect/ui/BeatSheetSelector.tsx`\n- `src/plugins/series-architect/services/BeatSheetService.ts`\n\n## Dependencies\n- Issue: [Series Architect] Create Plugin Structure\n\n## Labels\n`plugin`, `series-architect`, `priority-high`\n\n## Estimated Effort\n6-8 hours",
+      "labels": ["plugin", "series-architect", "priority-high"]
+    },
+    {
+      "epic": "Epic: Series Architect Plugin",
+      "title": "[Series Architect] Port Template System",
+      "body": "## Description\nPort the 15 production templates from series-architect-2/templates/ into the plugin.\n\n## Tasks\n- [ ] Create templates directory\n- [ ] Port all 15 template files\n- [ ] Create template registry\n- [ ] Implement template selector UI\n- [ ] Add variable substitution\n- [ ] Template preview functionality\n\n## Acceptance Criteria\n- All 15 templates available\n- Template selector UI works\n- Variables substituted correctly\n- Can preview filled templates\n- Templates integrate with File Service\n\n## Files to Port\n- All templates from series-architect-2/templates/\n\n## Files to Create\n- `src/plugins/series-architect/templates/`\n- `src/plugins/series-architect/ui/TemplateSelector.tsx`\n- `src/plugins/series-architect/services/TemplateService.ts`\n\n## Dependencies\n- Issue: [Series Architect] Create Plugin Structure\n- Issue: [Core] Implement File Service\n\n## Labels\n`plugin`, `series-architect`, `priority-high`\n\n## Estimated Effort\n6-8 hours",
+      "labels": ["plugin", "series-architect", "priority-high"]
+    },
+    {
+      "epic": "Epic: Series Architect Plugin",
+      "title": "[Series Architect] Implement Stage 1: Intake",
+      "body": "## Description\nImplement Stage 1 (Intake & Assessment) of the Series Architect workflow.\n\n## Tasks\n- [ ] Create Intake form UI\n- [ ] Implement form validation\n- [ ] Save intake data to database\n- [ ] Create series project record\n- [ ] Integrate with Workflow Engine\n- [ ] Stage completion validation\n\n## Acceptance Criteria\n- Intake form renders\n- All fields collect data\n- Validation works\n- Data saved to database\n- Stage marked complete\n- Can proceed to Stage 2\n\n## Reference\n- series-architect-2/references/workflows/stage_1_intake.md\n\n## Files to Create\n- `src/plugins/series-architect/ui/stages/Stage1Intake.tsx`\n- `src/plugins/series-architect/workflows/Stage1.ts`\n\n## Dependencies\n- Issue: [Series Architect] Create Plugin Structure\n- Issue: [Core] Implement Workflow Engine\n\n## Labels\n`plugin`, `series-architect`, `workflow`, `priority-high`\n\n## Estimated Effort\n8-10 hours",
+      "labels": ["plugin", "series-architect", "workflow", "priority-high"]
+    },
+    {
+      "epic": "Epic: Series Architect Plugin",
+      "title": "[Series Architect] Implement Stage 2: Research",
+      "body": "## Description\nImplement Stage 2 (Research Phase) with market research, user materials, and baseline options.\n\n## Tasks\n- [ ] Create Research UI\n- [ ] Implement web research (AI-powered)\n- [ ] User materials upload\n- [ ] Baseline template selection\n- [ ] Hybrid research mode\n- [ ] Research output generation\n- [ ] Stage completion validation\n\n## Acceptance Criteria\n- Research options presented\n- Web research works with AI\n- Can upload user materials\n- Baseline templates selectable\n- Research findings saved\n- Stage marked complete\n\n## Reference\n- series-architect-2/references/workflows/stage_2_research.md\n\n## Files to Create\n- `src/plugins/series-architect/ui/stages/Stage2Research.tsx`\n- `src/plugins/series-architect/workflows/Stage2.ts`\n- `src/plugins/series-architect/services/ResearchService.ts`\n\n## Dependencies\n- Issue: [Series Architect] Implement Stage 1\n- Issue: [Core] Implement AI Service\n\n## Labels\n`plugin`, `series-architect`, `workflow`, `priority-high`\n\n## Estimated Effort\n10-12 hours",
+      "labels": ["plugin", "series-architect", "workflow", "priority-high"]
+    },
+    {
+      "epic": "Epic: Series Architect Plugin",
+      "title": "[Series Architect] Implement Stages 3-6",
+      "body": "## Description\nImplement remaining workflow stages (3: Framework, 4: Dossier, 5: Development, 6: Output).\n\n## Tasks\n- [ ] Stage 3: Series Framework UI and logic\n- [ ] Stage 4: Story Dossier Selection\n- [ ] Stage 5: Book-Level Development (main event)\n- [ ] Stage 6: Output Generation and export\n- [ ] Cross-stage validation\n- [ ] Complete workflow testing\n\n## Acceptance Criteria\n- All stages functional\n- Can complete full workflow end-to-end\n- Validation working at each stage\n- Output files generated correctly\n- Session resume works\n\n## Reference Files\n- series-architect-2/references/workflows/stage_3_framework.md\n- stage_4_dossier.md\n- stage_5_development.md\n- stage_6_output.md\n\n## Files to Create\n- `src/plugins/series-architect/ui/stages/Stage3-6.tsx`\n- `src/plugins/series-architect/workflows/Stage3-6.ts`\n\n## Dependencies\n- Issue: [Series Architect] Implement Stage 2\n- Issue: [Series Architect] Port Beat Sheets\n- Issue: [Series Architect] Port Templates\n\n## Labels\n`plugin`, `series-architect`, `workflow`, `priority-high`\n\n## Estimated Effort\n20-24 hours",
+      "labels": ["plugin", "series-architect", "workflow", "priority-high"]
+    },
+    {
+      "epic": "Epic: Series Architect Plugin",
+      "title": "[Series Architect] Implement Export Pipeline",
+      "body": "## Description\nBuild multi-format export system (Markdown, DOCX, PDF, ZIP).\n\n## Tasks\n- [ ] Markdown export (default)\n- [ ] DOCX export integration\n- [ ] PDF export integration\n- [ ] ZIP bundle creation\n- [ ] Navigation INDEX.md generation\n- [ ] Export options UI\n- [ ] Batch export support\n\n## Acceptance Criteria\n- Can export to Markdown\n- Can export to DOCX\n- Can export to PDF\n- ZIP bundle includes all files\n- INDEX.md navigable\n- Export UI intuitive\n\n## Files to Create\n- `src/plugins/series-architect/services/ExportService.ts`\n- `src/plugins/series-architect/ui/ExportDialog.tsx`\n\n## Dependencies\n- Issue: [Core] Implement File Service\n- Issue: [Series Architect] Implement Stages 3-6\n\n## Labels\n`plugin`, `series-architect`, `export`, `priority-medium`\n\n## Estimated Effort\n8-10 hours",
+      "labels": ["plugin", "series-architect", "export", "priority-medium"]
+    },
+    {
+      "epic": "Epic: Penname Manager Plugin",
+      "title": "[Penname] Create Plugin Structure and CRUD",
+      "body": "## Description\nCreate Penname Manager plugin with basic CRUD operations.\n\n## Tasks\n- [ ] Create plugin structure\n- [ ] Database schema for pennames\n- [ ] Create penname UI\n- [ ] Edit penname UI\n- [ ] Delete penname (with confirmation)\n- [ ] List all pennames\n- [ ] Penname selector component (for other plugins)\n\n## Acceptance Criteria\n- Can create pennames\n- Can edit penname details\n- Can delete pennames\n- Penname list displays\n- Other plugins can use penname selector\n\n## Files to Create\n- `src/plugins/penname-manager/plugin.json`\n- `src/plugins/penname-manager/index.ts`\n- `src/plugins/penname-manager/ui/PennameList.tsx`\n- `src/plugins/penname-manager/ui/PennameForm.tsx`\n- `src/plugins/penname-manager/schemas/schema.sql`\n\n## Dependencies\n- Epic: Core Framework Infrastructure (complete)\n\n## Labels\n`plugin`, `penname-manager`, `priority-medium`\n\n## Estimated Effort\n8-10 hours",
+      "labels": ["plugin", "penname-manager", "priority-medium"]
+    },
+    {
+      "epic": "Epic: Penname Manager Plugin",
+      "title": "[Penname] Implement Voice Profiles",
+      "body": "## Description\nAdd voice profile system for AI-generated content consistency.\n\n## Tasks\n- [ ] Voice profile schema\n- [ ] Voice profile editor UI\n- [ ] Sample text input for voice analysis\n- [ ] Integration with AI Service\n- [ ] Voice profile selection in other plugins\n\n## Acceptance Criteria\n- Can define voice profiles\n- Voice profiles stored per penname\n- AI Service can access voice profiles\n- Voice consistency maintained in generation\n\n## Files to Create\n- `src/plugins/penname-manager/ui/VoiceProfileEditor.tsx`\n- `src/plugins/penname-manager/services/VoiceProfileService.ts`\n\n## Dependencies\n- Issue: [Penname] Create Plugin Structure\n- Issue: [Core] Implement AI Service\n\n## Labels\n`plugin`, `penname-manager`, `ai`, `priority-medium`\n\n## Estimated Effort\n6-8 hours",
+      "labels": ["plugin", "penname-manager", "ai", "priority-medium"]
+    },
+    {
+      "epic": "Epic: Manuscript Writer Plugin",
+      "title": "[Manuscript] Create Plugin and Import Dossiers",
+      "body": "## Description\nCreate Manuscript Writer plugin with ability to import Series Architect book dossiers.\n\n## Tasks\n- [ ] Create plugin structure\n- [ ] Dossier import from Series Architect\n- [ ] Chapter list UI\n- [ ] Chapter selection\n- [ ] Manuscript project creation\n\n## Acceptance Criteria\n- Plugin loads successfully\n- Can import book dossiers\n- Chapter list displays\n- Can select chapter to write\n- Manuscript projects created\n\n## Files to Create\n- `src/plugins/manuscript-writer/plugin.json`\n- `src/plugins/manuscript-writer/index.ts`\n- `src/plugins/manuscript-writer/ui/DossierImporter.tsx`\n- `src/plugins/manuscript-writer/ui/ChapterList.tsx`\n\n## Dependencies\n- Epic: Core Framework Infrastructure (complete)\n- Epic: Series Architect Plugin (complete)\n\n## Labels\n`plugin`, `manuscript-writer`, `priority-medium`\n\n## Estimated Effort\n8-10 hours",
+      "labels": ["plugin", "manuscript-writer", "priority-medium"]
+    },
+    {
+      "epic": "Epic: Manuscript Writer Plugin",
+      "title": "[Manuscript] Implement Chapter Writing with AI",
+      "body": "## Description\nImplement AI-assisted chapter writing from beat outlines.\n\n## Tasks\n- [ ] Chapter editor UI\n- [ ] Beat-to-prose AI generation\n- [ ] Voice profile integration\n- [ ] Real-time word count\n- [ ] Chapter save/autosave\n- [ ] Chapter revision tracking\n\n## Acceptance Criteria\n- AI generates prose from beats\n- Voice profile applied\n- Word count accurate\n- Autosave works\n- Can track revisions\n\n## Files to Create\n- `src/plugins/manuscript-writer/ui/ChapterEditor.tsx`\n- `src/plugins/manuscript-writer/services/WritingService.ts`\n\n## Dependencies\n- Issue: [Manuscript] Create Plugin\n- Issue: [Penname] Implement Voice Profiles\n- Issue: [Core] Implement AI Service\n\n## Labels\n`plugin`, `manuscript-writer`, `ai`, `priority-medium`\n\n## Estimated Effort\n12-16 hours",
+      "labels": ["plugin", "manuscript-writer", "ai", "priority-medium"]
+    }
+  ]
+}

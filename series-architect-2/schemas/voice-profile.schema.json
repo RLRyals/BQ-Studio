@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/schemas/voice-profile.schema.json",
+  "title": "Voice Profile",
+  "type": "object",
+  "required": ["id", "name", "version", "sliders", "dominant", "palette"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "name": { "type": "string", "minLength": 1 },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "sliders": {
+      "type": "object",
+      "required": [
+        "cadence","imagery","figurative","specificity","sensory","heat","diction"
+      ],
+      "properties": {
+        "cadence": { "type": "integer", "minimum": 1, "maximum": 7 },
+        "imagery": { "type": "integer", "minimum": 1, "maximum": 7 },
+        "figurative": { "type": "integer", "minimum": 1, "maximum": 7 },
+        "specificity": { "type": "integer", "minimum": 1, "maximum": 7 },
+        "sensory": { "type": "integer", "minimum": 1, "maximum": 7 },
+        "heat": { "type": "integer", "minimum": 1, "maximum": 7 },
+        "diction": { "type": "integer", "minimum": 1, "maximum": 7 }
+      },
+      "additionalProperties": false
+    },
+    "dominant": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1,
+      "maxItems": 3
+    },
+    "palette": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 2,
+      "maxItems": 3
+    },
+    "lexicon": { "type": "string" },
+    "notes": { "type": "string" },
+    "schema": { "type": "string" }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/schemas/chapter-style-state.schema.json",
+  "title": "Scene Style State",
+  "type": "object",
+  "required": ["chapterId", "characterId", "emotion", "arousal", "valence", "version"],
+  "properties": {
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "chapterId": { "type": "string", "minLength": 1 },
+    "characterId": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "emotion": {
+      "type": "string",
+      "enum": ["Fear","Anger","Shame","Calm","Joy","Awe","Custom"]
+    },
+    "arousal": { "type": "integer", "minimum": 1, "maximum": 7 },
+    "valence": { "type": "string", "enum": ["-","0","+"] },
+    "timePressure": { "type": "boolean" },
+    "violenceOnPage": { "type": "boolean" },
+    "contextNotes": { "type": "string" },
+    "deltas": {
+      "type": "object",
+      "properties": {
+        "cadence": { "type": "integer", "minimum": -3, "maximum": 3 },
+        "imagery": { "type": "integer", "minimum": -3, "maximum": 3 },
+        "figurative": { "type": "integer", "minimum": -3, "maximum": 3 },
+        "specificity": { "type": "integer", "minimum": -3, "maximum": 3 },
+        "sensory": { "type": "integer", "minimum": -3, "maximum": 3 },
+        "heat": { "type": "integer", "minimum": -3, "maximum": 3 },
+        "diction": { "type": "integer", "minimum": -3, "maximum": 3 }
+      },
+      "additionalProperties": false
+    },
+    "computedSliders": {
+      "type": "object",
+      "properties": {
+        "cadence": { "type": "integer", "minimum": 1, "maximum": 7 },
+        "imagery": { "type": "integer", "minimum": 1, "maximum": 7 },
+        "figurative": { "type": "integer", "minimum": 1, "maximum": 7 },
+        "specificity": { "type": "integer", "minimum": 1, "maximum": 7 },
+        "sensory": { "type": "integer", "minimum": 1, "maximum": 7 },
+        "heat": { "type": "integer", "minimum": 1, "maximum": 7 },
+        "diction": { "type": "integer", "minimum": 1, "maximum": 7 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
