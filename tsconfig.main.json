@@ -5,6 +5,7 @@
     "module": "CommonJS",
     "lib": ["ES2020"],
     "moduleResolution": "node",
+    "allowImportingTsExtensions": false,
     "noEmit": false,
     "outDir": "dist/main",
     "jsx": "preserve"

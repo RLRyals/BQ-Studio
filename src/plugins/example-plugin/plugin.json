@@ -1,0 +1,20 @@
+{
+  "id": "example-plugin",
+  "name": "Example Plugin",
+  "version": "1.0.0",
+  "description": "A simple example plugin demonstrating the BQ Studio plugin system",
+  "author": "BQ Studio Team",
+  "icon": "puzzle",
+  "entry": "index.ts",
+  "ui": {
+    "mainView": "ExampleView",
+    "sidebarIcon": "puzzle",
+    "dashboardWidget": "ExampleWidget"
+  },
+  "permissions": {
+    "fileSystem": false,
+    "network": false,
+    "ai": true,
+    "database": true
+  }
+}
