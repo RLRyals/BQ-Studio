@@ -144,6 +144,45 @@ Update Database Service to use Postgres:
 
 ---
 
+## Infrastructure Dependencies
+
+### MCP-Electron-App Repository
+**Location:** `RYALS\MCP-Electron-App`
+
+**What it provides:**
+- ✅ Postgres database in Docker
+- ✅ PgBouncer connection pooler
+- ✅ Typing Mind website
+- ✅ MCP connector for Typing Mind
+- ✅ 9 MCP Writing Servers (series, book, chapter, character, scene, continuity, review, reporting, author)
+
+**BQ Studio depends on:**
+1. MCP-Electron-App must be running
+2. Postgres accessible via PgBouncer (typically port 6432)
+3. MCP servers accessible (ports 3000-3008 or via tunnels)
+
+**Relationship:**
+```
+MCP-Electron-App = Infrastructure Provider (database + servers)
+BQ-Studio        = Client Application (UI + workflow orchestration)
+```
+
+**Development Setup:**
+1. Start MCP-Electron-App first
+2. Note Postgres connection string (from MCP-Electron-App .env)
+3. Note MCP server URLs (http://localhost:3000-3008)
+4. Configure BQ Studio .env with these values
+5. Start BQ Studio Electron app
+
+**Production/Shared Setup:**
+- Both apps can run simultaneously
+- Both connect to same Postgres instance
+- BQ Studio focuses on series/manuscript workflows
+- Typing Mind provides general AI chat interface
+- Shared character/scene data across both interfaces
+
+---
+
 ## Post-Weekend: Electron + Writing Team Integration
 
 ### Phase 1: Core Framework (Week 1)
@@ -221,26 +260,34 @@ Files to update:
 
 ---
 
-#### Issue #28: Connect Database Service to Postgres
+#### Issue #28: Connect Database Service to Shared Postgres
 **Description:**
 ```
 Update Database Service from SQLite to Postgres:
 
 - Replace better-sqlite3 with pg
 - Update migration system for Postgres syntax
-- Connect to same Postgres instance as MCPs
+- Connect to shared Postgres instance from MCP-Electron-App
+- Connect via PgBouncer for connection pooling
 - Update schema to match MCP server expectations
 - Maintain existing DatabaseService interface
 
 Configuration:
-- Read Postgres connection from environment
-- Support local development (Docker) and production
-- Connection pooling for performance
+- Read Postgres connection string from .env
+- Connection string points to MCP-Electron-App's PgBouncer
+- Example: postgresql://user:pass@localhost:6432/bq_studio
+- No need to manage Postgres lifecycle (runs in MCP-Electron-App)
+
+Infrastructure Dependencies:
+- Requires MCP-Electron-App running
+- Requires Postgres + PgBouncer accessible
+- Shared database with MCP servers
 
 Files to update:
 - src/core/database-service/DatabaseService.ts
 - src/core/database-service/migrations/*.sql (update syntax)
 - package.json (remove better-sqlite3, add pg)
+- .env.example (document connection string format)
 ```
 
 ---
@@ -248,24 +295,37 @@ Files to update:
 #### Issue #29: Add MCP Server Communication Layer
 **Description:**
 ```
-Create MCP client in Electron app:
+Create MCP client in BQ Studio Electron app:
 
-- Electron main process connects to MCP servers
+- Electron main process connects to MCP servers running in MCP-Electron-App
 - IPC bridge between renderer and MCP servers
 - Handle authentication (MCP_AUTH_TOKEN)
 - Connection management (reconnect on failure)
 - Request queuing and retry logic
+- Support both local (MCP-Electron-App) and tunnel (CCWeb) connections
 
 Architecture:
-┌──────────────┐         ┌──────────────┐         ┌──────────────┐
-│ React UI     │  IPC    │ Electron     │  HTTP   │ MCP Servers  │
-│ (Renderer)   │ <-----> │ Main Process │ <-----> │ (Docker)     │
-└──────────────┘         └──────────────┘         └──────────────┘
+┌──────────────┐         ┌──────────────┐         ┌─────────────────────┐
+│ BQ Studio    │  IPC    │ BQ Studio    │  HTTP   │ MCP-Electron-App    │
+│ React UI     │ <-----> │ Electron     │ <-----> │ MCP Servers         │
+│ (Renderer)   │         │ Main Process │         │ (Postgres + MCPs)   │
+└──────────────┘         └──────────────┘         └─────────────────────┘
+
+Configuration:
+- Read MCP server URLs from .env
+- Local mode: http://localhost:3000-3008 (MCP-Electron-App)
+- Tunnel mode: https://*.trycloudflare.com (for CCWeb)
+
+Infrastructure Dependencies:
+- Requires MCP-Electron-App running
+- Requires 9 MCP servers accessible
+- Shared Postgres database via MCP servers
 
 New files:
 - src/main/mcp/MCPClient.ts
 - src/main/mcp/MCPBridge.ts
 - src/renderer/hooks/useMCPQuery.ts
+- .env.example (document MCP server URLs)
 ```
 
 ---
@@ -317,19 +377,50 @@ Update scope to cover:
 
 ## Database Architecture Decision
 
-### ✅ Postgres (Your Choice)
+### ✅ Postgres (Shared Infrastructure)
+
+**Your Setup:**
+```
+┌────────────────────────────────────────────┐
+│  MCP-Electron-App Repository               │
+│  (Infrastructure Provider)                 │
+│                                            │
+│  Docker Compose:                           │
+│  ├── Postgres database                     │
+│  ├── PgBouncer (connection pooler)         │
+│  ├── Typing Mind website                   │
+│  ├── MCP connector for Typing Mind         │
+│  └── 9 MCP Writing Servers (likely here)   │
+└────────────────────────────────────────────┘
+                    ↓ shared connection
+┌────────────────────────────────────────────┐
+│  BQ-Studio Repository                      │
+│  (Client Application)                      │
+│                                            │
+│  Electron App:                             │
+│  ├── React UI for writing workflows        │
+│  ├── Connects to shared Postgres via       │
+│  │   PgBouncer (connection string)         │
+│  ├── Invokes Writing Team Agents           │
+│  └── Uses Agent Skills                     │
+└────────────────────────────────────────────┘
+```
+
 **Pros:**
-- ✅ MCPs already use Postgres
-- ✅ Single source of truth
-- ✅ Better for concurrent access
-- ✅ More powerful queries
-- ✅ Better JSON support
+- ✅ Postgres already running - no setup needed
+- ✅ PgBouncer provides connection pooling
+- ✅ MCP servers already connected
+- ✅ Single infrastructure for all writing tools
+- ✅ BQ Studio is lightweight client app
 
-**Cons:**
-- ⚠️ Requires Postgres running (Docker)
-- ⚠️ Slightly more complex setup
+**Configuration:**
+BQ Studio needs connection details from MCP-Electron-App:
+- Postgres host/port (via PgBouncer)
+- Database name
+- Authentication credentials
+- Connection pooling already handled by PgBouncer
 
-**Recommendation:** Stick with Postgres. Your MCPs use it, so Electron app should too.
+**Recommendation:** BQ Studio connects as client to shared infrastructure. No Docker setup needed in this repo.
 
 ---
 
@@ -387,7 +478,7 @@ bq-studio/
 │   └── TUNNEL_SETUP_GUIDE.md    # ⚠️ May remove
 │
 ├── start-cloudflare-tunnels.sh  # ⚠️ May remove
-└── docker-compose.yml           # Postgres + MCP servers
+└── .env.example                 # Connection string to MCP-Electron-App Postgres
 ```
 
 ---
