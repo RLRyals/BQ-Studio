@@ -29,23 +29,26 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.30.0",
+    "docx": "^8.5.0",
     "electron-store": "^8.1.0",
+    "markdown-it": "^14.1.0",
     "openai": "^4.70.0",
+    "pg": "^8.16.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "zustand": "^4.5.0",
-    "better-sqlite3": "^11.5.0",
-    "markdown-it": "^14.1.0",
-    "docx": "^8.5.0"
+    "zustand": "^4.5.0"
   },
   "devDependencies": {
+    "@testing-library/react": "^14.1.2",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/better-sqlite3": "^7.6.9",
     "@types/node": "^20.11.0",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
-    "@types/better-sqlite3": "^7.6.9",
     "@typescript-eslint/eslint-plugin": "^6.19.0",
     "@typescript-eslint/parser": "^6.19.0",
     "@vitejs/plugin-react": "^4.2.1",
+    "@vitest/ui": "^1.2.1",
     "autoprefixer": "^10.4.17",
     "concurrently": "^8.2.2",
     "electron": "^28.2.0",
@@ -61,9 +64,6 @@
     "typescript": "^5.3.3",
     "vite": "^5.0.12",
     "vitest": "^1.2.1",
-    "@vitest/ui": "^1.2.1",
-    "@testing-library/react": "^14.1.2",
-    "@testing-library/user-event": "^14.5.2",
     "wait-on": "^7.2.0"
   },
   "lint-staged": {
@@ -87,16 +87,22 @@
       "package.json"
     ],
     "win": {
-      "target": ["nsis"],
+      "target": [
+        "nsis"
+      ],
       "icon": "assets/icon.ico"
     },
     "mac": {
-      "target": ["dmg"],
+      "target": [
+        "dmg"
+      ],
       "icon": "assets/icon.icns",
       "category": "public.app-category.productivity"
     },
     "linux": {
-      "target": ["AppImage"],
+      "target": [
+        "AppImage"
+      ],
       "icon": "assets/icon.png",
       "category": "Office"
     }
