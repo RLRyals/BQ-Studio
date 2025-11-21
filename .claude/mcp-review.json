@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "core-continuity": {
+      "url": "https://mcp-continuity.YOUR_DOMAIN.com"
+    },
+    "review": {
+      "url": "https://mcp-review.YOUR_DOMAIN.com"
+    },
+    "reporting": {
+      "url": "https://mcp-reporting.YOUR_DOMAIN.com"
+    },
+    "character-planning": {
+      "url": "https://mcp-character.YOUR_DOMAIN.com"
+    }
+  }
+}

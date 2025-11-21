@@ -1,0 +1,112 @@
+{
+  "mcpServers": {
+    "author": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "-i",
+        "-e",
+        "MCP_STDIO_MODE=true",
+        "mcp-writing-servers",
+        "node",
+        "/app/src/config-mcps/author-server/index.js"
+      ]
+    },
+    "series-planning": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "-i",
+        "-e",
+        "MCP_STDIO_MODE=true",
+        "mcp-writing-servers",
+        "node",
+        "/app/src/config-mcps/series-planning-server/index.js"
+      ]
+    },
+    "book-planning": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "-i",
+        "-e",
+        "MCP_STDIO_MODE=true",
+        "mcp-writing-servers",
+        "node",
+        "/app/src/config-mcps/book-planning-server/index.js"
+      ]
+    },
+    "chapter-planning": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "-i",
+        "-e",
+        "MCP_STDIO_MODE=true",
+        "mcp-writing-servers",
+        "node",
+        "/app/src/config-mcps/chapter-planning-server/index.js"
+      ]
+    },
+    "character-planning": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "-i",
+        "-e",
+        "MCP_STDIO_MODE=true",
+        "mcp-writing-servers",
+        "node",
+        "/app/src/config-mcps/character-planning-server/index.js"
+      ]
+    },
+    "scene": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "-i",
+        "-e",
+        "MCP_STDIO_MODE=true",
+        "mcp-writing-servers",
+        "node",
+        "/app/src/config-mcps/scene-server/index.js"
+      ]
+    },
+    "core-continuity": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "-i",
+        "-e",
+        "MCP_STDIO_MODE=true",
+        "mcp-writing-servers",
+        "node",
+        "/app/src/config-mcps/core-continuity-server/index.js"
+      ]
+    },
+    "review": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "-i",
+        "-e",
+        "MCP_STDIO_MODE=true",
+        "mcp-writing-servers",
+        "node",
+        "/app/src/config-mcps/review-server/index.js"
+      ]
+    },
+    "reporting": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "-i",
+        "-e",
+        "MCP_STDIO_MODE=true",
+        "mcp-writing-servers",
+        "node",
+        "/app/src/config-mcps/reporting-server/index.js"
+      ]
+    }
+  }
+}

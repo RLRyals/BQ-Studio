@@ -1,0 +1,55 @@
+# ngrok Configuration for MCP Writing Servers
+# File: ~/ngrok-config.yml
+# Requires: ngrok paid plan for multiple simultaneous tunnels
+
+version: "2"
+authtoken: YOUR_NGROK_AUTH_TOKEN
+
+tunnels:
+  mcp-author:
+    addr: 3009
+    proto: http
+    hostname: YOUR_RESERVED_DOMAIN_1.ngrok.io  # Optional: use reserved domain
+
+  mcp-series-planning:
+    addr: 3002
+    proto: http
+    hostname: YOUR_RESERVED_DOMAIN_2.ngrok.io
+
+  mcp-book-planning:
+    addr: 3001
+    proto: http
+    hostname: YOUR_RESERVED_DOMAIN_3.ngrok.io
+
+  mcp-chapter-planning:
+    addr: 3003
+    proto: http
+    hostname: YOUR_RESERVED_DOMAIN_4.ngrok.io
+
+  mcp-character-planning:
+    addr: 3004
+    proto: http
+    hostname: YOUR_RESERVED_DOMAIN_5.ngrok.io
+
+  mcp-scene:
+    addr: 3005
+    proto: http
+    hostname: YOUR_RESERVED_DOMAIN_6.ngrok.io
+
+  mcp-core-continuity:
+    addr: 3006
+    proto: http
+    hostname: YOUR_RESERVED_DOMAIN_7.ngrok.io
+
+  mcp-review:
+    addr: 3007
+    proto: http
+    hostname: YOUR_RESERVED_DOMAIN_8.ngrok.io
+
+  mcp-reporting:
+    addr: 3008
+    proto: http
+    hostname: YOUR_RESERVED_DOMAIN_9.ngrok.io
+
+# Start all tunnels with:
+# ngrok start --all --config ~/ngrok-config.yml

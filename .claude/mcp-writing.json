@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "scene": {
+      "url": "https://mcp-scene.YOUR_DOMAIN.com"
+    },
+    "character-planning": {
+      "url": "https://mcp-character.YOUR_DOMAIN.com"
+    },
+    "core-continuity": {
+      "url": "https://mcp-continuity.YOUR_DOMAIN.com"
+    }
+  }
+}

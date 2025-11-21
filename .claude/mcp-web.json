@@ -1,0 +1,31 @@
+{
+  "mcpServers": {
+    "author": {
+      "url": "https://mcp-author.YOUR_DOMAIN.com"
+    },
+    "series-planning": {
+      "url": "https://mcp-series.YOUR_DOMAIN.com"
+    },
+    "book-planning": {
+      "url": "https://mcp-book.YOUR_DOMAIN.com"
+    },
+    "chapter-planning": {
+      "url": "https://mcp-chapter.YOUR_DOMAIN.com"
+    },
+    "character-planning": {
+      "url": "https://mcp-character.YOUR_DOMAIN.com"
+    },
+    "scene": {
+      "url": "https://mcp-scene.YOUR_DOMAIN.com"
+    },
+    "core-continuity": {
+      "url": "https://mcp-continuity.YOUR_DOMAIN.com"
+    },
+    "review": {
+      "url": "https://mcp-review.YOUR_DOMAIN.com"
+    },
+    "reporting": {
+      "url": "https://mcp-reporting.YOUR_DOMAIN.com"
+    }
+  }
+}
