@@ -6,7 +6,7 @@
 
 ## Overview
 
-BQ Studio is a **client application** that depends on infrastructure provided by the **MCP-Electron-App** repository. This document explains the relationship between the two repositories and how to set up the development environment.
+BQ Studio is a **client application** that depends on infrastructure provided by **FictionLab** (the MCP-Electron-App repository). FictionLab is installed as a Windows desktop application (accessible from Start Menu) that provides the shared infrastructure. This document explains the relationship between the two applications and how to set up the development environment.
 
 ---
 
@@ -14,8 +14,8 @@ BQ Studio is a **client application** that depends on infrastructure provided by
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  RYALS\MCP-Electron-App                                 │
-│  Infrastructure Provider                                │
+│  FictionLab (RYALS\MCP-Electron-App)                    │
+│  Infrastructure Provider (Desktop App)                  │
 │                                                         │
 │  Docker Compose Services:                              │
 │  ┌─────────────────────────────────────────┐          │
@@ -31,9 +31,14 @@ BQ Studio is a **client application** that depends on infrastructure provided by
 │  └─────────────────────────────────────────┘          │
 │  ┌─────────────────────────────────────────┐          │
 │  │ 9 MCP Writing Servers                   │          │
-│  │ - Ports 3000-3008                       │          │
+│  │ - Ports 3001-3009                       │          │
 │  │ - HTTP APIs for writing workflows       │          │
 │  │ - Connected to Postgres                 │          │
+│  └─────────────────────────────────────────┘          │
+│  ┌─────────────────────────────────────────┐          │
+│  │ Database Admin Interface                │          │
+│  │ - Port 3010                             │          │
+│  │ - Web-based DB administration           │          │
 │  └─────────────────────────────────────────┘          │
 │  ┌─────────────────────────────────────────┐          │
 │  │ Typing Mind Website                     │          │
@@ -78,9 +83,10 @@ BQ Studio is a **client application** that depends on infrastructure provided by
 
 ## What Each Repository Does
 
-### MCP-Electron-App (Infrastructure Provider)
+### FictionLab / MCP-Electron-App (Infrastructure Provider)
 
 **Purpose:** Provides shared infrastructure for all writing tools
+**Installed as:** Desktop application accessible from Windows Start Menu
 
 **Responsibilities:**
 - Run Postgres database in Docker
@@ -101,8 +107,9 @@ BQ Studio is a **client application** that depends on infrastructure provided by
 **Ports:**
 - 5432: Postgres (internal Docker network)
 - 6432: PgBouncer (exposed for connections)
-- 3000-3008: MCP servers
-- 3001: Typing Mind website
+- 3001-3009: MCP Writing Servers
+- 3010: Database Admin Interface
+- 8080: Typing Mind website (actual port may vary)
 
 ---
 
@@ -127,10 +134,11 @@ BQ Studio is a **client application** that depends on infrastructure provided by
 - pg (Postgres client)
 
 **Dependencies:**
-- Requires MCP-Electron-App running
+- Requires FictionLab running (launch from Start Menu)
 - Connects to shared Postgres via PgBouncer
-- Connects to MCP servers (local or tunnels)
+- Connects to MCP servers (local ports 3001-3009 or via tunnels)
 - Shares data with Typing Mind
+- Can access DB Admin interface (port 3010) for database inspection
 
 ---
 
@@ -138,10 +146,11 @@ BQ Studio is a **client application** that depends on infrastructure provided by
 
 ### Prerequisites
 
-1. **MCP-Electron-App repository cloned and running**
+1. **FictionLab application running**
    ```bash
+   # Launch FictionLab from Windows Start Menu
+   # OR from command line if in development:
    cd RYALS/MCP-Electron-App
-   # Start infrastructure
    npm start
    # OR
    docker-compose up
@@ -152,11 +161,19 @@ BQ Studio is a **client application** that depends on infrastructure provided by
    # Check Postgres via PgBouncer
    psql -h localhost -p 6432 -U your_user -d bq_studio
 
-   # Check MCP servers
-   curl http://localhost:3000/health  # author-server
-   curl http://localhost:3001/health  # series-planning-server
-   curl http://localhost:3002/health  # book-planning-server
-   # etc for ports 3003-3008
+   # Check MCP servers (ports 3001-3009)
+   curl http://localhost:3001/health  # author-server
+   curl http://localhost:3002/health  # series-planning-server
+   curl http://localhost:3003/health  # book-planning-server
+   curl http://localhost:3004/health  # chapter-planning-server
+   curl http://localhost:3005/health  # character-planning-server
+   curl http://localhost:3006/health  # scene-server
+   curl http://localhost:3007/health  # core-continuity-server
+   curl http://localhost:3008/health  # review-server
+   curl http://localhost:3009/health  # reporting-server
+
+   # Check DB Admin interface
+   open http://localhost:3010  # Opens in browser
    ```
 
 3. **Get connection details from MCP-Electron-App:**
@@ -223,9 +240,11 @@ BQ Studio is a **client application** that depends on infrastructure provided by
 ```bash
 # .env
 DATABASE_URL=postgresql://user:pass@localhost:6432/bq_studio
-MCP_AUTHOR_SERVER_URL=http://localhost:3000
-MCP_SERIES_PLANNING_SERVER_URL=http://localhost:3001
-# etc...
+MCP_AUTHOR_SERVER_URL=http://localhost:3001
+MCP_SERIES_PLANNING_SERVER_URL=http://localhost:3002
+MCP_BOOK_PLANNING_SERVER_URL=http://localhost:3003
+# etc. through port 3009
+MCP_DB_ADMIN_URL=http://localhost:3010
 ```
 
 **Pros:**
@@ -362,10 +381,11 @@ cat .env | grep DATABASE_URL
 
 **Check:**
 ```bash
-# Are MCP servers running?
-curl http://localhost:3000/health
+# Are MCP servers running? (ports 3001-3009)
 curl http://localhost:3001/health
-# etc...
+curl http://localhost:3002/health
+curl http://localhost:3003/health
+# etc. through 3009...
 
 # Check .env MCP URLs are correct
 cat .env | grep MCP_.*_SERVER_URL

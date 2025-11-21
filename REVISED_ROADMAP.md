@@ -15,11 +15,12 @@ Build Electron desktop app with:
 - Core services (AI, Database, File, Workflow, Event Bus)
 - Series Architect, Penname Manager, Manuscript Writer plugins
 
-### Temporary Detour (Next 3 Days)
-- Use Claude Code Web to maximize **use-or-lose credits**
-- Build Writing Team Agents (9 agents) + Agent Skills (5 skills)
-- Connect to MCPs via Cloudflare tunnels
-- Validate workflows and gather requirements
+### Current Sprint (This Weekend + Parallel Development)
+- Use Claude Code Web to maximize **$724 in credits** ($7 spent so far)
+- Build Writing Team Agents (9 agents) + Agent Skills (5 skills) ✅ DONE
+- Connect to MCPs via Cloudflare tunnels ✅ DONE
+- Validate workflows and gather requirements 🔨 IN PROGRESS
+- **Parallel development**: Start Electron app work this weekend (not waiting)
 
 ### Post-Weekend Integration (The Real Goal)
 - **Return to Electron app development**
@@ -113,32 +114,44 @@ Update Database Service to use Postgres:
 
 ---
 
-## Next 3 Days: CCWeb Sprint Strategy
+## This Weekend: Parallel Development Strategy
 
-### Goal: Maximize Free Credits by Building & Testing Writing Team
+### Goal: Maximize $724 Credits + Start Electron App
 
-#### Day 1 (Today) - Validation ✅
+**Budget:** $724 in credits, $7 spent so far = $717 remaining (plenty for parallel work!)
+
+#### Today (Day 1) - Writing Team Validation ✅
 - [x] Writing Team Agents created (9 agents)
 - [x] Agent Skills created (5 skills)
 - [x] MCP configurations created
 - [x] Cloudflare tunnel automation
+- [x] Infrastructure documentation updated
 - [ ] **Test one complete workflow** (series planning → book → chapter → scene)
 
-#### Day 2 (Tomorrow) - Testing & Refinement
+#### Tomorrow - Testing & Electron Setup
+**CCWeb Track:**
 - [ ] Test all 5 Agent Skills with real content
 - [ ] Document pain points and failure modes
 - [ ] Refine agent prompts based on testing
 - [ ] Validate MCP permission-based operations
+
+**Electron Track (Start in parallel):**
+- [ ] Resume Issue #5: Set up Electron + React + TypeScript
+- [ ] Basic app launches
+- [ ] Connect to FictionLab Postgres (via PgBouncer port 6432)
+- [ ] Test MCP server connectivity (ports 3001-3009)
+
+#### Weekend - Parallel Development
+**CCWeb Track:**
 - [ ] Test character knowledge tracking (Tessa agent)
 - [ ] Create example session transcript
+- [ ] Document what worked well / needs improvement
 
-#### Day 3 (Weekend) - Documentation & Requirements
-- [ ] Document what worked well
-- [ ] Document what needs improvement
-- [ ] Write integration requirements for Electron app
-- [ ] Create "Writing Team Integration Spec" for post-weekend work
-- [ ] Finalize agent prompt improvements
-- [ ] Plan Electron UI mockups that leverage Writing Team
+**Electron Track:**
+- [ ] Resume Issue #12: Create Dashboard Layout
+- [ ] Resume Issue #13: Create Workspace Layout
+- [ ] Create Writing Team chat interface component
+- [ ] Test invoking agents from Electron UI
 
 **Output:** Validated Writing Team ready to integrate into Electron app
 
@@ -146,33 +159,45 @@ Update Database Service to use Postgres:
 
 ## Infrastructure Dependencies
 
-### MCP-Electron-App Repository
+### FictionLab (MCP-Electron-App Repository)
 **Location:** `RYALS\MCP-Electron-App`
+**Installed as:** Desktop application "FictionLab" (Windows Start Menu)
 
 **What it provides:**
 - ✅ Postgres database in Docker
 - ✅ PgBouncer connection pooler
 - ✅ Typing Mind website
 - ✅ MCP connector for Typing Mind
-- ✅ 9 MCP Writing Servers (series, book, chapter, character, scene, continuity, review, reporting, author)
+- ✅ 9 MCP Writing Servers (ports 3001-3009)
+  - author-server (3001)
+  - series-planning-server (3002)
+  - book-planning-server (3003)
+  - chapter-planning-server (3004)
+  - character-planning-server (3005)
+  - scene-server (3006)
+  - core-continuity-server (3007)
+  - review-server (3008)
+  - reporting-server (3009)
+- ✅ Database Admin Interface (port 3010)
 
 **BQ Studio depends on:**
-1. MCP-Electron-App must be running
-2. Postgres accessible via PgBouncer (typically port 6432)
-3. MCP servers accessible (ports 3000-3008 or via tunnels)
+1. FictionLab must be running (launch from Start Menu)
+2. Postgres accessible via PgBouncer (port 6432)
+3. MCP servers accessible (ports 3001-3009 locally or via tunnels)
 
 **Relationship:**
 ```
-MCP-Electron-App = Infrastructure Provider (database + servers)
-BQ-Studio        = Client Application (UI + workflow orchestration)
+FictionLab (MCP-Electron-App) = Infrastructure Provider (database + servers)
+BQ-Studio                      = Client Application (UI + workflow orchestration)
 ```
 
 **Development Setup:**
-1. Start MCP-Electron-App first
-2. Note Postgres connection string (from MCP-Electron-App .env)
-3. Note MCP server URLs (http://localhost:3000-3008)
-4. Configure BQ Studio .env with these values
-5. Start BQ Studio Electron app
+1. Launch FictionLab from Start Menu (or `npm start` if developing)
+2. Verify Postgres running (PgBouncer port 6432)
+3. Verify MCP servers running (ports 3001-3009)
+4. Note connection details from FictionLab/.env
+5. Configure BQ Studio .env with these values
+6. Start BQ Studio Electron app
 
 **Production/Shared Setup:**
 - Both apps can run simultaneously
@@ -313,12 +338,14 @@ Architecture:
 
 Configuration:
 - Read MCP server URLs from .env
-- Local mode: http://localhost:3000-3008 (MCP-Electron-App)
+- Local mode: http://localhost:3001-3009 (FictionLab MCP servers)
 - Tunnel mode: https://*.trycloudflare.com (for CCWeb)
+- DB Admin: http://localhost:3010
 
 Infrastructure Dependencies:
-- Requires MCP-Electron-App running
-- Requires 9 MCP servers accessible
+- Requires FictionLab running (launch from Start Menu)
+- Requires 9 MCP servers accessible (ports 3001-3009)
+- Requires DB Admin interface (port 3010) for database inspection
 - Shared Postgres database via MCP servers
 
 New files:
