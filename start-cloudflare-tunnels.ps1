@@ -3,12 +3,12 @@
 
 $ErrorActionPreference = "Stop"
 
-Write-Host "🚀 Starting Cloudflare Tunnels for MCP Writing Servers..." -ForegroundColor Green
+Write-Host "Starting Cloudflare Tunnels for MCP Writing Servers..." -ForegroundColor Green
 Write-Host ""
 
 # Check if cloudflared is installed
 if (-not (Get-Command cloudflared -ErrorAction SilentlyContinue)) {
-    Write-Host "❌ cloudflared is not installed." -ForegroundColor Red
+    Write-Host "ERROR: cloudflared is not installed." -ForegroundColor Red
     Write-Host "Install with:" -ForegroundColor Yellow
     Write-Host "  Option 1: winget install --id Cloudflare.cloudflared" -ForegroundColor Cyan
     Write-Host "  Option 2: Download from https://github.com/cloudflare/cloudflared/releases" -ForegroundColor Cyan
@@ -18,12 +18,12 @@ if (-not (Get-Command cloudflared -ErrorAction SilentlyContinue)) {
 # Check if Docker container is running
 $dockerCheck = docker ps 2>&1 | Select-String "mcp-writing-servers"
 if (-not $dockerCheck) {
-    Write-Host "❌ Docker container 'mcp-writing-servers' is not running." -ForegroundColor Red
+    Write-Host "ERROR: Docker container 'mcp-writing-servers' is not running." -ForegroundColor Red
     Write-Host "Start it with your Electron app or: docker start mcp-writing-servers" -ForegroundColor Yellow
     exit 1
 }
 
-Write-Host "✅ Docker container is running" -ForegroundColor Green
+Write-Host "SUCCESS: Docker container is running" -ForegroundColor Green
 Write-Host ""
 
 # Create logs directory
@@ -33,7 +33,7 @@ if (-not (Test-Path $logsDir)) {
 }
 
 # Kill any existing cloudflared processes
-Write-Host "🧹 Cleaning up existing tunnels..." -ForegroundColor Yellow
+Write-Host "Cleaning up existing tunnels..." -ForegroundColor Yellow
 Get-Process cloudflared -ErrorAction SilentlyContinue | Stop-Process -Force
 Start-Sleep -Seconds 2
 
@@ -51,7 +51,7 @@ $ports = @{
 }
 
 # Start tunnels
-Write-Host "🔗 Starting tunnels..." -ForegroundColor Green
+Write-Host "Starting tunnels..." -ForegroundColor Green
 Write-Host ""
 
 $jobs = @{}
@@ -79,35 +79,36 @@ foreach ($server in $ports.Keys) {
 }
 
 Write-Host ""
-Write-Host "⏳ Waiting for tunnels to initialize (10 seconds)..." -ForegroundColor Yellow
+Write-Host "Waiting for tunnels to initialize (10 seconds)..." -ForegroundColor Yellow
 Start-Sleep -Seconds 10
 
 # Extract URLs from logs
 Write-Host ""
-Write-Host "📋 Extracting tunnel URLs..." -ForegroundColor Green
+Write-Host "Extracting tunnel URLs..." -ForegroundColor Green
 Write-Host ""
 
 $urls = @{}
 
 foreach ($server in $ports.Keys) {
     $logFile = $jobs[$server].LogFile
+    $errFile = "$logFile.err"
 
-    if (Test-Path $logFile) {
-        $content = Get-Content $logFile -Raw
+    if (Test-Path $errFile) {
+        $content = Get-Content $errFile -Raw
         if ($content -match "(https://[a-z0-9-]+\.trycloudflare\.com)") {
             $url = $Matches[1]
             $urls[$server] = $url
-            Write-Host "  ✅ $server : $url" -ForegroundColor Green
+            Write-Host "  SUCCESS: $server : $url" -ForegroundColor Green
         } else {
-            Write-Host "  ❌ Failed to get URL for $server" -ForegroundColor Red
+            Write-Host "  ERROR: Failed to get URL for $server" -ForegroundColor Red
         }
     } else {
-        Write-Host "  ❌ Log file not found for $server" -ForegroundColor Red
+        Write-Host "  ERROR: Log file not found for $server" -ForegroundColor Red
     }
 }
 
 Write-Host ""
-Write-Host "📝 Generating MCP configuration files..." -ForegroundColor Green
+Write-Host "Generating MCP configuration files..." -ForegroundColor Green
 Write-Host ""
 
 # Generate mcp-planning.json
@@ -163,23 +164,23 @@ $webConfig = @{
 
 $webConfig | Out-File -FilePath ".claude\mcp-web.json" -Encoding UTF8
 
-Write-Host "✅ Generated .claude\mcp-planning.json" -ForegroundColor Green
-Write-Host "✅ Generated .claude\mcp-writing.json" -ForegroundColor Green
-Write-Host "✅ Generated .claude\mcp-review.json" -ForegroundColor Green
-Write-Host "✅ Generated .claude\mcp-web.json" -ForegroundColor Green
+Write-Host "SUCCESS: Generated .claude\mcp-planning.json" -ForegroundColor Green
+Write-Host "SUCCESS: Generated .claude\mcp-writing.json" -ForegroundColor Green
+Write-Host "SUCCESS: Generated .claude\mcp-review.json" -ForegroundColor Green
+Write-Host "SUCCESS: Generated .claude\mcp-web.json" -ForegroundColor Green
 
 Write-Host ""
-Write-Host "🎉 All tunnels are running!" -ForegroundColor Green
+Write-Host "All tunnels are running!" -ForegroundColor Green
 Write-Host ""
-Write-Host "📌 Next Steps:" -ForegroundColor Cyan
+Write-Host "Next Steps:" -ForegroundColor Cyan
 Write-Host "  1. Open your BQ-Studio repo in Claude Code Web (already connected via GitHub)"
 Write-Host "  2. Go to Settings → MCP Servers"
 Write-Host "  3. Upload one of the generated mcp-*.json files from .claude/ folder"
 Write-Host "  4. Start using your Writing Team!"
 Write-Host ""
-Write-Host "⚠️  Keep this window open - closing it will stop the tunnels" -ForegroundColor Yellow
+Write-Host "WARNING: Keep this window open - closing it will stop the tunnels" -ForegroundColor Yellow
 Write-Host ""
-Write-Host "🛑 To stop all tunnels, press Ctrl+C" -ForegroundColor Red
+Write-Host "To stop all tunnels, press Ctrl+C" -ForegroundColor Red
 Write-Host ""
 
 # Wait for user interrupt
@@ -190,7 +191,7 @@ try {
     }
 } finally {
     Write-Host ""
-    Write-Host "🛑 Stopping tunnels..." -ForegroundColor Yellow
+    Write-Host "Stopping tunnels..." -ForegroundColor Yellow
     Get-Process cloudflared -ErrorAction SilentlyContinue | Stop-Process -Force
-    Write-Host "✅ All tunnels stopped" -ForegroundColor Green
+    Write-Host "All tunnels stopped" -ForegroundColor Green
 }

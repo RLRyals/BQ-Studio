@@ -3,7 +3,8 @@
     "allow": [
       "Bash(gh auth login:*)",
       "Bash(node scripts/create-github-issues.js:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(Get-Content \"$env:USERPROFILE\\.mcp-tunnel-logs\\tunnel-author.log\" -ErrorAction SilentlyContinue)"
     ],
     "deny": [],
     "ask": []

@@ -1,16 +1,16 @@
-{
-  "mcpServers": {
-    "core-continuity": {
-      "url": "https://mcp-continuity.YOUR_DOMAIN.com"
-    },
-    "review": {
-      "url": "https://mcp-review.YOUR_DOMAIN.com"
-    },
-    "reporting": {
-      "url": "https://mcp-reporting.YOUR_DOMAIN.com"
-    },
-    "character-planning": {
-      "url": "https://mcp-character.YOUR_DOMAIN.com"
-    }
-  }
+﻿{
+    "mcpServers":  {
+                       "core-continuity":  {
+                                               "url":  "https://commissioner-confidence-weapon-kruger.trycloudflare.com"
+                                           },
+                       "character-planning":  {
+                                                  "url":  "https://archives-develop-disposal-adelaide.trycloudflare.com"
+                                              },
+                       "reporting":  {
+                                         "url":  "https://demand-grammar-debug-finite.trycloudflare.com"
+                                     },
+                       "review":  {
+                                      "url":  "https://had-beds-trackbacks-skip.trycloudflare.com"
+                                  }
+                   }
 }

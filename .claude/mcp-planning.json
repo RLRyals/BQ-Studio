@@ -1,19 +1,19 @@
-{
-  "mcpServers": {
-    "author": {
-      "url": "https://mcp-author.YOUR_DOMAIN.com"
-    },
-    "series-planning": {
-      "url": "https://mcp-series.YOUR_DOMAIN.com"
-    },
-    "book-planning": {
-      "url": "https://mcp-book.YOUR_DOMAIN.com"
-    },
-    "chapter-planning": {
-      "url": "https://mcp-chapter.YOUR_DOMAIN.com"
-    },
-    "character-planning": {
-      "url": "https://mcp-character.YOUR_DOMAIN.com"
-    }
-  }
+﻿{
+    "mcpServers":  {
+                       "book-planning":  {
+                                             "url":  "https://comic-hundreds-approved-poll.trycloudflare.com"
+                                         },
+                       "character-planning":  {
+                                                  "url":  "https://archives-develop-disposal-adelaide.trycloudflare.com"
+                                              },
+                       "chapter-planning":  {
+                                                "url":  "https://helping-examples-owner-slightly.trycloudflare.com"
+                                            },
+                       "author":  {
+                                      "url":  "https://str-humanities-wiley-insertion.trycloudflare.com"
+                                  },
+                       "series-planning":  {
+                                               "url":  "https://arms-freebsd-interesting-science.trycloudflare.com"
+                                           }
+                   }
 }
