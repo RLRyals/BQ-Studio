@@ -22,15 +22,52 @@ BQ Studio is a modular, plugin-based desktop application for managing AI-powered
 5. **series-architect-2/** - Reference implementation of first plugin
 
 ## Environment Setup
-### GitHub Token Configuration
-This project requires a GitHub authentication token for working with issues and pull requests:
-- **Environment Variable**: `GITHUB_AUTH_TOKEN`
-- **How to set**: Export the token in your environment before starting Claude Code
-  ```bash
-  export GITHUB_AUTH_TOKEN=your_github_token_here
-  ```
-- **Token Permissions Needed**: `repo`, `read:org`, `workflow`
-- **SessionStart Hook**: Automatically validates token presence on session start
+### GitHub API Access Configuration
+This project uses GitHub's REST API for programmatic access to issues and pull requests. Claude Code can directly access the GitHub API using tokens from environment variables.
+
+#### Available Environment Variables
+- **`GITHUB_AUTH_TOKEN`** - Primary token for GitHub API access (classic PAT format: `ghp_...`)
+- **`GIT_TOKEN`** - Alternative token (fine-grained PAT format: `github_pat_...`)
+
+#### API Access Pattern
+Claude Code accesses the GitHub API directly using HTTPS requests:
+
+```javascript
+// Example: List open issues
+const options = {
+  hostname: 'api.github.com',
+  path: '/repos/RLRyals/BQ-Studio/issues?state=open',
+  method: 'GET',
+  headers: {
+    'Authorization': `token ${process.env.GITHUB_AUTH_TOKEN}`,
+    'User-Agent': 'BQ-Studio-Claude',
+    'Accept': 'application/vnd.github.v3+json'
+  }
+};
+```
+
+#### Common GitHub API Operations
+Claude can perform these operations programmatically:
+- **List Issues**: `GET /repos/{owner}/{repo}/issues?state=open`
+- **Get Issue**: `GET /repos/{owner}/{repo}/issues/{issue_number}`
+- **Create Issue**: `POST /repos/{owner}/{repo}/issues`
+- **Update Issue**: `PATCH /repos/{owner}/{repo}/issues/{issue_number}`
+- **Close Issue**: `PATCH /repos/{owner}/{repo}/issues/{issue_number}` with `{"state": "closed"}`
+- **Add Comment**: `POST /repos/{owner}/{repo}/issues/{issue_number}/comments`
+- **Add Labels**: `POST /repos/{owner}/{repo}/issues/{issue_number}/labels`
+
+#### Token Requirements
+For full API access, tokens need these permissions:
+- **repo** - Full repository access (required for issues, PRs)
+- **read:org** - Read organization data
+- **workflow** - Update GitHub Actions workflows
+
+#### SessionStart Hook
+The `.claude/hooks/SessionStart.sh` validates token presence, exports it for use during the session, and tests API connectivity on startup.
+
+#### Detailed API Documentation
+For comprehensive information on GitHub API operations, request formats, and examples, see:
+**[GitHub API Guide](.claude/docs/github-api-guide.md)**
 
 ### Quick Commands
 - `npm install` - Install dependencies
