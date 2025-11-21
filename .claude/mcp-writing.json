@@ -1,13 +1,31 @@
-﻿{
-    "mcpServers":  {
-                       "core-continuity":  {
-                                               "url":  "https://commissioner-confidence-weapon-kruger.trycloudflare.com"
-                                           },
-                       "character-planning":  {
-                                                  "url":  "https://archives-develop-disposal-adelaide.trycloudflare.com"
-                                              },
-                       "scene":  {
-                                     "url":  "https://gig-messaging-tuner-streets.trycloudflare.com"
-                                 }
-                   }
+{
+    "mcpServers": {
+        "author": {
+            "url": "https://str-humanities-wiley-insertion.trycloudflare.com"
+        },
+        "series-planning": {
+            "url": "https://arms-freebsd-interesting-science.trycloudflare.com"
+        },
+        "book-planning": {
+            "url": "https://comic-hundreds-approved-poll.trycloudflare.com"
+        },
+        "chapter-planning": {
+            "url": "https://helping-examples-owner-slightly.trycloudflare.com"
+        },
+        "character-planning": {
+            "url": "https://archives-develop-disposal-adelaide.trycloudflare.com"
+        },
+        "scene": {
+            "url": "https://gig-messaging-tuner-streets.trycloudflare.com"
+        },
+        "core-continuity": {
+            "url": "https://commissioner-confidence-weapon-kruger.trycloudflare.com"
+        },
+        "review": {
+            "url": "https://had-beds-trackbacks-skip.trycloudflare.com"
+        },
+        "reporting": {
+            "url": "https://demand-grammar-debug-finite.trycloudflare.com"
+        }
+    }
 }
