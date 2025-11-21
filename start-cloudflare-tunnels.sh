@@ -111,18 +111,36 @@ cat > .claude/mcp-planning.json <<EOF
 }
 EOF
 
-# Generate mcp-writing.json
+# Generate mcp-writing.json (all 9 servers for Writing Team)
 cat > .claude/mcp-writing.json <<EOF
 {
   "mcpServers": {
-    "scene": {
-      "url": "${URLS[scene]}"
+    "author": {
+      "url": "${URLS[author]}"
+    },
+    "series-planning": {
+      "url": "${URLS[series-planning]}"
+    },
+    "book-planning": {
+      "url": "${URLS[book-planning]}"
+    },
+    "chapter-planning": {
+      "url": "${URLS[chapter-planning]}"
     },
     "character-planning": {
       "url": "${URLS[character-planning]}"
     },
+    "scene": {
+      "url": "${URLS[scene]}"
+    },
     "core-continuity": {
       "url": "${URLS[core-continuity]}"
+    },
+    "review": {
+      "url": "${URLS[review]}"
+    },
+    "reporting": {
+      "url": "${URLS[reporting]}"
     }
   }
 }
