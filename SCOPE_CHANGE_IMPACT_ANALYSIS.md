@@ -6,9 +6,28 @@
 
 ---
 
+## ⚠️ UPDATE: This Analysis Was Based on Incomplete Understanding
+
+**Status:** SUPERSEDED by REVISED_ROADMAP.md
+
+**Original Analysis Assumption:** Electron app was permanently cancelled in favor of Claude Code Web
+**Reality:** CCWeb is a **3-day temporary detour** to use free credits. Electron app remains the primary goal.
+
+**Key Corrections:**
+- ❌ Don't close issues #5-25 - they're still valid, just on hold
+- ✅ Keep Writing Team Agents/Skills - they integrate into Electron app after weekend
+- ✅ Database is Postgres (not SQLite) - matches MCPs
+- ✅ Cloudflare tunnels are temporary - will reassess after credits end
+
+**See REVISED_ROADMAP.md for accurate plan.**
+
+The analysis below is preserved for historical context but should not be acted upon.
+
+---
+
 ## Executive Summary
 
-**MAJOR SCOPE PIVOT DETECTED**
+**MAJOR SCOPE PIVOT DETECTED** _(Note: This was incorrect)_
 
 BQ Studio has pivoted from an **Electron desktop application** to a **Claude Code-based AI writing assistant system**. This fundamentally changes the architecture, technology stack, and implementation approach.
 
