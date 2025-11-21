@@ -1,7 +1,7 @@
 # BQ Studio Environment Setup Helper (Windows PowerShell)
 # This script helps configure .env from FictionLab's configuration
 
-Write-Host "🔧 BQ Studio Environment Setup" -ForegroundColor Cyan
+Write-Host "[BQ Studio Environment Setup]" -ForegroundColor Cyan
 Write-Host "================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -10,9 +10,30 @@ $McpServersEnv = "..\MCP-Writing-Servers\.env"
 $McpWebConfig = ".claude\mcp-web.json"
 $BqStudioEnv = ".env"
 
+# Check if .env already exists
+if (Test-Path $BqStudioEnv) {
+    Write-Host "WARNING: .env file already exists!" -ForegroundColor Yellow
+    Write-Host ""
+    $overwrite = Read-Host "Do you want to OVERWRITE your existing .env file? [y/N]"
+    if ($overwrite -ne "y" -and $overwrite -ne "Y") {
+        Write-Host ""
+        Write-Host "Setup cancelled. Your existing .env file was not modified." -ForegroundColor Green
+        Write-Host ""
+        Write-Host "If you need to update specific values:"
+        Write-Host "1. Edit .env manually, OR"
+        Write-Host "2. Backup your .env and run this script again"
+        exit 0
+    }
+    Write-Host ""
+    Write-Host "Creating backup: .env.backup" -ForegroundColor Yellow
+    Copy-Item $BqStudioEnv "$BqStudioEnv.backup" -Force
+    Write-Host "Backup created. Proceeding with setup..." -ForegroundColor Green
+    Write-Host ""
+}
+
 # Check if MCP-Writing-Servers/.env exists
 if (-not (Test-Path $McpServersEnv)) {
-    Write-Host "❌ Error: Could not find $McpServersEnv" -ForegroundColor Red
+    Write-Host "[ERROR] Could not find $McpServersEnv" -ForegroundColor Red
     Write-Host ""
     Write-Host "Please ensure MCP-Writing-Servers repository is in the same parent directory:"
     Write-Host "  RYALS\"
@@ -23,11 +44,11 @@ if (-not (Test-Path $McpServersEnv)) {
     exit 1
 }
 
-Write-Host "✓ Found MCP-Writing-Servers\.env" -ForegroundColor Green
+Write-Host "[OK] Found MCP-Writing-Servers\.env" -ForegroundColor Green
 
 # Extract values from MCP-Writing-Servers/.env
 Write-Host ""
-Write-Host "📋 Reading configuration from MCP-Writing-Servers..." -ForegroundColor Cyan
+Write-Host "Reading configuration from MCP-Writing-Servers..." -ForegroundColor Cyan
 
 $envContent = Get-Content $McpServersEnv
 
@@ -54,11 +75,11 @@ $PgBouncerPort = Extract-Value "PGBOUNCER_PORT"
 if (-not $PgBouncerPort) { $PgBouncerPort = "6432" }
 if (-not $PostgresDb) { $PostgresDb = "fictionlab" }
 
-Write-Host "✓ Extracted database configuration" -ForegroundColor Green
+Write-Host "[OK] Extracted database configuration" -ForegroundColor Green
 
 # Check which mode (local or tunnels)
 Write-Host ""
-Write-Host "🌐 Connection Mode Selection" -ForegroundColor Cyan
+Write-Host "Connection Mode Selection" -ForegroundColor Cyan
 Write-Host "----------------------------"
 Write-Host "1) Local Development (localhost:3001-3009) - Recommended"
 Write-Host "2) Cloudflare Tunnels (for Claude Code Web)"
@@ -68,7 +89,7 @@ if (-not $mode) { $mode = "1" }
 
 # Start building .env file
 Write-Host ""
-Write-Host "📝 Creating .env file..." -ForegroundColor Cyan
+Write-Host "Creating .env file..." -ForegroundColor Cyan
 
 $envFileContent = @"
 # BQ Studio - Environment Configuration
@@ -116,9 +137,9 @@ if ($mode -eq "2") {
         $envFileContent += "MCP_REVIEW_SERVER_URL=$($mcpConfig.'review-server'.url)`n"
         $envFileContent += "MCP_REPORTING_SERVER_URL=$($mcpConfig.'reporting-server'.url)`n"
 
-        Write-Host "✓ Extracted tunnel URLs from mcp-web.json" -ForegroundColor Green
+        Write-Host "[OK] Extracted tunnel URLs from mcp-web.json" -ForegroundColor Green
     } else {
-        Write-Host "⚠ mcp-web.json not found. You'll need to run tunnels first." -ForegroundColor Yellow
+        Write-Host "[WARNING] mcp-web.json not found. You'll need to run tunnels first." -ForegroundColor Yellow
         $envFileContent += "# MCP_AUTHOR_SERVER_URL=https://xxxxx.trycloudflare.com`n"
         $envFileContent += "# MCP_SERIES_PLANNING_SERVER_URL=https://xxxxx.trycloudflare.com`n"
         $envFileContent += "# ... etc (run start-cloudflare-tunnels.ps1 first)`n"
@@ -144,7 +165,7 @@ MCP_REPORTING_SERVER_URL=http://localhost:3009
 MCP_DB_ADMIN_URL=http://localhost:3010
 
 "@
-    Write-Host "✓ Configured for local development" -ForegroundColor Green
+    Write-Host "[OK] Configured for local development" -ForegroundColor Green
 }
 
 # Add API keys section
@@ -167,9 +188,9 @@ LOG_LEVEL=info
 $envFileContent | Out-File -FilePath $BqStudioEnv -Encoding UTF8
 
 Write-Host ""
-Write-Host "✅ .env file created successfully!" -ForegroundColor Green
+Write-Host "[SUCCESS] .env file created successfully!" -ForegroundColor Green
 Write-Host ""
-Write-Host "📋 Next steps:" -ForegroundColor Cyan
+Write-Host "Next steps:" -ForegroundColor Cyan
 Write-Host "1. Edit .env and add your API keys:"
 Write-Host "   - ANTHROPIC_API_KEY (required for Writing Team)"
 Write-Host "   - OPENAI_API_KEY (optional)"
@@ -197,7 +218,7 @@ Write-Host ""
 # Offer to test connections
 if ($mode -eq "1") {
     Write-Host ""
-    $testConn = Read-Host "🔍 Test MCP server connections now? [y/N]"
+    $testConn = Read-Host "Test MCP server connections now? [y/N]"
     if ($testConn -eq "y" -or $testConn -eq "Y") {
         Write-Host ""
         Write-Host "Testing MCP server connections..." -ForegroundColor Cyan
@@ -206,10 +227,10 @@ if ($mode -eq "1") {
             try {
                 $response = Invoke-WebRequest -Uri "http://localhost:$port/health" -Method Get -TimeoutSec 2 -UseBasicParsing
                 if ($response.StatusCode -eq 200) {
-                    Write-Host "✓ localhost:$port - OK" -ForegroundColor Green
+                    Write-Host "[OK] localhost:$port - RESPONDING" -ForegroundColor Green
                 }
             } catch {
-                Write-Host "✗ localhost:$port - NOT RESPONDING" -ForegroundColor Red
+                Write-Host "[FAIL] localhost:$port - NOT RESPONDING" -ForegroundColor Red
             }
         }
 
@@ -219,4 +240,4 @@ if ($mode -eq "1") {
 }
 
 Write-Host ""
-Write-Host "Setup complete! 🎉" -ForegroundColor Green
+Write-Host "Setup complete!" -ForegroundColor Green
