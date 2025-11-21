@@ -9,8 +9,9 @@ export default [
       'dist/**',
       'release/**',
       'node_modules/**',
-      '*.config.js',
-      '*.config.ts',
+      '**/*.config.js',
+      '**/*.config.ts',
+      '**/*.config.mjs',
       '.claude/**',
     ],
   },
@@ -31,12 +32,14 @@ export default [
         document: 'readonly',
         navigator: 'readonly',
         console: 'readonly',
+        fetch: 'readonly',
         // Node globals
         process: 'readonly',
         __dirname: 'readonly',
         __filename: 'readonly',
         module: 'readonly',
         require: 'readonly',
+        Buffer: 'readonly',
         // ES2020+ globals
         globalThis: 'readonly',
         Promise: 'readonly',
@@ -52,6 +55,7 @@ export default [
       'react-hooks': reactHooks,
     },
     rules: {
+      // TypeScript rules
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
@@ -61,8 +65,10 @@ export default [
       ],
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
-      'no-undef': 'error',
-      'no-unused-vars': 'off', // Use TypeScript's no-unused-vars instead
+      '@typescript-eslint/no-var-requires': 'warn',
+      // Disable base rules that conflict with TypeScript
+      'no-unused-vars': 'off',
+      'no-undef': 'off', // TypeScript handles this
     },
     settings: {
       react: {
