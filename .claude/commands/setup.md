@@ -21,7 +21,18 @@ BQ Studio is a modular, plugin-based desktop application for managing AI-powered
 4. **.claude/docs/plugin-guide.md** - Plugin development guide
 5. **series-architect-2/** - Reference implementation of first plugin
 
-## Quick Commands
+## Environment Setup
+### GitHub Token Configuration
+This project requires a GitHub authentication token for working with issues and pull requests:
+- **Environment Variable**: `GITHUB_AUTH_TOKEN`
+- **How to set**: Export the token in your environment before starting Claude Code
+  ```bash
+  export GITHUB_AUTH_TOKEN=your_github_token_here
+  ```
+- **Token Permissions Needed**: `repo`, `read:org`, `workflow`
+- **SessionStart Hook**: Automatically validates token presence on session start
+
+### Quick Commands
 - `npm install` - Install dependencies
 - `npm run dev` - Start development server
 - `npm run build` - Build for production
