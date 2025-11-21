@@ -1,0 +1,45 @@
+# Cloudflare Tunnel Configuration for MCP Writing Servers
+# File: ~/mcp-tunnel-config.yml
+
+tunnel: mcp-writing-servers
+credentials-file: /Users/YOUR_USERNAME/.cloudflared/YOUR_TUNNEL_ID.json
+
+ingress:
+  # Author Server
+  - hostname: mcp-author.YOUR_DOMAIN.com
+    service: http://localhost:3009
+
+  # Series Planning Server
+  - hostname: mcp-series.YOUR_DOMAIN.com
+    service: http://localhost:3002
+
+  # Book Planning Server
+  - hostname: mcp-book.YOUR_DOMAIN.com
+    service: http://localhost:3001
+
+  # Chapter Planning Server
+  - hostname: mcp-chapter.YOUR_DOMAIN.com
+    service: http://localhost:3003
+
+  # Character Planning Server
+  - hostname: mcp-character.YOUR_DOMAIN.com
+    service: http://localhost:3004
+
+  # Scene Server
+  - hostname: mcp-scene.YOUR_DOMAIN.com
+    service: http://localhost:3005
+
+  # Core Continuity Server
+  - hostname: mcp-continuity.YOUR_DOMAIN.com
+    service: http://localhost:3006
+
+  # Review Server
+  - hostname: mcp-review.YOUR_DOMAIN.com
+    service: http://localhost:3007
+
+  # Reporting Server
+  - hostname: mcp-reporting.YOUR_DOMAIN.com
+    service: http://localhost:3008
+
+  # Catch-all
+  - service: http_status:404
