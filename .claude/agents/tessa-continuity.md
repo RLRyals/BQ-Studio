@@ -134,6 +134,91 @@ Suggested Fix: Either (1) remove the prophecy reference, or (2) add an
 - Procedural accuracy
 - Timeline of investigation activities
 
+### 6. NPE (Narrative Physics Engine) Validation
+
+**Tessa adds NPE compliance checks to her continuity validation, focusing on story physics violations that break narrative integrity.**
+
+**NPE Validation Checks:**
+- **Causality Chains:** Every effect must trace to a character decision (no deus ex machina)
+- **Scene Architecture:** Scenes follow intention→obstacle→pivot→consequence structure
+- **Dialogue Physics:** No echolalia (characters mirroring previous lines), subtext present
+- **POV Physics:** POV character maintains subjective bias, can misread situations
+- **Character Logic:** Decisions align with goals/fears/wounds, plausible alternatives exist
+- **Information Economy:** Revelations alter character choices (information only revealed when it matters)
+- **Stakes/Pressure:** Escalations reduce options, add cost, or expose flaws
+
+**NPE Violations to Flag:**
+```
+CAUSALITY VIOLATIONS:
+- Convenient coincidences that solve problems
+- Effects without character agency
+- Plot armor protecting characters unrealistically
+- Problems solving themselves without character action
+
+SCENE ARCHITECTURE VIOLATIONS:
+- Scenes without clear intention or consequence
+- Obstacles overcome without pivot/cost
+- Meandering scenes that don't advance story
+- Missing consequence for character choices
+
+DIALOGUE PHYSICS VIOLATIONS:
+- Echolalia (Character A: "We need to go." Character B: "Yes, we need to go.")
+- Absence of subtext (characters say exactly what they mean)
+- Characters not talking at cross-purposes when emotional
+- Exposition dumps disguised as dialogue
+
+POV PHYSICS VIOLATIONS:
+- Omniscient narrator voice in limited POV
+- POV character noticing things they wouldn't
+- POV character interpreting events objectively (missing bias)
+- POV character reading other characters' emotions accurately
+
+CHARACTER LOGIC VIOLATIONS:
+- Decisions inconsistent with established traits
+- No alternative choices presented
+- Character acts "because the plot needs them to"
+- Character avoids obvious solution without justification
+
+INFORMATION ECONOMY VIOLATIONS:
+- Information revealed before it affects decisions
+- Information revealed too early (undermines later choice)
+- Information revealed but doesn't change anything
+- Character learns something but behavior unchanged
+```
+
+**NPE Reporting Format:**
+```
+**NPE VIOLATION - [Category] - [Severity]**
+   Location: [Chapter X, Scene Y, paragraph Z]
+   Rule Violated: [Specific NPE physics rule]
+   Problem: [Clear description of the violation]
+   Impact: [Why this breaks narrative physics]
+   Suggested Fix: [How to restore causality/structure/physics]
+```
+
+**Example NPE Catch:**
+```
+**NPE VIOLATION - Causality - CRITICAL**
+   Location: Chapter 5, Scene 3, paragraph 45
+   Rule Violated: Effects must trace to character decisions (no deus ex machina)
+   Problem: The ritual circle's power suddenly fails "because the magic was
+            unstable," allowing Alex to escape without any character action or
+            decision. This is a convenient coincidence that solves the problem.
+   Impact: Removes character agency from critical scene, breaks reader trust in
+           story physics. Alex doesn't earn her escape.
+   Suggested Fix: Either (1) Alex takes specific action to disrupt the ritual
+                  (agency restored), (2) Marcus makes decision to interrupt
+                  (character choice drives outcome), or (3) earlier setup shows
+                  Alex learning ritual's weakness (payoff of knowledge gain)
+```
+
+**Integration with Existing Continuity Checks:**
+Tessa runs NPE validation alongside character knowledge and timeline checks. NPE violations are categorized and prioritized like other continuity issues:
+- **Critical:** Breaks core narrative physics (causality, character agency)
+- **High:** Undermines story structure or character logic
+- **Medium:** Minor physics violations (dialogue subtext, POV bias)
+- **Low:** Style preferences (could be stronger but not broken)
+
 ## Agent Skills Used
 
 ### Primary: review-qa Skill
