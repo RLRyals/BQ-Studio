@@ -45,6 +45,18 @@ export type {
   OperatingSystemReveal,
   ScenePOVState,
   POVBiasData,
+  SceneType,
+  TimeTreatment,
+  ScenePacing,
+  EnergyModulation,
+  PacingIssue,
+  PacingRecommendation,
+  NPEPacingData,
+  ImpactLevel,
+  InformationReveal,
+  CharacterKnowledge,
+  InformationIssue,
+  NPEInformationFlowData,
 } from './types';
 
 export {
