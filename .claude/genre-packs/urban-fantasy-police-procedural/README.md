@@ -45,6 +45,29 @@ This genre pack provides comprehensive, production-ready resources for writing U
 - **procedural-setting-template.md** - Precinct/unit environment template *(placeholder)*
 - **urban-fantasy-world-template.md** - Magic system and supernatural society template *(placeholder)*
 
+### ⚙️ NPE Physics Rules (`npe-physics/`)
+
+Narrative Physics Engine rules for execution-level craft:
+
+- **character-logic.json** - Character behavior consistency rules (V1-V4 behavioral palette framework)
+- **dialogue-physics.json** - Authentic dialogue flow, subtext, and voice consistency
+- **information-economy.json** - Information revelation pacing and reader knowledge management
+- **offstage-narrative.json** - Off-page event handling and impact
+- **pacing-rules.json** - Scene and chapter-level pacing physics
+- **plot-mechanics.json** - Core plot construction and cause-effect chains
+- **pov-physics.json** - Point-of-view rules and perspective consistency
+- **scene-architecture.json** - Scene construction and sequel patterns
+- **stakes-pressure.json** - Stakes establishment and escalation rules
+- **transitions.json** - Scene-to-scene and chapter-to-chapter transition guidelines
+
+### 👥 Character Systems (`character-systems/`)
+
+- **behavioral-palettes.json** - V1-V4 framework: Core identity (V1), learned behaviors (V2), situational responses (V3), emotional states (V4)
+
+### 💔 Relationship Architecture (`relationship-architecture/`)
+
+- **tension-axes.json** - Relationship dynamics and tension framework
+
 ### 🎯 Configuration
 
 - **manifest.json** - Genre pack metadata, compatibility info, and workflow recommendations
@@ -459,6 +482,8 @@ This genre pack is part of the BQ Studio project. If you create improvements or 
 2. **investigation-structure.md** - Core genre framework
 3. **detective-character-template.md** - Protagonist creation
 4. **case-structure-template.md** - Investigation planning
+5. **npe-physics/character-logic.json** - Character behavioral consistency (V1-V4 framework)
+6. **character-systems/behavioral-palettes.json** - Deep character palette definitions
 
 ---
 

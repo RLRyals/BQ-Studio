@@ -94,6 +94,75 @@
     }
   },
 
+  "npe_physics": {
+    "character-logic": {
+      "file": "npe-physics/character-logic.json",
+      "description": "Character behavior consistency rules governing decisions, emotional authenticity, and behavioral palettes",
+      "usage": "Validate character actions align with established palette (V1-V4 framework) and knowledge state"
+    },
+    "dialogue-physics": {
+      "file": "npe-physics/dialogue-physics.json",
+      "description": "Rules for authentic dialogue flow, subtext, and character voice consistency",
+      "usage": "Scene writing and review for dialogue authenticity"
+    },
+    "information-economy": {
+      "file": "npe-physics/information-economy.json",
+      "description": "Rules for pacing information revelation and managing reader knowledge",
+      "usage": "Mystery plotting and fair-play clue distribution"
+    },
+    "offstage-narrative": {
+      "file": "npe-physics/offstage-narrative.json",
+      "description": "Guidelines for handling events that occur off-page and their impact",
+      "usage": "Scene planning and chapter transitions"
+    },
+    "pacing-rules": {
+      "file": "npe-physics/pacing-rules.json",
+      "description": "Scene and chapter-level pacing physics for tension management",
+      "usage": "Book planning and scene writing for optimal pacing"
+    },
+    "plot-mechanics": {
+      "file": "npe-physics/plot-mechanics.json",
+      "description": "Core plot construction rules and cause-effect chains",
+      "usage": "Book and chapter planning for logical plot progression"
+    },
+    "pov-physics": {
+      "file": "npe-physics/pov-physics.json",
+      "description": "Point-of-view rules and perspective consistency guidelines",
+      "usage": "Scene writing for POV discipline and reader orientation"
+    },
+    "scene-architecture": {
+      "file": "npe-physics/scene-architecture.json",
+      "description": "Structural rules for scene construction and sequel patterns",
+      "usage": "Scene planning and writing for proper scene structure"
+    },
+    "stakes-pressure": {
+      "file": "npe-physics/stakes-pressure.json",
+      "description": "Rules for establishing and escalating stakes throughout narrative",
+      "usage": "Book planning and scene writing for tension escalation"
+    },
+    "transitions": {
+      "file": "npe-physics/transitions.json",
+      "description": "Guidelines for smooth scene-to-scene and chapter-to-chapter transitions",
+      "usage": "Chapter planning and scene writing for narrative flow"
+    }
+  },
+
+  "character_systems": {
+    "behavioral-palettes": {
+      "file": "character-systems/behavioral-palettes.json",
+      "description": "V1-V4 character behavioral framework defining core identity through emotional states",
+      "usage": "Character creation and consistency validation across all phases"
+    }
+  },
+
+  "relationship_architecture": {
+    "tension-axes": {
+      "file": "relationship-architecture/tension-axes.json",
+      "description": "Framework for building and tracking relationship dynamics and tension",
+      "usage": "Character relationship planning and progression tracking"
+    }
+  },
+
   "templates": {
     "detective-character": {
       "file": "templates/detective-character-template.md",
