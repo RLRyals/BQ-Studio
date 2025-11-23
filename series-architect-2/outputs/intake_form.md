@@ -124,15 +124,33 @@ Victorian vampire inventor locked in underground steampunk wonderland, working o
 
 ## Stage 4: Story Dossier Selection
 
-**Status:** [ ] Not Started
-**Target Date:** TBD
+**Status:** [x] Complete
+**Date Completed:** 2025-11-23
 
 **Dossier Source:**
 - [ ] User-provided
-- [ ] Library template
+- [x] Library template
 - [ ] Custom build
 
-**Note:** Need to select beat sheet framework (10 available in beat_sheet_library/)
+**Template Selected:** `beat_sheet_library/Romantasy_The_Beats.md`
+
+**Rationale:**
+- Dual-thread structure (Fantasy/Romance → Steampunk Plot/Romance) supports 60/40 split naturally
+- Strong external plot framework (world-changing events, battles, tech systems as drivers)
+- Romance grows FROM plot events (forced proximity, shared danger, collaborative work)
+- 5-Act structure (18 core beats + 6 optional bonus beats) maps to 5-book series progression
+- Beats adaptable: Magic → Mechanical, Court → Gardens/Vampire Court, Prophecy → Cure research
+
+**Adaptation Strategy:**
+- "Fantasy thread" becomes "Steampunk cure quest thread" (60% narrative focus)
+- "Romance thread" remains sapphic romance development (40% narrative focus)
+- Each beat balances both threads with steampunk primary, romance enhancing
+- Acts I-V provide structural framework for layering over existing Books 1-3 outlines
+
+**Stage 5 Plan:**
+- Use Romantasy beats to validate/enhance existing Books 1-3 chapter structures
+- Develop Books 4-5 using Romantasy framework directly
+- Layer romance beats into cure quest milestones
 
 ---
 

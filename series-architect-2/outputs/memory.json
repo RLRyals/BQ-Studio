@@ -2,8 +2,8 @@
   "project_metadata": {
     "project_name": "The Eternal Garden Series",
     "session_date": "2025-11-23",
-    "current_stage": "Stage 3 Complete",
-    "workflow_position": "Series framework fully expanded with sapphic romance, ready for Stage 4"
+    "current_stage": "Stage 4 Complete",
+    "workflow_position": "Beat sheet framework selected (Romantasy adapted for Steampunk), ready for Stage 5"
   },
 
   "session_mode": "express",
@@ -17,7 +17,7 @@
     "stage_1_intake": "Complete - 2025-11-23",
     "stage_2_research": "Complete - 2025-11-23 (Hybrid: foundation + web research + sapphic romance pivot)",
     "stage_3_framework": "Complete - 2025-11-23 (Full romance integration: 5-book arc, character arcs, tropes, market positioning)",
-    "stage_4_dossier": "Not started",
+    "stage_4_dossier": "Complete - 2025-11-23 (Selected Romantasy beat sheet, adapted for 60/40 Steampunk/Romance split)",
     "stage_5_development": "Not started",
     "stage_6_output": "Not started"
   },
@@ -28,6 +28,7 @@
     "content": "Heat 4/5 (spicy sapphic romance), Violence 4/5, Dark themes yes",
     "approach": "Creative exploration with existing foundation materials + commercial optimization",
     "romance_integration": "5-book slow-burn sapphic romance (captive/captor → enemies-to-lovers → resolution), cure quest remains primary plot, tech drives story, intimate scenes 2-3 per book",
+    "beat_sheet_framework": "Romantasy (18 core beats + 6 optional) adapted for Steampunk Gothic Romance, 60/40 plot/romance split, Fantasy thread → Steampunk cure quest thread",
     "existing_materials": [
       "market-research.md",
       "worldbuilding-bible.md",
@@ -77,6 +78,7 @@
     "2025-11-23 - Stage 2 Research complete (hybrid: foundation docs + 2024-2025 web research synthesized)",
     "2025-11-23 - CRITICAL PIVOT: Added sapphic romance for commercial optimization (heat 2→4, revenue potential 2-3x)",
     "2025-11-23 - Stage 3 Framework started (integrating romance arc while maintaining steampunk/cure quest primacy)",
-    "2025-11-23 - Stage 3 Framework complete (full series_framework.md expansion: 5-book romance arc, character arcs, 14 romance tropes, intimate scene planning, market repositioning, continuity tracking)"
+    "2025-11-23 - Stage 3 Framework complete (full series_framework.md expansion: 5-book romance arc, character arcs, 14 romance tropes, intimate scene planning, market repositioning, continuity tracking)",
+    "2025-11-23 - Stage 4 Dossier Selection complete (selected Romantasy beat sheet framework, adapted for 60/40 steampunk plot/romance split, dual-thread structure supports both cure quest and sapphic romance)"
   ]
 }
