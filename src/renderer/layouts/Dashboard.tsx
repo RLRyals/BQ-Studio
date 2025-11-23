@@ -4,7 +4,8 @@ import { Sidebar } from '../components/Sidebar';
 import { Widget } from '../components/Widget';
 import { QuickActions } from '../components/QuickActions';
 import { TensionGraphWidget } from '../components/charts/TensionGraphWidget';
-import { Clock, TrendingUp, FileText, Book, Activity } from 'lucide-react';
+import { NPEComplianceScorecard } from '../components/npe';
+import { Clock, TrendingUp, FileText, Book, Activity, CheckCircle2 } from 'lucide-react';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
@@ -31,7 +32,8 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     { i: 'quick-actions', x: 0, y: 0, w: 12, h: 2, minH: 2, minW: 6 },
     { i: 'recent-projects', x: 0, y: 2, w: 8, h: 4, minH: 3, minW: 4 },
     { i: 'statistics', x: 8, y: 2, w: 4, h: 4, minH: 3, minW: 3 },
-    { i: 'tension-graph', x: 0, y: 6, w: 12, h: 6, minH: 5, minW: 8 },
+    { i: 'npe-compliance', x: 0, y: 6, w: 5, h: 7, minH: 6, minW: 4 },
+    { i: 'tension-graph', x: 5, y: 6, w: 7, h: 7, minH: 5, minW: 6 },
   ]);
 
   return (
@@ -147,12 +149,24 @@ export function Dashboard({ onNavigate }: DashboardProps) {
               </Widget>
             </div>
 
+            {/* NPE Compliance Scorecard Widget */}
+            <div key="npe-compliance">
+              <Widget id="npe-compliance" title="NPE Compliance" icon={CheckCircle2}>
+                <NPEComplianceScorecard
+                  onCategoryClick={(category) => {
+                    console.log('Category clicked:', category);
+                    // TODO: Navigate to detailed violations view
+                  }}
+                />
+              </Widget>
+            </div>
+
             {/* Tension Graph Widget */}
             <div key="tension-graph">
               <Widget id="tension-graph" title="Tension Axis" icon={Activity}>
                 <TensionGraphWidget
                   config={{
-                    width: 900,
+                    width: 600,
                     height: 400,
                     showGrid: true,
                     enableDrag: true,
