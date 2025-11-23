@@ -1,6 +1,12 @@
 export { NPEComplianceScorecard } from './NPEComplianceScorecard';
 export { DialoguePhysicsMonitor } from './DialoguePhysicsMonitor';
 export { StakesPressureGauge } from './StakesPressureGauge';
+export { CausalityChainGraph } from './CausalityChainGraph';
+export { DecisionTreeVisualizer } from './DecisionTreeVisualizer';
+export { CharacterStateTracker } from './CharacterStateTracker';
+export { POVBiasTracker } from './POVBiasTracker';
+export { PacingAnalyzer } from './PacingAnalyzer';
+export { InformationFlowGraph } from './InformationFlowGraph';
 
 export type {
   NPECategory,
@@ -16,6 +22,29 @@ export type {
   PressureDataPoint,
   EscalationValidation,
   StakesPressureData,
+  CausalityNodeType,
+  CausalityArrowType,
+  CausalityNode,
+  CausalityLink,
+  CausalityChainData,
+  AlignmentType,
+  AlignmentIndicator,
+  DecisionAlternative,
+  DecisionNode,
+  DecisionTreeData,
+  CharacterVersionLabel,
+  BehavioralPalette,
+  ContextState,
+  WoundHealing,
+  CharacterVersion,
+  CharacterTimeline,
+  CharacterStateData,
+  BiasLevel,
+  Misreading,
+  SelectiveAttention,
+  OperatingSystemReveal,
+  ScenePOVState,
+  POVBiasData,
 } from './types';
 
 export {
