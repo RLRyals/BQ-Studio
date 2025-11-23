@@ -1,0 +1,33 @@
+{
+  "templates_root": "templates",
+  "beat_sheets_root": "beat_sheet_library",
+  "templates": [
+    "book_dossier_template.md",
+    "chapter_summary_template.md",
+    "character_architecture_template.md",
+    "character_profiles_template.md",
+    "intake_form_template.md",
+    "intake_form_template_lean.md",
+    "premise.template.md",
+    "research_output_template.md",
+    "scene_card_template.md",
+    "series_bible_template.md",
+    "series_overview_template.md",
+    "story_dossier_worksheet_genre_neutral.md",
+    "story_dossier_worksheet_truby_style.md",
+    "subplot_tracking_template.md",
+    "worldbuilding_template.md"
+  ],
+  "beat_sheets": [
+    "A_MutualTrauma_Bonding.md",
+    "B_Protector_Wounded.md",
+    "C_Toxic_Coping.md",
+    "D_PostTrauma_Reentry.md",
+    "Dark_Romancing_The_Beats.md",
+    "E_Dark_TraumaHybrid.md",
+    "Romantasy_The_Beats.md",
+    "romance_beat_sheet.md",
+    "romantasy_20_beats.md",
+    "three_act_structure.md"
+  ]
+}

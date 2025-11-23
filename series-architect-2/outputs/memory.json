@@ -1,0 +1,192 @@
+{
+  "project_metadata": {
+    "project_name": "The Eternal Garden",
+    "series_name": "The Eternal Garden Series",
+    "session_date": "2025-11-23",
+    "current_stage": "Stage 5 - Retrofit to series-architect-2 format",
+    "workflow_position": "Books 1-3 outlined; transforming to series-architect-2 outputs/ structure"
+  },
+
+  "session_mode": "express",
+  "flags": {
+    "testing": false,
+    "retrofit": true
+  },
+
+  "stages": {
+    "completed": [1, 2, 3, 5],
+    "current": 6,
+    "skipped": [4]
+  },
+
+  "stage_status": {
+    "stage_1_intake": "Complete - 2025-11-23 (Backfilled from existing work)",
+    "stage_2_research": "Complete - 2025-11-23 (market-research.md, worldbuilding-bible.md, character-psychology.md)",
+    "stage_3_framework": "Complete - 2025-11-23 (series-arc.md created, being transformed to series_framework.md)",
+    "stage_4_dossier": "Skipped - Used custom structure approach",
+    "stage_5_development": "Complete - 2025-11-23 (Books 1-3 outlined in detail, NPE analysis for Book 1)",
+    "stage_6_output": "In Progress - Transforming existing work to outputs/ structure"
+  },
+
+  "parameters": {
+    "books": 5,
+    "chapters_per_book": 24,
+    "words_per_chapter": 4000,
+    "target_words_per_book": 100000,
+    "genre": "Horror",
+    "subgenre": "Steampunk Gothic Horror",
+    "heat": 2,
+    "violence": 4,
+    "dark_themes": true,
+    "series_structure": "ongoing"
+  },
+
+  "key_decisions": {
+    "scope": "5 books, 24 chapters average, 100k words per book",
+    "genre": "Steampunk Gothic Horror",
+    "content": "Heat 2 (warm), Violence 4 (high), Dark themes: yes",
+    "approach": "Custom development without series-architect-2, now retrofitting",
+    "template": "Custom chapter-by-chapter structure",
+    "beat_sheet": "Custom Gothic horror pacing (derived from genre pack NPE rules)",
+    "genre_pack": "Steampunk Gothic Horror (.claude/genre-packs/steampunk-gothic/)",
+    "protagonist": "Celeste Hartwell (vampire serial killer inventor)",
+    "deuteragonist": "Margot (thief turned keeper)",
+    "setting": "Hartwell Mechanical Gardens (underground steampunk wonderland, Victorian London 1885)",
+    "central_quest": "Mechanical cure for vampirism",
+    "core_tension": "Can a monster who seeks redemption deserve it?"
+  },
+
+  "files_generated": [
+    "series-planning/steampunk-gothic-eternal-garden/README.md",
+    "series-planning/steampunk-gothic-eternal-garden/PROGRESS.md",
+    "series-planning/steampunk-gothic-eternal-garden/market-research.md",
+    "series-planning/steampunk-gothic-eternal-garden/worldbuilding-bible.md",
+    "series-planning/steampunk-gothic-eternal-garden/character-psychology.md",
+    "series-planning/steampunk-gothic-eternal-garden/series-arc.md",
+    "series-planning/steampunk-gothic-eternal-garden/book-1-structure.md",
+    "series-planning/steampunk-gothic-eternal-garden/book-1-npe-analysis.md",
+    "series-planning/steampunk-gothic-eternal-garden/book-2-structure.md",
+    "series-planning/steampunk-gothic-eternal-garden/book-3-structure.md",
+    ".claude/genre-packs/steampunk-gothic/npe-physics/stakes-pressure.json",
+    ".claude/genre-packs/steampunk-gothic/npe-physics/pacing-rules.json",
+    ".claude/genre-packs/steampunk-gothic/manifest.json",
+    ".claude/genre-packs/steampunk-gothic/README.md",
+    "series-planning/steampunk-gothic-eternal-garden/INTEGRATION-PLAN.md",
+    "series-architect-2/outputs/resource_manifest.json"
+  ],
+
+  "files_to_generate": [
+    "outputs/intake_form.md",
+    "outputs/series_framework.md",
+    "outputs/names_registry.json",
+    "outputs/INDEX.md",
+    "outputs/book_1_The_Eternal_Garden/book_1_dossier.md",
+    "outputs/book_1_The_Eternal_Garden/book_1_act_1.md",
+    "outputs/book_1_The_Eternal_Garden/book_1_act_2.md",
+    "outputs/book_1_The_Eternal_Garden/book_1_act_3.md",
+    "outputs/book_1_The_Eternal_Garden/book_1_act_4.md",
+    "outputs/book_1_The_Eternal_Garden/book_1_act_5.md",
+    "outputs/book_1_The_Eternal_Garden/book_1_npe_analysis.md",
+    "outputs/book_2_The_Clockwork_Cure/book_2_dossier.md",
+    "outputs/book_2_The_Clockwork_Cure/book_2_act_1.md",
+    "outputs/book_2_The_Clockwork_Cure/book_2_act_2.md",
+    "outputs/book_2_The_Clockwork_Cure/book_2_act_3.md",
+    "outputs/book_2_The_Clockwork_Cure/book_2_act_4.md",
+    "outputs/book_2_The_Clockwork_Cure/book_2_act_5.md",
+    "outputs/book_3_The_Mechanical_Heart/book_3_dossier.md",
+    "outputs/book_3_The_Mechanical_Heart/book_3_act_1.md",
+    "outputs/book_3_The_Mechanical_Heart/book_3_act_2.md",
+    "outputs/book_3_The_Mechanical_Heart/book_3_act_3.md",
+    "outputs/book_3_The_Mechanical_Heart/book_3_act_4.md",
+    "outputs/book_3_The_Mechanical_Heart/book_3_act_5.md"
+  ],
+
+  "resume_instructions": {
+    "current_point": "Stage 6 - Retrofit existing work to series-architect-2 outputs/ structure",
+    "next_steps": [
+      "1. Transform series-arc.md → outputs/series_framework.md",
+      "2. Split book-1-structure.md → dossier + 5 act files",
+      "3. Repeat for Books 2-3",
+      "4. Generate names_registry.json from character/world docs",
+      "5. Generate INDEX.md navigation file",
+      "6. Validate series-architect-2 compliance"
+    ],
+    "context_files": [
+      "series-planning/steampunk-gothic-eternal-garden/INTEGRATION-PLAN.md - Complete retrofit plan and integration roadmap",
+      "series-planning/steampunk-gothic-eternal-garden/README.md - Series concept and foundation documents",
+      "series-planning/steampunk-gothic-eternal-garden/series-arc.md - 5-book overview (to be transformed)",
+      "series-planning/steampunk-gothic-eternal-garden/book-1-structure.md - Book 1 detailed outline (to be split)",
+      ".claude/genre-packs/steampunk-gothic/ - Custom genre pack with NPE physics"
+    ]
+  },
+
+  "workflow_notes": {
+    "user_style": "Creative exploration with commercial awareness",
+    "optimizations": [
+      "Custom development before series-architect-2 discovery",
+      "Retrofitting existing work to demonstrate skill usage for homework",
+      "Genre pack created with NPE physics rules",
+      "NPE analysis performed on Book 1 (83% compliance)"
+    ],
+    "integration_enhancements": [
+      "Phase 2: NPE validation integration into Stage 5",
+      "Phase 3: Genre pack discovery protocol",
+      "Phase 4: BQ-Studio agent integration (Professor Mira, Dr. Viktor, Edna, Miranda)",
+      "Phase 5: MCP server integration (future)"
+    ],
+    "session_improvements": [
+      "Created INTEGRATION-PLAN.md documenting retrofit process",
+      "Identified gaps between custom work and series-architect-2 structure",
+      "Mapped existing documents to series-architect-2 equivalents",
+      "Proposed 5-phase integration roadmap for ecosystem enhancement"
+    ]
+  },
+
+  "changelog": [
+    {
+      "timestamp": "2025-11-23T09:00:00Z",
+      "event": "session_start",
+      "details": "Project initiated outside series-architect-2 workflow"
+    },
+    {
+      "timestamp": "2025-11-23T10:00:00Z",
+      "event": "stage_2_research",
+      "details": "Completed market research, worldbuilding bible, character psychology (Edna, Professor Mira, Dr. Viktor)"
+    },
+    {
+      "timestamp": "2025-11-23T12:00:00Z",
+      "event": "stage_3_framework",
+      "details": "Created series-arc.md with 5-book overview and plot tracking"
+    },
+    {
+      "timestamp": "2025-11-23T14:00:00Z",
+      "event": "genre_pack_created",
+      "details": "Created custom Steampunk Gothic Horror genre pack with NPE physics rules"
+    },
+    {
+      "timestamp": "2025-11-23T15:00:00Z",
+      "event": "stage_5_development",
+      "details": "Created book-1-structure.md (24 chapters), book-1-npe-analysis.md (83% compliance)"
+    },
+    {
+      "timestamp": "2025-11-23T16:00:00Z",
+      "event": "stage_5_development",
+      "details": "Created book-2-structure.md (25 chapters) and book-3-structure.md (28 chapters)"
+    },
+    {
+      "timestamp": "2025-11-23T18:00:00Z",
+      "event": "skill_discovery",
+      "details": "Discovered series-architect-2 skill requirement for homework; existing work not in proper format"
+    },
+    {
+      "timestamp": "2025-11-23T19:00:00Z",
+      "event": "integration_planning",
+      "details": "Created INTEGRATION-PLAN.md mapping retrofit process and 5-phase enhancement roadmap"
+    },
+    {
+      "timestamp": "2025-11-23T20:00:00Z",
+      "event": "stage_6_output",
+      "details": "Created outputs/ directory structure and book folders; began transformation process"
+    }
+  ]
+}
