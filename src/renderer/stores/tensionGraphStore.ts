@@ -1,10 +1,13 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { TensionLine, TensionPoint } from '../components/charts/types';
+import { mcpClient } from '../services/mcpClient';
 
 interface TensionGraphState {
   lines: TensionLine[];
   selectedLineId: string | null;
+  isLoadingFromMCP: boolean;
+  mcpDataSource: { bookId: string | null };
 
   // Actions
   addLine: (line: TensionLine) => void;
@@ -17,6 +20,10 @@ interface TensionGraphState {
 
   setSelectedLine: (lineId: string | null) => void;
   toggleLineVisibility: (lineId: string) => void;
+
+  // MCP Integration
+  loadFromMCP: (bookId: string) => Promise<void>;
+  setMCPLoading: (loading: boolean) => void;
 
   reset: () => void;
 }
@@ -57,6 +64,8 @@ export const useTensionGraphStore = create<TensionGraphState>()(
     (set) => ({
       lines: defaultLines,
       selectedLineId: 'main-tension',
+      isLoadingFromMCP: false,
+      mcpDataSource: { bookId: null },
 
       addLine: (line: TensionLine) =>
         set((state: TensionGraphState) => ({
@@ -118,10 +127,53 @@ export const useTensionGraphStore = create<TensionGraphState>()(
           ),
         })),
 
+      loadFromMCP: async (bookId: string) => {
+        set({ isLoadingFromMCP: true });
+        try {
+          // Fetch plot threads and tension data from MCP
+          const threadsData = await mcpClient.getPlotThreads(bookId);
+          const tensionData = await mcpClient.getTensionData(bookId);
+
+          // Transform MCP data into TensionLine format
+          // Note: The exact structure depends on MCP response format
+          // This is a placeholder that should be adjusted based on actual MCP response
+          const lines: TensionLine[] = (threadsData as any)?.threads?.map((thread: any, index: number) => ({
+            id: thread.id || `thread-${index}`,
+            name: thread.name || `Plot Thread ${index + 1}`,
+            color: thread.color || ['#3b82f6', '#ec4899', '#10b981', '#f59e0b', '#8b5cf6'][index % 5],
+            visible: true,
+            points: (tensionData as any)?.points
+              ?.filter((p: any) => p.threadId === thread.id)
+              ?.map((p: any) => ({
+                id: p.id || `point-${p.x}`,
+                x: p.storyPosition || p.x || 0,
+                y: p.tensionLevel || p.y || 0,
+                label: p.label,
+              })) || [],
+          })) || defaultLines;
+
+          set({
+            lines,
+            mcpDataSource: { bookId },
+            selectedLineId: lines[0]?.id || null,
+          });
+        } catch (error) {
+          console.error('Failed to load tension data from MCP:', error);
+          // Keep existing data on error
+        } finally {
+          set({ isLoadingFromMCP: false });
+        }
+      },
+
+      setMCPLoading: (loading: boolean) =>
+        set({ isLoadingFromMCP: loading }),
+
       reset: () =>
         set({
           lines: defaultLines,
           selectedLineId: 'main-tension',
+          isLoadingFromMCP: false,
+          mcpDataSource: { bookId: null },
         }),
     }),
     {
