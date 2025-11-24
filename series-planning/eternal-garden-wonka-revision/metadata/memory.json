@@ -1,0 +1,84 @@
+{
+  "project_metadata": {
+    "project_name": "The Eternal Garden Series",
+    "session_date": "2025-11-23",
+    "current_stage": "Stage 4 Complete",
+    "workflow_position": "Beat sheet framework selected (Romantasy adapted for Steampunk), ready for Stage 5"
+  },
+
+  "session_mode": "express",
+
+  "flags": {
+    "testing": false,
+    "has_existing_materials": true
+  },
+
+  "stage_status": {
+    "stage_1_intake": "Complete - 2025-11-23",
+    "stage_2_research": "Complete - 2025-11-23 (Hybrid: foundation + web research + sapphic romance pivot)",
+    "stage_3_framework": "Complete - 2025-11-23 (Full romance integration: 5-book arc, character arcs, tropes, market positioning)",
+    "stage_4_dossier": "Complete - 2025-11-23 (Selected Romantasy beat sheet, adapted for 60/40 Steampunk/Romance split)",
+    "stage_5_development": "Not started",
+    "stage_6_output": "Not started"
+  },
+
+  "key_decisions": {
+    "scope": "5 books, ~24 chapters each, ~100K words per book",
+    "genre": "Sapphic Dark Romance / Steampunk Gothic Horror",
+    "content": "Heat 4/5 (spicy sapphic romance), Violence 4/5, Dark themes yes",
+    "approach": "Creative exploration with existing foundation materials + commercial optimization",
+    "romance_integration": "5-book slow-burn sapphic romance (captive/captor → enemies-to-lovers → resolution), cure quest remains primary plot, tech drives story, intimate scenes 2-3 per book",
+    "beat_sheet_framework": "Romantasy (18 core beats + 6 optional) adapted for Steampunk Gothic Romance, 60/40 plot/romance split, Fantasy thread → Steampunk cure quest thread",
+    "existing_materials": [
+      "market-research.md",
+      "worldbuilding-bible.md",
+      "character-psychology.md",
+      "series-arc.md",
+      "book-1-structure.md (24 chapters)",
+      "book-2-structure.md (25 chapters)",
+      "book-3-structure.md (28 chapters)",
+      "book-1-npe-analysis.md",
+      "Custom genre pack (steampunk-gothic)"
+    ]
+  },
+
+  "files_generated": [
+    "outputs/intake_form.md",
+    "outputs/series_framework.md",
+    "outputs/memory.json",
+    "outputs/eternal_garden_research.md"
+  ],
+
+  "resume_instructions": {
+    "current_point": "Stage 1 Complete",
+    "next_steps": [
+      "1. Transition to Stage 2: Research Phase",
+      "2. Decision Point 2A: Choose research approach (user-provided materials available)",
+      "3. Load existing foundation documents",
+      "4. Execute Stage Transition Protocol"
+    ],
+    "context_files": [
+      "outputs/intake_form.md - Project parameters and workflow status",
+      "outputs/series_framework.md - Series overview stub",
+      "series-planning/steampunk-gothic-eternal-garden/market-research.md",
+      "series-planning/steampunk-gothic-eternal-garden/worldbuilding-bible.md",
+      "series-planning/steampunk-gothic-eternal-garden/character-psychology.md"
+    ]
+  },
+
+  "workflow_notes": {
+    "user_style": "Creative exploration",
+    "optimizations": ["Express mode", "Use existing materials", "Leverage foundation docs"],
+    "session_improvements": []
+  },
+
+  "changelog_key_events": [
+    "2025-11-23 - Session started (series-architect-2 workflow)",
+    "2025-11-23 - Stage 1 Intake complete (intake form, series framework stub, memory.json generated)",
+    "2025-11-23 - Stage 2 Research complete (hybrid: foundation docs + 2024-2025 web research synthesized)",
+    "2025-11-23 - CRITICAL PIVOT: Added sapphic romance for commercial optimization (heat 2→4, revenue potential 2-3x)",
+    "2025-11-23 - Stage 3 Framework started (integrating romance arc while maintaining steampunk/cure quest primacy)",
+    "2025-11-23 - Stage 3 Framework complete (full series_framework.md expansion: 5-book romance arc, character arcs, 14 romance tropes, intimate scene planning, market repositioning, continuity tracking)",
+    "2025-11-23 - Stage 4 Dossier Selection complete (selected Romantasy beat sheet framework, adapted for 60/40 steampunk plot/romance split, dual-thread structure supports both cure quest and sapphic romance)"
+  ]
+}

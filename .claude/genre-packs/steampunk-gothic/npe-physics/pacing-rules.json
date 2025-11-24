@@ -1,0 +1,306 @@
+{
+  "category": "pacing-rules",
+  "version": "1.0",
+  "genre": "steampunk-gothic-horror",
+  "description": "Pacing rhythm rules for Gothic horror featuring claustrophobic tension, slow-burn corruption, and atmospheric dread",
+
+  "gothic_pacing_philosophy": "Gothic horror is a slow burn punctuated by horror beats. Unlike thrillers (constant action) or mysteries (investigation rhythm), Gothic builds dread through atmosphere, relationship dynamics, and gradual normalization of transgression. Pacing should feel oppressive but compelling.",
+
+  "story_structure": {
+    "three_act_framework": {
+      "act_1_entrapment": {
+        "duration": "25-30% of word count",
+        "purpose": "Establish cage (physical and psychological), introduce captor/monster, initial horror",
+        "key_beats": [
+          "Inciting incident: Protagonist trapped/isolated",
+          "Monster revealed (nature, danger, wrongness)",
+          "First boundary crossed (small compromise)",
+          "End: Protagonist commits to staying (survival/curiosity/necessity)"
+        ],
+        "pacing_notes": "Start with clear hook (break-in, discovery, attack) then SLOW DOWN for atmosphere and relationship establishment"
+      },
+      "act_2_corruption": {
+        "duration": "40-50% of word count",
+        "purpose": "Gradual normalization of horror, protagonist becomes complicit, relationship deepens",
+        "key_beats": [
+          "Growing partnership/dependency",
+          "Series of escalating boundary crossings",
+          "Midpoint: Major horror event OR character transformation moment",
+          "External world begins to intrude",
+          "End: Protagonist cannot return to who they were"
+        ],
+        "pacing_notes": "SLOWEST section; focus on character dynamics, small compromises, atmosphere. Punctuate with occasional horror beats."
+      },
+      "act_3_reckoning": {
+        "duration": "20-25% of word count",
+        "purpose": "Consequences arrive, external/internal conflicts collide, resolution or transformation",
+        "key_beats": [
+          "External threats force crisis",
+          "Protagonist must choose side/identity",
+          "Climax: Confrontation (physical and moral)",
+          "Resolution: Changed state (redemption/damnation/transcendence)",
+          "Denouement: What remains? What's lost?"
+        ],
+        "pacing_notes": "ACCELERATE but not thriller-fast; maintain Gothic atmosphere even in action"
+      }
+    }
+  },
+
+  "rules": {
+    "scene_rhythm": {
+      "validations": [
+        {
+          "rule_id": "GR-001",
+          "name": "atmosphere-action-ratio",
+          "severity": "high",
+          "description": "Balance atmospheric/character scenes with plot progression; Gothic favors 60/40 split",
+          "target_distribution": {
+            "atmospheric_character_scenes": "60%",
+            "plot_action_scenes": "40%"
+          },
+          "examples": {
+            "violation": "Constant plot advancement with no breathing room for atmosphere or relationship",
+            "compliant": "Conversation about past → flashback sequence → cure research scene → atmospheric exploration → horror beat → quiet aftermath"
+          }
+        },
+        {
+          "rule_id": "GR-002",
+          "name": "horror-beat-spacing",
+          "severity": "medium",
+          "description": "Space major horror beats 15-25k words apart; too frequent = desensitization, too rare = boredom",
+          "examples": {
+            "violation": "Three horror beats in 5k words, then nothing for 40k words",
+            "compliant": "Chapter 4: First kill revealed (horror) → 20k words of character/atmosphere → Chapter 11: Cure attempt fails violently (horror) → 18k words → Chapter 18: External threat arrives (horror)"
+          }
+        },
+        {
+          "rule_id": "GR-003",
+          "name": "slow-burn-corruption-pacing",
+          "severity": "critical",
+          "description": "Moral compromises must be GRADUAL; space boundary crossings to feel earned, not rushed",
+          "examples": {
+            "violation": "Protagonist goes from horrified to complicit in 3 chapters",
+            "compliant": "Chapter 2: Horrified → Ch 7: Rationalization begins → Ch 12: Small help → Ch 18: Active assistance → Ch 24: Full complicity (over 22 chapters)"
+          },
+          "validation_query": "How many chapters between major moral compromises? Is it at least 5-8 chapters for significant shifts?"
+        }
+      ]
+    },
+
+    "chapter_structure": {
+      "validations": [
+        {
+          "rule_id": "GR-101",
+          "name": "gothic-chapter-hooks",
+          "severity": "high",
+          "description": "End chapters on unease/dread/revelation, not necessarily cliffhangers; Gothic hooks are psychological",
+          "hook_types": [
+            "Unsettling realization (protagonist notices their own change)",
+            "Ominous foreshadowing (something wrong coming)",
+            "Relationship shift (power dynamic changed)",
+            "Boundary crossed (moral line stepped over)",
+            "Beauty-in-horror moment (attracted to what should repel)",
+            "Question raised (philosophical/moral dilemma)"
+          ],
+          "examples": {
+            "violation": "Chapter ends with action cliffhanger out of genre tone",
+            "compliant": "Chapter ends: 'Margot caught herself laughing at Celeste's joke, and the realization horrified her' (psychological hook)"
+          }
+        },
+        {
+          "rule_id": "GR-102",
+          "name": "chapter-length-variation-gothic",
+          "severity": "medium",
+          "description": "Vary chapter length for pacing, but Gothic allows longer chapters for atmosphere",
+          "target_distribution": {
+            "short_chapters_2k_3k": "20%",
+            "medium_chapters_3k_5k": "60%",
+            "long_chapters_5k_plus": "20%"
+          },
+          "notes": "Gothic can sustain longer chapters better than thrillers; use for atmospheric immersion"
+        }
+      ]
+    },
+
+    "act_two_pacing": {
+      "description": "Act 2 is the heart of Gothic; must avoid sagging while maintaining slow burn",
+      "validations": [
+        {
+          "rule_id": "GR-201",
+          "name": "boundary-crossing-rhythm",
+          "severity": "critical",
+          "description": "Act 2 must feature 4-6 boundary crossings, escalating in severity, spaced throughout",
+          "pattern": "Each crossing should be 6-10k words after previous; gives time to normalize before next transgression",
+          "examples": {
+            "compliant": "Crossing 1 (Ch 11): Helps hide evidence → 8k words → Crossing 2 (Ch 14): Lies to authority → 9k words → Crossing 3 (Ch 17): Assists in planning → 7k words → Crossing 4 (Ch 20): Participates in act"
+          }
+        },
+        {
+          "rule_id": "GR-202",
+          "name": "relationship-deepening-beats",
+          "severity": "high",
+          "description": "Show relationship evolution through specific scenes: vulnerability shared, gift given, secret revealed",
+          "frequency": "1 significant relationship beat every 10-15k words in Act 2",
+          "examples": {
+            "violation": "Relationship described as deepening but no on-page moments showing it",
+            "compliant": "Ch 9: Shared intellectual problem-solving → Ch 12: Celeste gives Margot mechanical nightingale → Ch 16: Celeste shows vulnerability → Ch 19: Margot chooses to stay"
+          }
+        },
+        {
+          "rule_id": "GR-203",
+          "name": "external-intrusion-escalation",
+          "severity": "medium",
+          "description": "External world must intrude at least 3-4 times in Act 2, increasing in severity",
+          "pattern": "Warning → Complication → Direct threat",
+          "examples": {
+            "compliant": "Intrusion 1: Letter arrives seeking Margot → Intrusion 2: Someone comes to door → Intrusion 3: Vampire Court sends message → Intrusion 4: Deadline issued"
+          }
+        }
+      ]
+    },
+
+    "atmospheric_pacing": {
+      "description": "Gothic requires time for atmosphere; not all scenes advance plot visibly",
+      "validations": [
+        {
+          "rule_id": "GR-301",
+          "name": "atmosphere-scene-allowance",
+          "severity": "medium",
+          "description": "10-15% of scenes can be primarily atmospheric (show setting, mood, wrongness) without major plot advancement",
+          "examples": {
+            "violation": "Every scene must advance plot visibly (feels rushed, loses Gothic tone)",
+            "compliant": "Scene showing Margot exploring empty Gardens level, no dialogue, atmospheric description, subtle character reflection; advances theme/mood not plot"
+          },
+          "caveat": "These scenes must still advance character understanding or thematic development"
+        },
+        {
+          "rule_id": "GR-302",
+          "name": "breathing-room-after-horror",
+          "severity": "high",
+          "description": "After major horror beat, allow 3-5k words of lower-tension processing/aftermath",
+          "purpose": "Let impact land; show character reaction; reset tension for next build",
+          "examples": {
+            "violation": "Cure attempt fails violently → immediate next plot beat (no processing)",
+            "compliant": "Cure attempt fails → Margot isolates for chapters → Reflection on what happened → Slow return to interaction → Then next plot beat"
+          }
+        }
+      ]
+    },
+
+    "dialogue_pacing": {
+      "validations": [
+        {
+          "rule_id": "GR-401",
+          "name": "conversation-length-gothic",
+          "severity": "low",
+          "description": "Gothic allows longer conversations than thrillers; intellectual/philosophical exchanges can run 1.5-2k words",
+          "examples": {
+            "compliant": "Celeste and Margot discuss nature of humanity, empathy, redemption for 1800 words (appropriate for intellectual Gothic)"
+          },
+          "caveat": "Must be intellectually engaging; not filler"
+        },
+        {
+          "rule_id": "GR-402",
+          "name": "subtext-over-exposition",
+          "severity": "medium",
+          "description": "Gothic dialogue should carry subtext (power dynamics, unspoken attraction, moral positions) not just information exchange",
+          "validation_query": "What is unsaid in this conversation? What power dynamic is playing out beneath surface?"
+        }
+      ]
+    },
+
+    "locked_setting_pacing": {
+      "description": "For claustrophobic/locked settings, pacing challenges unique to confined narrative",
+      "validations": [
+        {
+          "rule_id": "GR-501",
+          "name": "setting-expansion-reveals",
+          "severity": "high",
+          "description": "Expand setting over time (new rooms, levels, secrets) to prevent stagnation",
+          "frequency": "Major setting expansion every 20-30k words",
+          "examples": {
+            "compliant": "Book 1: Levels 1-2 → Book 2: Level 3 discovered → Book 3: Hidden passages → Book 4: Secret workshop → Book 5: Final chamber"
+          }
+        },
+        {
+          "rule_id": "GR-502",
+          "name": "flashback-integration-pacing",
+          "severity": "medium",
+          "description": "Use flashbacks to vary setting/pacing without leaving locked location",
+          "frequency": "1-2 significant flashback sequences per act",
+          "examples": {
+            "compliant": "Act 1: Celeste's transformation flashback → Act 2: Margot's past revealed → Act 3: Augustus's secrets shown"
+          },
+          "caveat": "Flashbacks must advance understanding, not feel like filler"
+        }
+      ]
+    },
+
+    "tension_curve_gothic": {
+      "description": "Gothic tension curve differs from thriller: slower build, sustained dread, psychological peaks",
+      "validations": [
+        {
+          "rule_id": "GR-601",
+          "name": "dread-vs-action-peaks",
+          "severity": "high",
+          "description": "Gothic peaks are psychological dread or moral horror, not just physical action",
+          "examples": {
+            "violation": "All peaks are action scenes (feels like thriller, not Gothic)",
+            "compliant": "Peak types: Physical horror (cure attempt fails violently) + Moral horror (Margot realizes she's complicit) + Psychological (Split Celeste forces identity crisis)"
+          }
+        },
+        {
+          "rule_id": "GR-602",
+          "name": "sustained-dread-baseline",
+          "severity": "medium",
+          "description": "Gothic maintains higher baseline tension than other genres; even 'calm' scenes have underlying wrongness",
+          "measurement": "Tension should never drop below 30/100 even in quietest moments",
+          "technique": "Atmospheric description, subtle wrongness, character awareness of situation"
+        }
+      ]
+    }
+  },
+
+  "pacing_metrics": {
+    "boundary_crossing_frequency": {
+      "target": "1 significant moral compromise every 8-12 chapters (Book 1), increasing frequency in later books as normalization occurs",
+      "measurement": "Count boundary crossings; measure chapters between each"
+    },
+    "horror_beat_spacing": {
+      "target": "Major horror beat every 15-25k words",
+      "types": ["Physical horror", "Moral horror", "Psychological horror", "Atmospheric horror"]
+    },
+    "relationship_evolution_beats": {
+      "target": "Significant relationship moment every 10-15k words",
+      "types": ["Vulnerability shared", "Gift/gesture", "Power shift", "Intimacy increase", "Trust moment"]
+    },
+    "external_intrusion_frequency": {
+      "book_1": "1-2 intrusions",
+      "book_2": "3-4 intrusions",
+      "book_3_plus": "Increasing toward siege state"
+    }
+  },
+
+  "common_pacing_violations": {
+    "rushed_corruption": "Protagonist goes from horrified to complicit too quickly; feels unearned",
+    "thriller_pacing": "Constant action/plot advancement; loses Gothic atmosphere",
+    "static_middle": "Act 2 has no momentum; relationship/corruption doesn't evolve",
+    "unvaried_tone": "All horror beats same type (e.g., only physical); lacks variety",
+    "ignored_aftermath": "No processing time after major events; emotional impact lost"
+  },
+
+  "validation_queries": {
+    "act_level": [
+      "How many boundary crossings this act? Are they escalating?",
+      "How many horror beats? Are they spaced 15-25k apart?",
+      "How many relationship evolution moments?",
+      "Is atmosphere maintained even in plot-heavy sections?"
+    ],
+    "chapter_level": [
+      "Does this chapter advance plot OR character OR atmosphere (at least one)?",
+      "If horror beat present, is there aftermath/processing after?",
+      "Does chapter end on psychological hook appropriate to Gothic?",
+      "Is dialogue carrying subtext beyond information exchange?"
+    ]
+  }
+}

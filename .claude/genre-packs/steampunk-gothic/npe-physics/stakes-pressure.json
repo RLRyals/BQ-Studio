@@ -1,0 +1,337 @@
+{
+  "category": "stakes-pressure",
+  "version": "1.0",
+  "genre": "steampunk-gothic-horror",
+  "description": "Stakes escalation and tension-building rules for Gothic horror narratives featuring isolation, moral transgression, and psychological decay",
+
+  "stakes_philosophy": "Gothic horror derives power from claustrophobia, moral decay, and the slow erosion of boundaries. Stakes are psychological and existential as often as physical. The question is not just 'will they survive?' but 'what will they become?'",
+
+  "stakes_categories": {
+    "isolation": "Entrapment, claustrophobia, inability to escape physical or psychological prison",
+    "transgression": "Moral boundaries crossed, complicity in monstrosity, descent into darkness",
+    "physical_horror": "Bodily transformation, hunger/thirst, violence, decay",
+    "psychological": "Identity crisis, sanity, humanity vs. monstrosity, memory",
+    "existential": "Redemption vs. damnation, worth of soul, deserving salvation",
+    "relational": "Power dynamics, dependency, Stockholm syndrome, corrupted intimacy"
+  },
+
+  "rules": {
+    "stakes_establishment": {
+      "description": "Gothic stakes must be layered: physical danger AND psychological/moral peril",
+      "validations": [
+        {
+          "rule_id": "GP-001",
+          "name": "dual-layer-stakes",
+          "severity": "critical",
+          "description": "Gothic horror requires both external danger AND internal corruption/transformation stakes",
+          "examples": {
+            "violation": "Character trapped in haunted house but faces only physical danger (could be any thriller)",
+            "compliant": "Character trapped AND begins to sympathize with monster, questioning own morality (The Eternal Garden: Margot trapped + becoming accomplice)"
+          },
+          "validation_query": "What physical danger exists? What psychological/moral transformation is at risk?"
+        },
+        {
+          "rule_id": "GP-002",
+          "name": "isolation-escalation",
+          "severity": "high",
+          "description": "Isolation must deepen: physical → social → psychological → existential",
+          "examples": {
+            "violation": "Character remains in same isolation state throughout",
+            "compliant": "Book 1: Physically trapped → Book 3: Cut off from external world → Book 5: Identity isolation (who am I anymore?)"
+          },
+          "validation_query": "How has isolation deepened beyond initial entrapment?"
+        },
+        {
+          "rule_id": "GP-003",
+          "name": "complicity-stakes",
+          "severity": "critical",
+          "description": "Stakes must include protagonist's moral decay; becoming what they fear/oppose",
+          "examples": {
+            "violation": "Protagonist remains morally pure despite proximity to evil",
+            "compliant": "Protagonist makes small compromises, then larger ones, questions where the line is (Margot: captive → helper → willing accomplice)"
+          },
+          "validation_query": "How has protagonist been corrupted/compromised? What lines have they crossed?"
+        }
+      ]
+    },
+
+    "gothic_tension_escalation": {
+      "description": "Gothic tension builds through boundary erosion and normalization of horror",
+      "validations": [
+        {
+          "rule_id": "GP-101",
+          "name": "normalization-horror",
+          "severity": "high",
+          "description": "What was horrifying at start becomes normal; new horrors must be introduced",
+          "examples": {
+            "violation": "Same level of horror shocks protagonist throughout",
+            "compliant": "Book 1: Vampire revelation horrifies Margot → Book 3: She helps plan murder for research → Book 5: Debates which vampires deserve death"
+          },
+          "validation_query": "What shocked protagonist early on? Do those things still shock them? What new horrors have replaced initial shocks?"
+        },
+        {
+          "rule_id": "GP-102",
+          "name": "dependency-escalation",
+          "severity": "high",
+          "description": "Captive/victim must become increasingly dependent on captor/monster (practical then emotional)",
+          "examples": {
+            "violation": "Protagonist remains purely resistant throughout",
+            "compliant": "Physical dependency (can't escape) → intellectual dependency (needs knowledge) → emotional dependency (values relationship)"
+          },
+          "validation_query": "Why can't protagonist leave? Has reason shifted from physical impossibility to emotional inability?"
+        },
+        {
+          "rule_id": "GP-103",
+          "name": "humanity-erosion-tracking",
+          "severity": "critical",
+          "description": "Track protagonist's moral compromises; each should be larger than previous",
+          "examples": {
+            "violation": "Protagonist makes same-level compromises repeatedly",
+            "compliant": "Compromise 1: Doesn't report crime → 2: Lies to authorities → 3: Helps conceal evidence → 4: Actively assists in planning crime → 5: Participates in crime"
+          },
+          "validation_query": "List protagonist's moral compromises. Does each cross a new line?"
+        }
+      ]
+    },
+
+    "cure_quest_tension": {
+      "description": "For cure/salvation quest narratives, tension comes from hope vs. cost",
+      "validations": [
+        {
+          "rule_id": "GP-201",
+          "name": "incremental-progress-with-cost",
+          "severity": "high",
+          "description": "Each cure attempt must show progress AND demonstrate new costs/complications",
+          "examples": {
+            "violation": "Cure attempts fail identically; no learning or progress",
+            "compliant": "Attempt 1: Complete failure (0.3%) → Attempt 2: Partial success with reversion (5%) → Attempt 3: Split consciousness (15%) → Attempt 4: Success requires sacrifice (60%)"
+          },
+          "validation_query": "What was learned from previous attempt? What new cost/complication appeared?"
+        },
+        {
+          "rule_id": "GP-202",
+          "name": "deserving-salvation-question",
+          "severity": "medium",
+          "description": "As cure becomes possible, raise question: does monster deserve it?",
+          "examples": {
+            "violation": "Cure possibility never questioned morally",
+            "compliant": "Early: 'Can we cure her?' → Midpoint: 'Should we cure her?' → Late: 'Does she deserve to be cured after what she's done?'"
+          },
+          "validation_query": "Has anyone questioned whether protagonist/monster deserves salvation?"
+        },
+        {
+          "rule_id": "GP-203",
+          "name": "hope-despair-oscillation",
+          "severity": "medium",
+          "description": "Alternate between hope (progress) and despair (setback) to maintain tension",
+          "examples": {
+            "violation": "Constant progress toward cure, or constant failure with no hope",
+            "compliant": "Chapter pattern: Breakthrough → complication → small success → major setback → renewed hope → crushing discovery"
+          },
+          "validation_query": "When was last moment of hope? When was last moment of despair? Are they alternating?"
+        }
+      ]
+    },
+
+    "power_dynamic_tension": {
+      "description": "Gothic relationships involve power imbalances that shift over time",
+      "validations": [
+        {
+          "rule_id": "GP-301",
+          "name": "power-ratio-shifts",
+          "severity": "high",
+          "description": "Track power balance between characters; must shift based on events",
+          "examples": {
+            "violation": "Power dynamic remains static (captor always 100% in control)",
+            "compliant": "Book 1: 95/5 (Celeste/Margot) → Book 2: 80/20 → Book 3: 65/35 → Book 4: 50/50 → Book 5: Structural power vs. psychological power split"
+          },
+          "validation_query": "What is current power ratio? Has it shifted from last act? Why?"
+        },
+        {
+          "rule_id": "GP-302",
+          "name": "leverage-evolution",
+          "severity": "medium",
+          "description": "Character leverage should evolve: physical → intellectual → emotional",
+          "examples": {
+            "violation": "Only physical leverage (locked in) throughout",
+            "compliant": "Physical leverage (locked in) → Intellectual leverage (needed for research) → Emotional leverage (monster values relationship, can't let victim go)"
+          },
+          "validation_query": "What leverage does each character have over the other? Has type of leverage evolved?"
+        }
+      ]
+    },
+
+    "external_world_intrusion": {
+      "description": "For locked-setting Gothic, external world must threaten sanctuary to escalate",
+      "validations": [
+        {
+          "rule_id": "GP-401",
+          "name": "sanctuary-violation-escalation",
+          "severity": "high",
+          "description": "External threats must increasingly breach isolation",
+          "examples": {
+            "violation": "Locked setting remains impenetrable throughout",
+            "compliant": "Book 1: Complete isolation → Book 2: External awareness → Book 3: External demands → Book 4: External threats closing in → Book 5: Siege/confrontation"
+          },
+          "validation_query": "How has external world encroached on locked setting this book vs. last?"
+        },
+        {
+          "rule_id": "GP-402",
+          "name": "sanctuary-becomes-trap",
+          "severity": "medium",
+          "description": "What was sanctuary must eventually become trap (perception shift)",
+          "examples": {
+            "violation": "Location remains pure prison or pure sanctuary",
+            "compliant": "Book 1: Prison → Book 2: Workplace → Book 3: Sanctuary from external threats → Book 4: Trap can't escape → Book 5: Must destroy to be free"
+          },
+          "validation_query": "How does protagonist view the locked setting now vs. beginning?"
+        }
+      ]
+    },
+
+    "consequence_delivery": {
+      "description": "Gothic promises must be kept; threatened transformations must occur",
+      "validations": [
+        {
+          "rule_id": "GP-501",
+          "name": "transformation-follow-through",
+          "severity": "critical",
+          "description": "If character corruption/transformation threatened, it must occur (at least partially)",
+          "examples": {
+            "violation": "Protagonist threatened with moral decay but remains pure",
+            "compliant": "Threatened: 'You'll become like me' → Reality: Protagonist does become accomplice, questions own morality, crosses lines"
+          },
+          "validation_query": "What transformations were threatened? Have they occurred?"
+        },
+        {
+          "rule_id": "GP-502",
+          "name": "cost-of-proximity",
+          "severity": "high",
+          "description": "Proximity to monster must cost protagonist something permanent",
+          "examples": {
+            "violation": "Protagonist emerges unchanged from extended monster contact",
+            "compliant": "Permanent changes: Loss of innocence, reputation damaged, can't return to normal world, worldview altered, complicity in crimes"
+          },
+          "validation_query": "What has protagonist permanently lost/changed due to monster proximity?"
+        },
+        {
+          "rule_id": "GP-503",
+          "name": "gothic-consequences-linger",
+          "severity": "medium",
+          "description": "Gothic consequences don't resolve cleanly; scars remain",
+          "examples": {
+            "violation": "Victory achieved, all consequences erased, clean ending",
+            "compliant": "Even if monster defeated: protagonist forever changed, relationships damaged, guilt remains, questions linger"
+          },
+          "validation_query": "What consequences will linger even after resolution?"
+        }
+      ]
+    },
+
+    "identity_crisis_tension": {
+      "description": "Gothic horror often features identity dissolution or split consciousness",
+      "validations": [
+        {
+          "rule_id": "GP-601",
+          "name": "which-self-is-real",
+          "severity": "high",
+          "description": "If character has multiple selves/states, question which is 'real' must be raised",
+          "examples": {
+            "violation": "Split consciousness presented but never questioned philosophically",
+            "compliant": "Human-Celeste vs. Vampire-Celeste: Which is the real person? Is one a disease state? Are both equally valid? Can't reconcile."
+          },
+          "validation_query": "If character has multiple states/selves, has story questioned which is authentic?"
+        },
+        {
+          "rule_id": "GP-602",
+          "name": "mirror-protagonist-monster",
+          "severity": "medium",
+          "description": "Protagonist and monster should become more similar over time (mirroring)",
+          "examples": {
+            "violation": "Protagonist and monster remain clearly distinct throughout",
+            "compliant": "Early: clear victim/monster distinction → Late: protagonist using monster's logic, methods, rationalization; line blurred"
+          },
+          "validation_query": "How has protagonist become more like the monster? What traits/behaviors have they adopted?"
+        }
+      ]
+    }
+  },
+
+  "genre_specific_metrics": {
+    "moral_compromise_tracking": {
+      "description": "Track protagonist's descent through specific boundary crossings",
+      "required_progression": "Each book should feature 2-3 new boundary crossings, escalating in severity",
+      "example_progression": [
+        "Book 1: Doesn't report crime, lies to protect monster, helps with non-harmful tasks",
+        "Book 2: Actively assists research that requires victims, rationalizes assistance",
+        "Book 3: Helps plan capture of test subject, complicit in imprisonment",
+        "Book 4: Participates in testing that harms subject, crosses 'will not kill' line",
+        "Book 5: Makes final choice: enable monster's salvation or destroy them"
+      ]
+    },
+    "power_balance_tracking": {
+      "description": "Track shifting power dynamics between captor and captive",
+      "measurement": "Percentage of power held by each character (should sum to 100)",
+      "required_evolution": "Power balance must shift at least 15% per book toward equalization, then complicate",
+      "example_ratios": {
+        "book_1_start": "Monster 95% / Victim 5%",
+        "book_1_end": "Monster 80% / Victim 20% (victim has made self valuable)",
+        "book_3_midpoint": "Monster 50% / Victim 50% (intellectual equals, emotional dependency mutual)",
+        "book_5": "Structural vs. Psychological power split (complex, not simple ratio)"
+      }
+    },
+    "sanctuary_violation_score": {
+      "description": "Track how often/severely external world intrudes on locked setting",
+      "scale": "0 (completely isolated) to 10 (under siege)",
+      "required_progression": "Should increase 2-3 points per book",
+      "example_progression": [
+        "Book 1: Score 1 (one external threat mentioned)",
+        "Book 2: Score 3 (external party seeks protagonist)",
+        "Book 3: Score 5 (external demands made on monster)",
+        "Book 4: Score 8 (multiple external threats converging)",
+        "Book 5: Score 10 (siege, all threats present)"
+      ]
+    }
+  },
+
+  "validation_queries": {
+    "book_level": [
+      "What new boundary did protagonist cross this book?",
+      "How has power dynamic shifted from book start to end?",
+      "What external threat level this book vs. last book?",
+      "Has protagonist's view of monster changed? How?",
+      "What can protagonist no longer return to (permanent loss)?"
+    ],
+    "chapter_level": [
+      "Does this chapter show protagonist becoming more like monster OR resisting that pull?",
+      "What leverage does each character have in this scene?",
+      "Is something that was shocking earlier now normalized?",
+      "What hope or despair does this chapter introduce?"
+    ],
+    "scene_level": [
+      "Does this scene show power dynamic in action?",
+      "Is there Gothic atmosphere (decay, wrongness, beauty in horror)?",
+      "Does dialogue reveal character moral position?",
+      "Is there subtle boundary crossing or normalization?"
+    ]
+  },
+
+  "common_violations": {
+    "static_power_dynamic": "Power balance never shifts; captor always fully in control",
+    "no_moral_decay": "Protagonist resists monster influence perfectly; no corruption",
+    "clean_victories": "Successes achieved without cost or complication",
+    "ignored_external_world": "Locked setting remains perfectly isolated despite series length",
+    "shallow_stakes": "Only physical danger, no psychological or moral stakes",
+    "inconsistent_boundaries": "Character crosses major line without hesitation, then balks at minor transgression"
+  },
+
+  "enforcement": {
+    "agent_integration": {
+      "miranda": "Validates overall stakes escalation across series arc",
+      "dr_viktor": "Tracks character moral decay and psychological transformation authenticity",
+      "bailey": "Ensures scenes show power dynamics and boundary crossings on-page",
+      "tessa": "Validates consistency of character moral positions and leverage tracking",
+      "edna": "Ensures pacing of Gothic tension (slow build, not rushed corruption)"
+    }
+  }
+}

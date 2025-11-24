@@ -1,0 +1,161 @@
+{
+  "name": "Steampunk Gothic Horror",
+  "version": "1.0.0",
+  "description": "Genre pack for Gothic horror featuring steampunk elements, claustrophobic settings, slow-burn moral corruption, and Victorian atmosphere. Supports locked-room narratives with vampire/monster protagonists and psychological transformation arcs.",
+  "author": "BQ Studio",
+  "created": "2025-11-23",
+  "updated": "2025-11-23",
+
+  "genre": {
+    "primary": "Horror",
+    "subgenre": "Steampunk Gothic Horror",
+    "tags": [
+      "gothic-horror",
+      "steampunk",
+      "victorian",
+      "vampire",
+      "locked-setting",
+      "moral-corruption",
+      "slow-burn",
+      "psychological-horror",
+      "claustrophobic",
+      "monster-protagonist",
+      "intellectual-partnership",
+      "captive-captor-dynamics",
+      "redemption-quest",
+      "mechanical-cure",
+      "atmospheric"
+    ]
+  },
+
+  "content_ratings": {
+    "violence": "high",
+    "heat_level": "warm",
+    "language": "moderate",
+    "dark_themes": true
+  },
+
+  "structure": {
+    "typical_word_count": {
+      "min": 90000,
+      "max": 110000,
+      "target": 100000
+    },
+    "typical_chapter_count": {
+      "min": 20,
+      "max": 30,
+      "target": 24
+    },
+    "series_structure": "ongoing"
+  },
+
+  "files": {
+    "beat_sheets": [
+      "beat-sheets/example-beat-sheet.md"
+    ],
+    "style_guides": [
+      "style-guides/example-style-guide.md"
+    ],
+    "validation_rules": [
+      "validation-rules/example-validation.md"
+    ],
+    "templates": [
+      "templates/character-template.md",
+      "templates/world-template.md"
+    ],
+    "npe_physics": [
+      "npe-physics/stakes-pressure.json",
+      "npe-physics/pacing-rules.json"
+    ]
+  },
+
+  "skills_integration": {
+    "series_planning": true,
+    "book_planning": true,
+    "chapter_planning": true,
+    "scene_writing": true,
+    "review_qa": true
+  },
+
+  "gothic_horror_specifics": {
+    "required_elements": [
+      "Isolation (physical, social, or psychological)",
+      "Atmospheric dread (Victorian setting, mechanical systems, decay)",
+      "Moral transgression (boundary crossing, complicity)",
+      "Power imbalance (captor/captive, monster/victim)",
+      "Psychological transformation (corruption, identity crisis)",
+      "Beauty in horror (mechanical marvels, intellectual partnership)"
+    ],
+    "tension_types": [
+      "Physical danger (hunger, violence, entrapment)",
+      "Moral decay (complicity, boundary erosion)",
+      "Psychological horror (identity, sanity, dependency)",
+      "Existential stakes (redemption, damnation, humanity)",
+      "Relational tension (power dynamics, Stockholm avoidance)",
+      "Atmospheric dread (wrongness, isolation, claustrophobia)"
+    ],
+    "pacing_philosophy": "Slow burn punctuated by horror beats; Gothic favors atmosphere over action (60/40 ratio). Moral corruption must be gradual (8-12 chapters per major boundary crossing). Relationship deepening occurs every 10-15k words.",
+    "key_differentiators": [
+      "NOT paranormal romance (no central romance, ambiguous attraction)",
+      "NOT thriller (slow burn, not constant action)",
+      "NOT traditional vampire fiction (intellectual focus, cure quest)",
+      "IS Gothic horror with steampunk aesthetics",
+      "IS psychological transformation narrative",
+      "IS claustrophobic locked-setting mystery"
+    ]
+  },
+
+  "npe_compliance": {
+    "stakes_pressure_rules": "npe-physics/stakes-pressure.json",
+    "pacing_rules": "npe-physics/pacing-rules.json",
+    "required_metrics": [
+      "Boundary crossing frequency (1 per 8-12 chapters Book 1, increasing)",
+      "Horror beat spacing (15-25k words)",
+      "Relationship evolution beats (1 per 10-15k words)",
+      "Power dynamic shifts (15%+ per book minimum)",
+      "External intrusion escalation (score 1-2 Book 1 → 10 Book 5)",
+      "Moral compromise tracking (severity escalation)",
+      "Dependency progression (physical → intellectual → emotional)"
+    ]
+  },
+
+  "market_positioning": {
+    "target_audience": "Adult readers (25-45) seeking dark, complex genre fiction with literary quality prose. Fans of morally gray protagonists, locked-room mysteries, intellectual partnerships, and psychological horror.",
+    "comp_titles": [
+      "The Invisible Life of Addie LaRue by V.E. Schwab (immortal protagonist, long quest)",
+      "Gideon the Ninth by Tamsyn Muir (locked setting, complex female leads)",
+      "The Luminous Dead by Caitlin Starling (claustrophobic tension, morally gray)",
+      "Mexican Gothic by Silvia Moreno-Garcia (Gothic horror, isolated setting)",
+      "Ninth House by Leigh Bardugo (dark, complex damaged lead)"
+    ],
+    "unique_selling_points": [
+      "Serial killer vampire protagonist seeking mechanical cure",
+      "Victorian steampunk wonderland as both cage and marvel",
+      "Intellectual partnership between monster and victim",
+      "Slow-burn moral corruption without romance plot",
+      "Cure quest spanning 5-book series",
+      "Locked setting with expanding discoveries"
+    ],
+    "commercial_expectations": "Upper midlist with cult favorite potential. Book 1: 5,000-15,000 copies, Series total: 30,000-75,000 copies, Breakout potential: 100,000+ if word-of-mouth ignites. NOT mass market play; career-establishing serious genre fiction.",
+    "not_for": [
+      "Romance readers (no central romance)",
+      "YA crossover (too dark, too complex)",
+      "Mass market thriller readers (too genre-specific)",
+      "Light urban fantasy fans (wrong tone)"
+    ]
+  },
+
+  "series_examples": {
+    "the_eternal_garden": {
+      "books": 5,
+      "protagonist": "Celeste Hartwell (vampire serial killer inventor)",
+      "deuteragonist": "Margot (thief turned keeper)",
+      "setting": "Hartwell Mechanical Gardens (underground steampunk wonderland, Victorian London 1885)",
+      "central_quest": "Mechanical cure for vampirism",
+      "core_tension": "Can a monster who seeks redemption deserve it?",
+      "escalation_pattern": "Isolation → Corruption → Crisis → Escalation → Reckoning"
+    }
+  },
+
+  "notes": "This genre pack supports Gothic horror narratives featuring steampunk elements, particularly locked-setting stories with morally complex protagonists. Emphasizes slow-burn psychological transformation, atmospheric dread, and gradual boundary erosion. NPE physics rules adapted from Urban Fantasy Police Procedural framework but specialized for Gothic pacing and tension types. Suitable for vampire fiction, monster protagonist stories, captive-captor dynamics, redemption quests, and claustrophobic mysteries."
+}
