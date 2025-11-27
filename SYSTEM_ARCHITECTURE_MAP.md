@@ -441,21 +441,14 @@ Phase 4: Series Architecture (Series Architect Agent)
 Phase 5: Book-Level Planning (Optional)
     ↓  Output: BOOK1_PLAN_*.md, detailed chapter outline
     ↓
-Phase 5.5: NPE SERIES VALIDATION (NEW - NPE Series Validator Agent)
-    ↓  
+Phase 5.5: NPE SERIES VALIDATION (NPE Series Validator Agent)
+    ↓
     ├─► Loads 10 NPE JSON rule files (357 rules total)
     ├─► Validates character knowledge across 5 books
     ├─► Validates setup/payoff registry (Chekhov's gun)
     ├─► Validates relationship progressions
     ├─► Validates stakes escalation logic
     ├─► Scores NPE compliance (0-100)
-    │
-    └─► STORES validated data in MCP DATABASE:
-          - character-planning-server: Character knowledge timelines
-          - core-continuity-server: Setup/payoff registry
-          - core-continuity-server: Relationship progressions
-          - series-planning-server: NPE validation results
-    │
     ├─► Output: NPE_VALIDATION_*.md
     ├─► Score: 0-100 (must be 80+ to proceed)
     └─► Decision: PASS / NEEDS_REVISION / BLOCKED
@@ -464,9 +457,38 @@ Phase 6: Commercial Quality Validation (Commercial Validator Agent)
     ↓  Output: COMMERCIAL_VALIDATION_*.md
     ↓  Decision: APPROVE / REVISE / REJECT
     ↓
-Phase 7: Handoff to Writing Team (Miranda + Agents)
+Phase 7: Writing Team Review & Refinement (Miranda + Agents + Genre Specialists)
     ↓
-Phase 8: WRITING EXECUTION (With MCP Queries)
+    ├─► Miranda coordinates review of validated plan
+    ├─► Genre Specialist Agents review for accuracy:
+    │     - Detective Logan (police procedural accuracy)
+    │     - Dr. Viktor (psychological authenticity)
+    │     - Professor Mira (worldbuilding consistency)
+    │     - Detective-specific agents per genre
+    ├─► Writing Team refines:
+    │     - Character arcs (are they writable?)
+    │     - Plot threads (do they work narratively?)
+    │     - Scene structure (can this be executed?)
+    ├─► Output: Refined series plan with Writing Team notes
+    └─► Status: READY FOR USER REVIEW
+    ↓
+Phase 8: USER REVIEW & APPROVAL
+    ↓
+    ├─► User reviews all planning documents
+    ├─► User reviews Writing Team refinements
+    ├─► User approves OR requests revisions
+    └─► User authorizes MCP database storage
+    ↓
+Phase 9: MCP DATABASE COMMIT (Only after user approval)
+    ↓
+    └─► STORES validated & approved data in MCP DATABASE:
+          - character-planning-server: Character knowledge timelines
+          - core-continuity-server: Setup/payoff registry
+          - core-continuity-server: Relationship progressions
+          - series-planning-server: Approved series structure
+          - series-planning-server: NPE validation results
+    ↓
+Phase 10: WRITING EXECUTION (With MCP Queries)
     │
     ├─► Miranda coordinates team
     ├─► Bailey writes scenes
