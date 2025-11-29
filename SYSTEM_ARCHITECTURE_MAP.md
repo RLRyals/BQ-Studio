@@ -1,765 +1,916 @@
 # MARKET-DRIVEN SERIES PRODUCTION SYSTEM
-## Architecture Map & Process Flow
+## Architecture Map & Updated Process Flow
+
+**Last Updated:** 2024-11-28
+**Version:** 2.0 (Genre-Aware + Multi-Layer NPE Validation)
 
 ---
 
-## ARCHITECTURE OVERVIEW
+## KEY UPDATES IN VERSION 2.0
 
-### Two Orchestration Patterns
-
-```
-PATTERN 1: Skill Calling Agents (Market-Driven Planning)
-┌─────────────────────────────────────────────────┐
-│ USER invokes SKILL                               │
-│ ↓                                                │
-│ SKILL orchestrates AGENTS sequentially          │
-│ ↓                                                │
-│ AGENTS perform specialized work                 │
-│ ↓                                                │
-│ SKILL hands off to Writing Team                 │
-└─────────────────────────────────────────────────┘
-
-PATTERN 2: Agents Using Skills (Writing Team)
-┌─────────────────────────────────────────────────┐
-│ USER invokes AGENT                               │
-│ ↓                                                │
-│ AGENT uses SKILLS as needed                     │
-│ ↓                                                │
-│ SKILLS provide workflow guidance                │
-│ ↓                                                │
-│ AGENT delivers final work                       │
-└─────────────────────────────────────────────────┘
-```
+1. **Genre Pack Creation** - Market Research Agent creates genre packs for new genres
+2. **Trope Research with Required Scenes** - Deep research stored in MCP
+3. **Genre-Aware Series Architect** - Uses genre-specific patterns, relationship-flexible
+4. **Multi-Layer NPE Validation** - "Big rocks" validated before writing, "sand" during writing
+5. **Corrected MCP Workflow** - Database commit only AFTER Writing Team review + user approval
 
 ---
 
-## COMPLETE SYSTEM MAP (With NPE + MCP Integration)
+## COMPLETE 11-PHASE PIPELINE
 
 ```
-┌────────────────────────────────────────────────────────────────────┐
-│                           USER                                      │
-└────────────────┬───────────────────────────────────────────────────┘
-                 │
-                 │ Invokes one of:
-                 ├──────────────────────┬─────────────────────────────┐
-                 │                      │                             │
-                 ▼                      ▼                             ▼
-     ┌───────────────────┐  ┌──────────────────┐         ┌──────────────────┐
-     │ MARKET-DRIVEN     │  │ MIRANDA          │         │ OTHER AGENTS     │
-     │ PLANNING SKILL    │  │ (Showrunner)     │         │ Bailey, Tessa,   │
-     │                   │  │                  │         │ Edna, etc.       │
-     │ [Orchestrator]    │  │ [Writing Leader] │         │                  │
-     └─────┬─────────────┘  └──────┬───────────┘         └──────┬───────────┘
-           │                       │                             │
-           │ Calls in sequence:    │ Uses skills:               │ Query MCP
-           │                       │                             │
-           │  ┌───────────────────────────────┐                 │
-           ├─►│ Market Research Agent         │                 │
-           │  │ - Web research                │                 │
-           │  │ - Comp titles                 │                 │
-           │  │ - Trend analysis              │                 │
-           │  │ - Initial viability score     │                 │
-           │  └───────────────────────────────┘                 │
-           │                       │                             │
-           │  ┌───────────────────────────────┐    ┌─────────────────┐
-           ├─►│ Series Architect Agent        │    │ /series-planning│
-           │  │ - 5-book structure            │◄───┤ /book-planning  │
-           │  │ - Character arcs              │    │ /chapter-planning│
-           │  │ - Escalation patterns         │    └─────────────────┘
-           │  │ - Series mythology            │                 │
-           │  └───────────────────────────────┘                 │
-           │                       │                             │
-           │  ┌───────────────────────────────────────────┐     │
-           ├─►│ NPE Series Validator Agent (NEW)          │     │
-           │  │ - Validates against 357 NPE rules         │     │
-           │  │ - Character knowledge tracking            │     │
-           │  │ - Setup/payoff registry                   │     │
-           │  │ - Relationship progression validation     │     │
-           │  │ - Stakes escalation logic                 │     │
-           │  │ - Stores validated data in MCP database───┼─────┤
-           │  └───────────────────────────────────────────┘     │
-           │                       │                             │
-           │  ┌───────────────────────────────┐    ┌─────────────────┐
-           └─►│ Commercial Validator Agent    │    │ /review-qa      │
-              │ - 5-category scoring          │◄───┤                 │
-              │ - Risk assessment             │    └─────────────────┘
-              │ - Go/no-go recommendation     │                 │
-              └──────────┬────────────────────┘                 │
-                         │                                       │
-                         │ If APPROVED                          │
-                         ▼                                       │
-              ┌──────────────────────────┐                      │
-              │  HANDOFF TO WRITING TEAM │                      │
-              │                          │                      │
-              │  Miranda (Showrunner)────┼──────────────────────┤
-              │    ↓                     │  Queries MCP for:    │
-              │  Bailey (First Drafter)──┼──────────────────────┤
-              │    ↓                     │  - Character knowledge│
-              │  Tessa (Continuity)──────┼──────────────────────┤
-              │    ↓                     │  - Relationship status│
-              │  Edna (Editor)           │  - Setup/payoff reg  │
-              │    ↓                     │  - Plot threads      │
-              │  Finn (Style)            │                      │
-              └──────────────────────────┘                      │
-                                                                │
-                         ┌────────────────────────────────────┐ │
-                         │   MCP DATABASE (PostgreSQL)        │◄┘
-                         │                                    │
-                         │  9 MCP Servers:                    │
-                         │  - author-server                   │
-                         │  - series-planning-server          │
-                         │  - book-planning-server            │
-                         │  - chapter-planning-server         │
-                         │  - character-planning-server       │
-                         │  - scene-server                    │
-                         │  - core-continuity-server          │
-                         │  - review-server                   │
-                         │  - reporting-server                │
-                         │                                    │
-                         │  Stores:                           │
-                         │  - Character knowledge timelines   │
-                         │  - Relationship progressions       │
-                         │  - Setup/payoff registry           │
-                         │  - Plot threads & arcs             │
-                         │  - NPE validation results          │
-                         │  - Scene drafts & revisions        │
-                         └────────────────────────────────────┘
+Phase 0: Genre Pack Check & Creation (if needed)
+    ↓
+Phase 1: Market Research + Trope Research
+    ↓
+Phase 2: Genre Pack Selection
+    ↓
+Phase 3: Series Architect (BIG ROCKS - genre-aware)
+    ↓
+Phase 4: SERIES-LEVEL NPE VALIDATION (Big Rocks Gate)
+    ↓
+Phase 5: Commercial Validation
+    ↓
+Phase 6: Writing Team Review & Refinement
+    ↓
+Phase 7: User Review & Approval
+    ↓
+Phase 8: MCP Database Commit (ONLY AFTER APPROVAL)
+    ↓
+Phase 9: Writing Team Plans Chapters (SMALL ROCKS)
+    ↓
+Phase 10: SCENE-LEVEL NPE VALIDATION (Sand Validation)
+    ↓
+Phase 11: Writing Execution
 ```
 
 ---
 
-## DETAILED WORKFLOW: MARKET-DRIVEN PLANNING
+## PHASE-BY-PHASE DETAIL
 
-### Phase-by-Phase Agent Invocation
+### Phase 0: Genre Pack Check & Creation (NEW)
 
+**Agent:** Market Research Agent
+**Trigger:** User provides concept in genre without existing genre pack
+**Process:**
 ```
-USER INVOKES: /market-driven-planning
-    │
-    └─► MARKET-DRIVEN PLANNING SKILL (Orchestrator)
-            │
-            ├─► PHASE 1: Intake & Genre ID (SKILL handles)
-            │       Input: User concept
-            │       Output: Genre classification
-            │
-            ├─► PHASE 2: Market Research
-            │       │
-            │       └─► Invokes: MARKET RESEARCH AGENT
-            │               Tools: WebSearch, WebFetch, Write
-            │               Output: Market research report (MARKET_RESEARCH_*.md)
-            │               Score: Initial viability 0-10
-            │
-            ├─► PHASE 3: Genre Pack Selection (SKILL handles)
-            │       Input: Genre from Phase 1
-            │       Output: Selected/created genre pack
-            │
-            ├─► PHASE 4: Series Architecture
-            │       │
-            │       └─► Invokes: SERIES ARCHITECT AGENT
-            │               Input: Market research + genre pack
-            │               Tools: Read, Write, Edit
-            │               Output: Series architecture doc (SERIES_ARCHITECTURE_*.md)
-            │               Score: Series structure 0-10
-            │
-            ├─► PHASE 5: Book Planning (Optional)
-            │       │
-            │       └─► Invokes: SERIES ARCHITECT AGENT (or book-planning-skill)
-            │               Input: Series architecture
-            │               Output: Book 1 plan (BOOK1_PLAN_*.md)
-            │               Score: Book 1 readiness 0-10
-            │
-            ├─► PHASE 6: Commercial Validation
-            │       │
-            │       └─► Invokes: COMMERCIAL VALIDATOR AGENT
-            │               Input: All previous documents
-            │               Tools: Read, Write
-            │               Output: Validation report (COMMERCIAL_VALIDATION_*.md)
-            │               Score: Overall viability 0-10
-            │               Decision: APPROVE / REVISE / REJECT
-            │
-            └─► PHASE 7: Handoff to Writing Team
-                    │
-                    If APPROVED:
-                    └─► USER invokes: MIRANDA (Showrunner)
-                            Miranda then coordinates Writing Team
+Market Research Agent checks: `.claude/genre-packs/{genre-slug}/`
+
+IF genre pack EXISTS:
+    → Load and proceed to Phase 1
+
+IF genre pack MISSING:
+    → Ask user: "Create genre pack for [Genre]?"
+    → IF YES:
+        1. Research genre conventions (WebSearch)
+        2. Analyze 5-10 comp titles for patterns
+        3. Generate genre pack files:
+           - manifest.json (genre characteristics, escalation pattern)
+           - beat-sheets/series-arc-integration.md
+           - templates/protagonist-template.md
+           - templates/setting-template.md
+           - style-guides/genre-voice.md
+           - npe-physics/ (copy from _TEMPLATE_, customize)
+        4. Store in `.claude/genre-packs/{genre-slug}/`
+        5. Proceed to Phase 1
 ```
+
+**Output:**
+- ✅ Genre pack loaded or created
+- ✅ Genre-specific escalation patterns available
+- ✅ Character/setting templates ready
+
+**MCP:** No database interaction (genre packs are files)
 
 ---
 
-## WRITING TEAM WORKFLOW (For Comparison)
+### Phase 1: Market Research + Trope Research
 
-### How Existing Agents Use Skills
+**Agent:** Market Research Agent
+**Input:** Concept + genre pack (from Phase 0)
+**Process:**
+```
+1. Analyze concept and confirm genre
+2. Research 5-7 comp titles with performance data
+3. DEEP TROPE RESEARCH (NEW):
+   For each trending trope:
+   a. Search MCP: mcp__list_tropes(search_query: "trope name")
+   b. IF EXISTS: Update with new research
+   c. IF NEW: Create with required scenes
+   d. Research required scenes:
+      - Opening scene (timing, validation criteria, examples)
+      - Middle scene(s) (timing, validation criteria, examples)
+      - Closing scene (timing, validation criteria, examples)
+   e. Document reader expectations and common pitfalls
+   f. Store/update in MCP:
+      mcp__create_trope() OR mcp__update_trope()
 
+4. Identify market gaps and opportunities
+5. Score commercial viability (0-10)
 ```
-USER INVOKES: Miranda (Showrunner)
-    │
-    └─► MIRANDA AGENT
-            │ Miranda uses skills as needed:
-            │
-            ├─► Miranda invokes: /series-planning
-            │       SERIES-PLANNING SKILL provides workflow
-            │       Miranda follows workflow, makes decisions
-            │       Output: Series plan
-            │
-            ├─► Miranda invokes: /book-planning
-            │       BOOK-PLANNING SKILL provides workflow
-            │       Miranda follows workflow, makes decisions
-            │       Output: Book outline
-            │
-            ├─► Miranda invokes: /chapter-planning
-            │       CHAPTER-PLANNING SKILL provides workflow
-            │       Miranda follows workflow, makes decisions
-            │       Output: Chapter outline
-            │
-            ├─► Miranda invokes: Bailey (First Drafter)
-            │       Bailey writes scenes
-            │       Output: Draft prose
-            │
-            ├─► Miranda invokes: /review-qa
-            │       REVIEW-QA SKILL provides checklist
-            │       Miranda validates quality
-            │       Output: Approval or revision requests
-            │
-            └─► Miranda makes FINAL DECISION
-                    Chapter approved or sent back for revision
-```
+
+**Output:**
+- Market research report
+- 10-15 trending tropes with required scenes stored in MCP
+- Commercial viability assessment
+
+**MCP:** ✅ **Stores tropes with required scenes** in series-planning-server
 
 ---
 
-## KEY DIFFERENCES
+### Phase 2: Genre Pack Selection
 
-### Pattern 1: Skill Calling Agents (Market-Driven Planning)
+**Process:** Genre pack already loaded from Phase 0, confirmed in Phase 1
 
-```
-CONTROL FLOW:
-User → Skill (orchestrator) → Agent A → Agent B → Agent C → Output
-
-CHARACTERISTICS:
-- Skill is in charge of workflow
-- Agents are workers/specialists
-- Sequential pipeline (one agent finishes, next starts)
-- Skill handles handoffs between agents
-- Agents don't know about each other
-
-EXAMPLE:
-market-driven-planning-skill calls:
-  1. market-research-agent
-  2. series-architect-agent
-  3. commercial-validator-agent
-```
-
-### Pattern 2: Agents Using Skills (Writing Team)
-
-```
-CONTROL FLOW:
-User → Agent → Skill (as tool/guide) → Agent continues → Output
-
-CHARACTERISTICS:
-- Agent is in charge of workflow
-- Skills are tools/guides for agent
-- Agent makes decisions, skills provide structure
-- Agent can use multiple skills
-- Agent coordinates final output
-
-EXAMPLE:
-Miranda (agent) uses:
-  - /series-planning (skill)
-  - /book-planning (skill)
-  - /chapter-planning (skill)
-  - /review-qa (skill)
-```
+**Output:**
+- Genre characteristics confirmed
+- Escalation pattern loaded
+- Templates accessible
 
 ---
 
-## DATA FLOW DIAGRAM
+### Phase 3: Series Architect (BIG ROCKS - Genre-Aware)
 
+**Agent:** Series Architect Agent
+**Input:** Market research + genre pack + tropes from MCP
+**Process:**
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│                    MARKET-DRIVEN PLANNING                        │
-└──────────────────────────────────────────────────────────────────┘
+1. Load genre pack manifest.json
+2. Extract genre characteristics:
+   - primary_genre (determines if romance required)
+   - protagonist_archetype (from template)
+   - core_conflict (from genre conventions)
+   - escalation_pattern (genre-specific, NOT hardcoded)
 
-Input: Raw concept (1 sentence)
-   │
-   ├─► Market Research Agent
-   │       │ Web searches
-   │       │ Comp title analysis
-   │       └─► Output: MARKET_RESEARCH_*.md
-   │               Data: Viability 8.5/10, trending tropes, comps
-   │
-   ├─► Series Architect Agent
-   │       │ Reads: MARKET_RESEARCH_*.md
-   │       │ Designs: 5-book structure
-   │       └─► Output: SERIES_ARCHITECTURE_*.md
-   │               Data: Series structure 9.3/10, character arcs
-   │
-   ├─► (Optional) Book Planning
-   │       │ Reads: SERIES_ARCHITECTURE_*.md
-   │       │ Expands: Book 1 details
-   │       └─► Output: BOOK1_PLAN_*.md
-   │               Data: Book 1 plan 9.2/10, 25 chapters
-   │
-   └─► Commercial Validator Agent
-           │ Reads: ALL previous documents
-           │ Scores: 5 categories
-           └─► Output: COMMERCIAL_VALIDATION_*.md
-                   Data: Overall 9.3/10, APPROVED/REJECT
-                   │
-                   └─► Handoff Package:
-                         - All 4 documents
-                         - Positioning strategy
-                         - Risk mitigation
-                         - Ready for Miranda + Writing Team
+3. Plan WORLDBUILDING ARCHITECTURE:
+   - Define world rules with explicit limitations
+   - Establish consistency requirements
+   - Magic/tech system boundaries
 
-┌──────────────────────────────────────────────────────────────────┐
-│                      WRITING TEAM                                │
-└──────────────────────────────────────────────────────────────────┘
+4. Plan CHARACTER ARCS (5 books):
+   - Protagonist: motivation, fear, flaw, transformation
+   - Deuteragonist: parallel arc (NOT automatic love interest)
+   - Antagonist: escalation or redemption
+   - V1 behavioral palette (core identity)
 
-Input: Approved series plan
-   │
-   └─► Miranda (Showrunner)
-           │ Uses /series-planning skill
-           │ Uses /book-planning skill
-           │ Uses /chapter-planning skill
-           │ Coordinates Bailey, Tessa, Edna, etc.
-           │
-           └─► Output: Written chapters
-                   Miranda validates with /review-qa skill
-                   Final approval based on NPE compliance
+5. Plan RELATIONSHIP PROGRESSIONS (ALL TYPES):
+   - Romantic (ONLY if primary_genre = "Romance" OR concept specifies)
+   - Friendships/partnerships
+   - Rivalries
+   - Mentorships
+   - Family bonds
+   - Trust level progression (-10 to +20 scale)
+   - Bridge events earning each change
+
+6. Plan TROPE EXECUTION:
+   - Load tropes from MCP: mcp__get_trope(trope_id)
+   - Get required scenes (opening/middle/closing)
+   - Plan where each required scene occurs (book, chapter range)
+   - Define execution approach (how to make it fresh)
+   - Record usage: mcp__create_trope_instance()
+
+7. Design 5-BOOK STRUCTURE:
+   - Apply GENRE-SPECIFIC escalation pattern
+   - Book-level conflicts (NOT chapter-level)
+   - Character arc distribution
+   - Cliffhangers between books
+
+8. Build BOOK-LEVEL SETUP/PAYOFF REGISTRY:
+   - Major setups from Books 1-3
+   - Payoffs by Book 5
+   - Track dangling threads
 ```
+
+**Output:**
+- Series architecture document (book-level detail)
+- Worldbuilding rules
+- Character arcs with motivations/fears/flaws
+- Relationship progressions with trust tracking
+- Trope execution plan with required scene placements
+- 5-book structure (book-level, NOT chapter-level)
+- Setup/payoff registry
+
+**MCP:** ✅ **Records trope usage** in series-planning-server
+**MCP:** ❌ **Does NOT store series structure yet** (waits for approval)
 
 ---
 
-## WHEN TO USE WHICH PATTERN?
+### Phase 4: SERIES-LEVEL NPE VALIDATION (Big Rocks Gate) ⭐ NEW
 
-### Use "Skill Calling Agents" When:
-- **Structured pipeline** - Linear workflow with clear stages
-- **Sequential processing** - Each agent needs previous agent's output
-- **Specialized workers** - Each agent does one thing very well
-- **Automation focus** - Minimal user intervention needed
-- **Example:** Market-Driven Planning (research → architect → validate)
+**Agent:** NPE Series Validator Agent
+**Input:** Series architecture + genre pack + tropes from MCP
+**Process:**
+```
+Validates 7 categories at SERIES/BOOK level (NOT scene-level):
 
-### Use "Agents Using Skills" When:
-- **Complex decision-making** - Agent needs to decide which skills to use
-- **Iterative workflow** - Agent may loop back to previous skills
-- **Coordination required** - Agent manages multiple specialists
-- **Judgment calls** - Agent makes final approval decisions
-- **Example:** Miranda coordinating writing team, deciding when to involve Bailey vs Tessa
+1. CHARACTER ARC LOGIC (20% weight):
+   - Motivation, fear, flaw defined and addressed?
+   - Transformation earned through major events?
+   - V1 behavioral palette consistent?
+   - Character knowledge tracking (book-level)
+
+2. RELATIONSHIP PROGRESSION LOGIC (15% weight):
+   - Trust levels change realistically (±3 max per book)?
+   - Bridge events earn each change?
+   - Genre-appropriate relationships?
+   - Progression aligns with character arcs?
+
+3. TROPE EXECUTION VALIDATION (20% weight):
+   - Required scenes present (opening/middle/closing)?
+   - Validation criteria met from MCP?
+   - Placement timing appropriate?
+   - Tropes compatible?
+
+4. PLOT THREAD COHERENCE (15% weight):
+   - Setup/payoff registry complete?
+   - Book-level conflicts resolve?
+   - Standalone satisfaction + series arc?
+   - Cliffhangers organic?
+
+5. WORLDBUILDING CONSISTENCY (10% weight):
+   - World rules defined with limitations?
+   - No violations across 5 books?
+   - Complexity appropriate for genre?
+
+6. STAKES ESCALATION LOGIC (10% weight):
+   - Genre-appropriate escalation from genre pack?
+   - Stakes escalate book-to-book?
+   - Stakes remain personal to characters?
+
+7. INFORMATION ECONOMY (10% weight):
+   - Revelation cascade across 5 books?
+   - Fair-play clues for readers?
+   - No deus ex machina information?
+
+Calculate overall score (0-100):
+  score = (cat1*0.20) + (cat2*0.15) + (cat3*0.20) + (cat4*0.15) +
+          (cat5*0.10) + (cat6*0.10) + (cat7*0.10)
+
+IF score ≥ 80: PASS → Proceed to Phase 5
+IF score < 80: FAIL → Return to Phase 3 (Series Architect) for revision
+```
+
+**Output:**
+- Validation report (markdown)
+- Overall score (0-100)
+- Violation list with severity and fixes
+- Pass/Fail decision
+
+**MCP:** ❌ **No database storage** (validation metadata not stored)
+
+**This is a QUALITY GATE** - Series cannot proceed without passing.
 
 ---
 
-## INTEGRATION POINT
+### Phase 5: Commercial Validation
+
+**Agent:** Commercial Validator Agent
+**Input:** Series architecture + market research + NPE score
+**Process:**
+```
+1. Score 5 categories:
+   - Market Fit (25%)
+   - Trope Execution (20%)
+   - Series Structure (25%)
+   - Unique Angle (15%)
+   - Reader Satisfaction (15%)
+
+2. Use NPE score as input to Series Structure category
+3. Risk assessment (Low/Medium/Critical)
+4. Go/no-go recommendation
+```
+
+**Output:**
+- Commercial viability score (0-10)
+- Risk assessment
+- Recommendation (APPROVE / REVISE / REJECT)
+
+**MCP:** No database interaction
+
+---
+
+### Phase 6: Writing Team Review & Refinement ⭐ NEW
+
+**Lead:** Miranda (Showrunner)
+**Team:** Genre Specialist Agents (Detective Logan, Dr. Viktor, Professor Mira, etc.)
+**Input:** Validated series structure + NPE report + commercial assessment
+**Process:**
+```
+1. Miranda coordinates review of validated plan
+2. Genre Specialist Agents review for accuracy:
+   - Detective Logan (police procedural accuracy)
+   - Dr. Viktor (psychological authenticity)
+   - Professor Mira (worldbuilding consistency)
+   - [Other genre-specific agents as needed]
+
+3. Writing Team refines:
+   - Character arcs (are they writable?)
+   - Plot threads (do they work narratively?)
+   - Scene possibilities (can this be executed?)
+   - Trope execution (is it fresh enough?)
+
+4. Team provides refinement notes
+```
+
+**Output:**
+- Refined series plan
+- Writing Team notes and recommendations
+- Status: READY FOR USER REVIEW
+
+**MCP:** ❌ **No database storage yet** (awaits user approval)
+
+---
+
+### Phase 7: User Review & Approval ⭐ CRITICAL GATE
+
+**Process:**
+```
+1. User reviews all planning documents:
+   - Market research report
+   - Series architecture
+   - NPE validation report (score, violations)
+   - Commercial viability assessment
+   - Writing Team refinement notes
+
+2. User decides:
+   - APPROVE → Proceed to Phase 8 (MCP Database Commit)
+   - REQUEST REVISIONS → Return to appropriate phase
+   - REJECT → End process
+
+3. User authorizes MCP database storage
+```
+
+**Output:**
+- User approval decision
+- Authorization for database commit
+
+**This is USER CONTROL** - Nothing stored in database without explicit approval.
+
+---
+
+### Phase 8: MCP Database Commit ⭐ ONLY AFTER APPROVAL
+
+**Trigger:** User has approved in Phase 7
+**Process:**
+```
+Store VALIDATED DATA (not validation metadata) in MCP:
+
+mcp__character_planning__store_character_arcs({
+  character_id, series_id,
+  motivation, fear, flaw,
+  book_progression: [...]
+})
+
+mcp__character_planning__store_character_knowledge_timeline({
+  character_id, book, chapter_range,
+  knows: [...],
+  doesnt_know: [...]
+})
+
+mcp__series_planning__store_series_relationships({
+  series_id, character_a, character_b, relationship_type,
+  trust_progression: {
+    book_1: -5, book_2: -2, book_3: +3, book_4: +7, book_5: +10
+  },
+  bridge_events: [...]
+})
+
+mcp__series_planning__store_worldbuilding_rules({
+  series_id, rule_category, rule_text, limitations
+})
+
+mcp__core_continuity__store_setup_payoff_registry({
+  series_id, element, setup_book, payoff_book, description
+})
+
+mcp__series_planning__update_trope_instance({
+  trope_instance_id,
+  validated: true,
+  npe_score: 87
+})
+```
+
+**What Gets Stored:**
+- ✅ Character arcs and knowledge timelines
+- ✅ Relationship progressions with trust levels
+- ✅ Worldbuilding rules
+- ✅ Setup/payoff registry
+- ✅ Trope usage (updated with validation status)
+
+**What Does NOT Get Stored:**
+- ❌ NPE validation scores
+- ❌ Violation reports
+- ❌ Commercial viability metadata
+- ❌ Validation history
+
+**MCP:** ✅ **Stores VALIDATED DATA** in multiple servers:
+- character-planning-server
+- series-planning-server
+- core-continuity-server
+
+---
+
+### Phase 9: Writing Team Plans Chapters (SMALL ROCKS)
+
+**Lead:** Miranda + Bailey + Writing Team
+**Input:** Approved series structure + data from MCP
+**Process:**
+```
+1. Miranda coordinates chapter planning for Book 1
+2. Bailey/team expand book-level structure to chapter-level:
+   - Book 1 (25 chapters) → Chapter 1: [what happens]
+   - Chapter 2: [what happens], etc.
+
+3. Use genre pack beat sheets for chapter structure
+4. Query MCP for context:
+   - Character knowledge states
+   - Relationship trust levels
+   - Trope required scenes to include
+   - Setup/payoff elements
+
+5. Plan scene-by-scene breakdown per chapter
+```
+
+**Output:**
+- Chapter-level outlines for Book 1
+- Scene-by-scene plans
+- Ready for writing execution
+
+**MCP:** ✅ **Queries data** (character knowledge, relationships, tropes, setups)
+
+---
+
+### Phase 10: SCENE-LEVEL NPE VALIDATION (Sand Validation) ⭐ DURING WRITING
+
+**Process:** Happens during writing execution (Phase 11)
+**Tools:** Existing NPE MCP tools
+**Validation:**
+```
+Uses 357 detailed NPE rules across 10 categories:
+
+- validate_scene_architecture
+- validate_dialogue_physics
+- log_character_decision
+- validate_causality_chain
+- analyze_chapter_pacing
+- validate_information_economy
+- track_stakes_escalation
+- track_relationship_tension
+- calculate_npe_compliance
+- get_npe_violations
+
+These validate WRITTEN SCENES (not planned structure).
+```
+
+**Output:**
+- Scene-level compliance scores
+- Dialogue/POV/pacing issues
+- Character behavioral palette violations
+
+**MCP:** ✅ **Uses existing NPE Config MCP Server** (4 specialized servers)
+
+**This is SCENE VALIDATION** - Different from Phase 4 (series structure validation).
+
+---
+
+### Phase 11: Writing Execution
+
+**Lead:** Bailey (First Drafter) + Full Writing Team
+**Process:**
+```
+1. Bailey writes scenes based on chapter plans
+2. Tessa (Continuity) validates consistency
+3. Edna (Editor) reviews pacing and quality
+4. Genre specialists provide expertise
+5. Scene-Level NPE validation runs continuously
+6. Miranda coordinates and approves
+
+Writing Team queries MCP constantly:
+- "What does Theodore know at Book 2, Ch 5?"
+- "What's trust level between characters here?"
+- "What trope scene needs to be in this chapter?"
+- "What setup from Book 1 needs to pay off now?"
+```
+
+**Output:**
+- Written chapters/scenes
+- Publication-ready book
+
+**MCP:** ✅ **Heavy query usage** (single source of truth for all validated data)
+
+---
+
+## ARCHITECTURE DIAGRAM
 
 ```
-WHERE THE TWO PATTERNS MEET:
-
-Market-Driven Planning (Skill calling Agents)
-    │
-    │ Produces: Validated series plan
-    │ Score: 9.3/10 viability
-    │ Status: APPROVED
-    │
-    └─► HANDOFF TO ──────────────────┐
-                                     │
-                                     ▼
-                    Writing Team (Agents using Skills)
+┌─────────────────────────────────────────────────────────────────┐
+│                           USER                                  │
+│                            │                                    │
+│              Provides concept in new genre                      │
+└────────────────────────────┬────────────────────────────────────┘
+                             │
+                             ▼
+        ┌────────────────────────────────────────┐
+        │ PHASE 0: Genre Pack Check              │
+        │ Market Research Agent                  │
+        │                                        │
+        │ IF missing: Create genre pack          │
+        │ - Research conventions (WebSearch)     │
+        │ - Generate manifest.json               │
+        │ - Create beat sheets, templates        │
+        │ - Store in .claude/genre-packs/        │
+        └────────────────┬───────────────────────┘
                          │
-                         └─► Miranda uses /chapter-planning
-                                 Bailey writes scenes
-                                 Tessa checks continuity
-                                 Miranda uses /review-qa
-                                 Chapter complete!
+                         ▼
+        ┌────────────────────────────────────────┐
+        │ PHASE 1: Market Research               │
+        │ Market Research Agent                  │
+        │                                        │
+        │ - Comp title analysis                  │
+        │ - DEEP TROPE RESEARCH:                 │
+        │   • Search MCP for existing tropes     │
+        │   • Research required scenes           │
+        │   • Store in MCP ──────────────┐       │
+        │ - Commercial viability         │       │
+        └────────────────┬──────────────│────────┘
+                         │              │
+                         ▼              │
+        ┌────────────────────────────│──│────────┐
+        │ PHASE 2: Genre Pack Selection │        │
+        │ (Already loaded from Phase 0)  │        │
+        └────────────────┬──────────────│────────┘
+                         │              │
+                         ▼              │
+        ┌───────────────────────────────│────────┐
+        │ PHASE 3: Series Architect      │        │
+        │ Series Architect Agent         │        │
+        │                                │        │
+        │ GENRE-AWARE (NEW):            │        │
+        │ - Loads genre pack manifest   │        │
+        │ - Uses genre escalation pattern│        │
+        │ - Romance if genre requires   │        │
+        │                                │        │
+        │ Plans BIG ROCKS:              │        │
+        │ - Worldbuilding rules          │        │
+        │ - Character arcs (motivations/│        │
+        │   fears/flaws)                 │        │
+        │ - Relationships (all types)    │        │
+        │ - Trope execution ←────────────┘        │
+        │ - Book-level structure                  │
+        │ - Setup/payoff registry                 │
+        │                                         │
+        │ Records trope usage in MCP ────┐        │
+        └────────────────┬───────────────│────────┘
+                         │               │
+                         ▼               │
+        ┌───────────────────────────────│────────┐
+        │ PHASE 4: SERIES-LEVEL NPE     │        │
+        │ NPE Series Validator Agent    │        │
+        │                                │        │
+        │ Validates "BIG ROCKS":        │        │
+        │ 1. Character arc logic (20%)  │        │
+        │ 2. Relationship progression (15%)      │
+        │ 3. Trope execution (20%)      │        │
+        │    - Loads required scenes ───┘        │
+        │      from MCP                          │
+        │ 4. Plot coherence (15%)                │
+        │ 5. Worldbuilding (10%)                 │
+        │ 6. Stakes escalation (10%)             │
+        │ 7. Information economy (10%)           │
+        │                                        │
+        │ Score: 0-100 (≥80 = PASS)              │
+        │ ❌ NO MCP STORAGE                       │
+        │    (validation metadata)               │
+        └────────────────┬───────────────────────┘
+                         │
+                         ├─► IF FAIL (<80)
+                         │   └─► Return to Phase 3
+                         │
+                         ├─► IF PASS (≥80)
+                         ▼
+        ┌────────────────────────────────────────┐
+        │ PHASE 5: Commercial Validation         │
+        │ Commercial Validator Agent             │
+        │                                        │
+        │ - Uses NPE score as input              │
+        │ - 5-category assessment                │
+        │ - Go/no-go recommendation              │
+        └────────────────┬───────────────────────┘
+                         │
+                         ▼
+        ┌────────────────────────────────────────┐
+        │ PHASE 6: Writing Team Review           │
+        │ Miranda + Genre Specialists            │
+        │                                        │
+        │ - Miranda coordinates review           │
+        │ - Genre specialists validate           │
+        │ - Team refines structure               │
+        │ - Provides refinement notes            │
+        │                                        │
+        │ ❌ NO MCP STORAGE YET                   │
+        └────────────────┬───────────────────────┘
+                         │
+                         ▼
+        ┌────────────────────────────────────────┐
+        │ PHASE 7: User Review & Approval        │
+        │ ⭐ CRITICAL GATE ⭐                      │
+        │                                        │
+        │ User reviews:                          │
+        │ - Series architecture                  │
+        │ - NPE validation (score: 87/100)       │
+        │ - Commercial viability                 │
+        │ - Writing Team notes                   │
+        │                                        │
+        │ User AUTHORIZES MCP database storage   │
+        └────────────────┬───────────────────────┘
+                         │
+                         ▼
+        ┌────────────────────────────────────────┐
+        │ PHASE 8: MCP DATABASE COMMIT           │
+        │ ⭐ ONLY AFTER USER APPROVAL ⭐          │
+        │                                        │
+        │ Stores VALIDATED DATA:                 │
+        │ ✅ Character arcs ──────────┐           │
+        │ ✅ Character knowledge ─────┤           │
+        │ ✅ Relationships ────────────┼─────────►│
+        │ ✅ Worldbuilding rules ──────┤   MCP    │
+        │ ✅ Setup/payoff registry ────┤ Database │
+        │ ✅ Trope usage (updated) ────┘           │
+        │                                        │
+        │ ❌ Does NOT store:                      │
+        │    NPE scores, violation reports       │
+        └────────────────┬───────────────────────┘
+                         │
+                         ▼
+        ┌────────────────────────────────────────┐
+        │ PHASE 9: Writing Team Plans Chapters   │
+        │ Miranda + Bailey + Team                │
+        │                                        │
+        │ SMALL ROCKS:                           │
+        │ - Chapter-level planning               │
+        │ - Scene-by-scene breakdown             │
+        │                                        │
+        │ Queries MCP constantly:       ┌───────►│
+        │ - Character knowledge ────────┤   MCP  │
+        │ - Relationship trust levels ──┤ Database
+        │ - Trope required scenes ──────┤        │
+        │ - Setup/payoff elements ──────┘        │
+        └────────────────┬───────────────────────┘
+                         │
+                         ▼
+        ┌────────────────────────────────────────┐
+        │ PHASE 10: Scene-Level NPE Validation   │
+        │ (During writing - Phase 11)            │
+        │                                        │
+        │ Uses EXISTING NPE Config MCP:          │
+        │ - validate_scene_architecture          │
+        │ - validate_dialogue_physics            │
+        │ - log_character_decision               │
+        │ - validate_causality_chain             │
+        │ - analyze_chapter_pacing               │
+        │                                        │
+        │ Validates "SAND" (357 detailed rules)  │
+        └────────────────┬───────────────────────┘
+                         │
+                         ▼
+        ┌────────────────────────────────────────┐
+        │ PHASE 11: Writing Execution            │
+        │ Bailey + Full Writing Team             │
+        │                                        │
+        │ - Bailey writes scenes                 │
+        │ - Tessa validates continuity           │
+        │ - Edna reviews pacing                  │
+        │ - Genre specialists consult            │
+        │ - Miranda approves                     │
+        │                                        │
+        │ Constant MCP queries ──────────►MCP DB │
+        └────────────────────────────────────────┘
 ```
 
 ---
 
-## SUMMARY
+## KEY ARCHITECTURAL PRINCIPLES
 
-**Market-Driven Planning System:**
-- **Structure:** Skill (orchestrator) → 3 Agents (workers)
-- **User invokes:** `/market-driven-planning` skill
-- **Skill calls:** market-research-agent → series-architect-agent → commercial-validator-agent
-- **Output:** 4 planning documents, go/no-go decision
-- **Purpose:** Pre-writing validation and commercial optimization
-
-**Writing Team System:**
-- **Structure:** Agent (coordinator) → Multiple Skills (tools)
-- **User invokes:** `Miranda` agent
-- **Agent uses:** /series-planning, /book-planning, /chapter-planning, /review-qa
-- **Output:** Written chapters, validated by NPE
-- **Purpose:** Actual writing execution with quality control
-
-**Both patterns coexist:**
-- Market-Driven Planning produces validated plan
-- Writing Team executes validated plan
-- Handoff happens at Phase 7 (after commercial validation approval)
-
----
-
-## VISUAL CHEAT SHEET
+### 1. Big Rocks First
 
 ```
-MARKET-DRIVEN PLANNING (Skill → Agents):
-User → [Skill]
-         ├─► Agent 1 (research)
-         ├─► Agent 2 (architect)
-         └─► Agent 3 (validate)
-              └─► Output
+BIG ROCKS (Series-Level):
+- Worldbuilding rules
+- Character arcs with motivations/fears/flaws
+- Relationships (all types) with trust progression
+- Trope execution with required scenes
+- 5-book structure (book-level)
+- Setup/payoff registry
 
-WRITING TEAM (Agent → Skills):
-User → [Agent]
-         ├─► Skill A (planning)
-         ├─► Skill B (review)
-         ├─► Other Agents (Bailey, Tessa)
-         └─► Output
+        ↓ Validated by Series-Level NPE
+
+SMALL ROCKS (Chapter-Level):
+- Chapter-by-chapter plans
+- Scene-by-scene breakdown
+
+        ↓ Planned by Writing Team
+
+PEBBLES & SAND (Scene-Level):
+- Dialogue exchanges
+- POV discipline
+- Sensory details
+- Pacing beats
+
+        ↓ Validated by Scene-Level NPE during writing
 ```
 
----
-
-**Does this clarify the architecture?**
-
-The key insight is:
-- **NEW system (Market-Driven):** Skill orchestrates Agents
-- **EXISTING system (Writing Team):** Agents use Skills
-- **They integrate:** Market-Driven output feeds into Writing Team input
-
----
-
-## UPDATED PIPELINE WITH NPE + MCP
-
-### Complete 8-Phase Pipeline (With NPE Validation)
+### 2. Multi-Layer NPE Validation
 
 ```
-Phase 1: Intake & Genre Identification
-    ↓
-Phase 2: Market Research & Trend Analysis (Market Research Agent)
-    ↓  Output: MARKET_RESEARCH_*.md, viability score
-    ↓
-Phase 3: Genre Pack Selection/Creation
-    ↓
-Phase 4: Series Architecture (Series Architect Agent)
-    ↓  Output: SERIES_ARCHITECTURE_*.md, 5-book structure
-    ↓
-Phase 5: Book-Level Planning (Optional)
-    ↓  Output: BOOK1_PLAN_*.md, detailed chapter outline
-    ↓
-Phase 5.5: NPE SERIES VALIDATION (NPE Series Validator Agent)
-    ↓
-    ├─► Loads 10 NPE JSON rule files (357 rules total)
-    ├─► Validates character knowledge across 5 books
-    ├─► Validates setup/payoff registry (Chekhov's gun)
-    ├─► Validates relationship progressions
-    ├─► Validates stakes escalation logic
-    ├─► Scores NPE compliance (0-100)
-    ├─► Output: NPE_VALIDATION_*.md
-    ├─► Score: 0-100 (must be 80+ to proceed)
-    └─► Decision: PASS / NEEDS_REVISION / BLOCKED
-    ↓
-Phase 6: Commercial Quality Validation (Commercial Validator Agent)
-    ↓  Output: COMMERCIAL_VALIDATION_*.md
-    ↓  Decision: APPROVE / REVISE / REJECT
-    ↓
-Phase 7: Writing Team Review & Refinement (Miranda + Agents + Genre Specialists)
-    ↓
-    ├─► Miranda coordinates review of validated plan
-    ├─► Genre Specialist Agents review for accuracy:
-    │     - Detective Logan (police procedural accuracy)
-    │     - Dr. Viktor (psychological authenticity)
-    │     - Professor Mira (worldbuilding consistency)
-    │     - Detective-specific agents per genre
-    ├─► Writing Team refines:
-    │     - Character arcs (are they writable?)
-    │     - Plot threads (do they work narratively?)
-    │     - Scene structure (can this be executed?)
-    ├─► Output: Refined series plan with Writing Team notes
-    └─► Status: READY FOR USER REVIEW
-    ↓
-Phase 8: USER REVIEW & APPROVAL
-    ↓
-    ├─► User reviews all planning documents
-    ├─► User reviews Writing Team refinements
-    ├─► User approves OR requests revisions
-    └─► User authorizes MCP database storage
-    ↓
-Phase 9: MCP DATABASE COMMIT (Only after user approval)
-    ↓
-    └─► STORES validated & approved data in MCP DATABASE:
-          - character-planning-server: Character knowledge timelines
-          - core-continuity-server: Setup/payoff registry
-          - core-continuity-server: Relationship progressions
-          - series-planning-server: Approved series structure
-          - series-planning-server: NPE validation results
-    ↓
-Phase 10: WRITING EXECUTION (With MCP Queries)
-    │
-    ├─► Miranda coordinates team
-    ├─► Bailey writes scenes
-    │     └─► Queries MCP: "What does Theodore know at Book 2, Ch 3?"
-    │           Response: Character knowledge from database
-    │           Bailey writes scene using correct knowledge
-    │
-    ├─► Tessa checks continuity
-    │     └─► Queries MCP: "What's Theodore/Vivienne relationship status at Book 3, Ch 12?"
-    │           Response: Trust level 6.5, recent betrayal in Ch 5
-    │           Tessa flags contradictions in draft
-    │
-    ├─► Edna validates pacing
-    │     └─► Queries MCP: "What setups need payoff by Book 5?"
-    │           Response: Setup/payoff registry
-    │           Edna ensures all Chekhov's guns fire
-    │
-    └─► Miranda final approval (uses NPE + MCP data for validation)
+LAYER 1: Series-Level NPE (Phase 4)
+- Validates BIG ROCKS
+- Book-level structure
+- 7 categories, score 0-100
+- Quality gate (≥80 to proceed)
+- NO database storage of validation
+
+LAYER 2: Scene-Level NPE (Phase 10)
+- Validates SAND
+- Scene-level details
+- 357 detailed rules across 10 categories
+- During writing execution
+- Uses existing NPE MCP tools
+```
+
+### 3. Genre-Aware Architecture
+
+```
+Genre Pack Integration:
+1. Market Research creates if missing
+2. Series Architect loads and applies:
+   - Genre-specific escalation patterns
+   - Protagonist archetypes from templates
+   - Romance ONLY if primary_genre = "Romance"
+   - Genre-appropriate terminology
+3. NPE Validator uses genre expectations
+```
+
+### 4. MCP Database Timing
+
+```
+❌ OLD WORKFLOW:
+Series Architect → NPE Validation → MCP Storage (automatic)
+
+✅ NEW WORKFLOW:
+Series Architect → NPE Validation → Commercial Validation
+→ Writing Team Review → User Approval → MCP Storage (authorized)
+```
+
+**Critical:** No data stored without user approval.
+
+### 5. Trope Research & Validation
+
+```
+PHASE 1: Market Research
+- Searches MCP for existing tropes
+- Researches required scenes (opening/middle/closing)
+- Stores in MCP: mcp__create_trope() or mcp__update_trope()
+
+PHASE 3: Series Architect
+- Loads tropes from MCP: mcp__get_trope()
+- Plans where required scenes occur
+- Records usage: mcp__create_trope_instance()
+
+PHASE 4: Series-Level NPE Validator
+- Validates required scenes are planned
+- Checks timing and validation criteria
+- Ensures trope execution will meet reader expectations
+
+PHASE 11: Writing Execution
+- Writing Team implements planned trope scenes
+- Ensures execution is fresh and compelling
 ```
 
 ---
 
-## NPE + MCP INTEGRATION BENEFITS
+## MCP DATABASE SERVERS & USAGE
 
-### Problem: Multiple Files with Conflicting Information
+### Servers:
+1. **author-server**
+2. **series-planning-server** ← Tropes stored here
+3. **book-planning-server**
+4. **chapter-planning-server**
+5. **character-planning-server** ← Character knowledge, arcs stored here
+6. **scene-server**
+7. **core-continuity-server** ← Setup/payoff, relationships stored here
+8. **review-server**
+9. **reporting-server**
 
-**Without MCP Database:**
-```
-File 1: Series_Architecture.md says "Theodore knows X in Book 2"
-File 2: Book2_Plan.md says "Theodore learns X in Book 2, Chapter 8"
-File 3: Chapter_8_Draft.md says "Theodore already knew X from Book 1"
+### When Data is Stored:
 
-Result: CONTINUITY ERROR - No single source of truth
-```
+**Phase 1 (Market Research):**
+- ✅ Tropes with required scenes → series-planning-server
 
-**With MCP Database:**
-```
-Database stores: Theodore learns X at {book: 2, chapter: 8}
+**Phase 3 (Series Architect):**
+- ✅ Trope usage instances → series-planning-server
 
-All agents query database:
-- Bailey queries before writing Ch 3: "Theodore doesn't know X yet"
-- Bailey queries before writing Ch 8: "Theodore learns X here"
-- Tessa queries during review: "Is knowledge consistent?" ✅ YES
+**Phase 8 (MCP Database Commit - AFTER USER APPROVAL):**
+- ✅ Character arcs → character-planning-server
+- ✅ Character knowledge timelines → character-planning-server
+- ✅ Relationships → series-planning-server
+- ✅ Worldbuilding rules → series-planning-server
+- ✅ Setup/payoff registry → core-continuity-server
 
-Result: SINGLE SOURCE OF TRUTH - No conflicts possible
-```
+**Phase 10-11 (Writing Execution):**
+- ✅ Scene validations → scene-server
+- ✅ Character decisions → character-planning-server (via NPE tools)
+- ✅ Causality chains → core-continuity-server (via NPE tools)
 
----
+### What is NOT Stored:
 
-### NPE Validation Catches Logic Breaks
+- ❌ NPE validation scores
+- ❌ Violation reports
+- ❌ Commercial viability assessments
+- ❌ Validation history
 
-**Example: Character Knowledge Violation**
-
-```
-Without NPE Validation:
-  Book 2, Chapter 3: Theodore acts on conspiracy knowledge
-  Book 2, Chapter 8: Conspiracy revealed to Theodore
-  
-  Problem: Character knows info before learning it
-  Caught: During revision (maybe, if editor notices)
-  Cost: Rewrite chapters, fix continuity
-
-With NPE Validation:
-  NPE Validator checks: "Does Theodore know about conspiracy at Ch 3?"
-  Database query: Theodore knowledge timeline
-  Result: ❌ VIOLATION - CL-101 (Knowledge-Based Decisions)
-  
-  Flagged: BEFORE writing begins
-  Fix: Move decision to Ch 9 OR plant hint in Book 1
-  Cost: Simple architecture revision, zero rewriting
-```
+Only VALIDATED DATA is stored, not validation metadata.
 
 ---
 
-### MCP Query Examples During Writing
+## AGENT SUMMARY
 
-#### Bailey Writing Book 2, Chapter 3
+### Planning Phase Agents:
+1. **Market Research Agent** - Genre pack creation, trope research, market analysis
+2. **Series Architect Agent** - Genre-aware series structure, big rocks planning
+3. **NPE Series Validator Agent** - Series-level validation gate
+4. **Commercial Validator Agent** - Commercial viability assessment
 
-```
-Bailey: "I need to write scene where Theodore makes decision. 
-What does he know at this point?"
+### Writing Phase Agents:
+5. **Miranda (Showrunner)** - Coordinates Writing Team
+6. **Bailey (First Drafter)** - Writes scenes
+7. **Tessa (Continuity)** - Validates consistency
+8. **Edna (Editor)** - Reviews pacing and quality
+9. **Finn (Style Specialist)** - Polishes prose
 
-Query MCP:
-→ character-planning-server.get_character_knowledge(
-    character_id: "theodore_grey",
-    book: 2,
-    chapter: 3
-  )
-
-Response:
-{
-  "knows": [
-    "Vivienne killed his sister",
-    "Clockwork heart requires deaths",
-    "Factory is prison",
-    "Cornelius provides victims"
-  ],
-  "doesnt_know": [
-    "Mentor involvement (revealed Ch 8)",
-    "Conspiracy scope (Book 3)",
-    "Ascension Engine (Book 4)"
-  ],
-  "emotional_state": "conflicted, morally compromised",
-  "relationship_trust_levels": {
-    "vivienne": 5.0,
-    "cornelius": 2.0,
-    "mentor": 8.0  // Doesn't know mentor is traitor yet
-  }
-}
-
-Bailey writes scene ensuring Theodore only acts on info he has.
-NPE violation prevented automatically.
-```
-
-#### Tessa Checking Book 3, Chapter 12
-
-```
-Tessa: "Character says 'I've always trusted you.' Is this consistent?"
-
-Query MCP:
-→ core-continuity-server.get_relationship_history(
-    character_a: "theodore",
-    character_b: "vivienne",
-    up_to_point: {book: 3, chapter: 12}
-  )
-
-Response:
-{
-  "trust_timeline": [
-    {book: 1, ch: 6, event: "Met, suspicious", trust: 2.0},
-    {book: 1, ch: 11, event: "Sister's killer revealed", trust: 0.5},
-    {book: 2, ch: 1, event: "Returns to help", trust: 4.0},
-    {book: 2, ch: 15, event: "First kiss", trust: 6.0},
-    {book: 3, ch: 5, event: "Major betrayal", trust: 3.0},
-    {book: 3, ch: 12, event: "Current point", trust: 5.0}
-  ],
-  "issues": [
-    "⚠️ Trust betrayal in Book 3, Ch 5 contradicts 'always trusted'"
-  ]
-}
-
-Tessa flags: "Dialogue contradicts trust history. Suggest:
-'I want to trust you' or 'I'm trying to trust you again'"
-```
-
-#### Edna Validating Setup/Payoff
-
-```
-Edna: "We're finishing Book 5. Are all Chekhov's guns fired?"
-
-Query MCP:
-→ core-continuity-server.get_unfired_setups(
-    series_id: "sweetwater_factory",
-    up_to_book: 5
-  )
-
-Response:
-{
-  "unfired_setups": [
-    {
-      "id": "setup_027",
-      "description": "Vivienne's locket inscribed 'Always'",
-      "introduced": {book: 1, chapter: 11},
-      "significance": "Unknown - seemed emotional but never explained",
-      "suggestion": "Either explain significance in Book 5 or remove from Book 1"
-    }
-  ],
-  "fired_setups": 46,
-  "total_setups": 47,
-  "completion": "98%"
-}
-
-Edna: "We have one hanging thread. Let's either:
-A) Have Vivienne explain locket significance in final chapter
-B) Remove locket mention in Book 1 revision"
-```
+### Genre Specialist Agents:
+10. **Detective Logan** - Police procedural accuracy
+11. **Dr. Viktor** - Psychological authenticity
+12. **Professor Mira** - Worldbuilding consistency
 
 ---
 
-## DATA FLOW: VALIDATION → STORAGE → QUERY
+## BENEFITS OF THIS ARCHITECTURE
 
-```
-VALIDATION PHASE (Before Writing):
-  
-  NPE Series Validator Agent
-    │
-    ├─► Validates series structure
-    ├─► Creates character knowledge maps
-    ├─► Builds setup/payoff registry
-    ├─► Tracks relationship progressions
-    │
-    └─► STORES in MCP Database:
-          {
-            character_knowledge: {
-              theodore: {book: 2, ch: 3, knows: [...], doesnt_know: [...]},
-              vivienne: {book: 2, ch: 3, knows: [...], doesnt_know: [...]}
-            },
-            relationships: {
-              theodore_vivienne: {book: 3, ch: 12, trust: 5.0, history: [...]}
-            },
-            setups: [
-              {id: "setup_001", introduced: {book: 1, ch: 2}, payoff: {book: 5, ch: 20}}
-            ]
-          }
+### 1. Early Issue Detection
+- Series-Level NPE catches structural issues in planning (cheap to fix)
+- Don't write 50,000 words with a flawed foundation
 
-WRITING PHASE (During Execution):
+### 2. Genre Flexibility
+- Supports any genre via genre pack creation
+- Genre-aware escalation patterns
+- No forced romance in non-romance genres
 
-  Bailey/Tessa/Edna/Miranda
-    │
-    ├─► QUERY MCP Database:
-    │     "What does character know here?"
-    │     "What's relationship status?"
-    │     "What setups need payoff?"
-    │
-    └─► WRITE using precise data:
-          No guessing, no conflicts, single source of truth
+### 3. Trope Guidance
+- Required scenes guide Series Architect
+- NPE validates trope execution meets reader expectations
+- Marketing knows which tropes are used
 
-RESULT:
-  ✅ Character knowledge consistent across all books
-  ✅ Relationships progress logically
-  ✅ All Chekhov's guns fired
-  ✅ No continuity errors
-  ✅ NPE compliance maintained
-```
+### 4. Single Source of Truth
+- MCP database prevents conflicting information
+- Writing Team queries validated data
+- No file searching, fast lookups
+
+### 5. User Control
+- Nothing stored without approval
+- Writing Team reviews before commit
+- User authorizes database storage
+
+### 6. Multi-Layer Quality
+- Big rocks validated before writing
+- Sand validated during writing
+- Both structural and detail quality ensured
 
 ---
 
-## SUMMARY: Complete System Architecture
+## VERSION HISTORY
 
-**Agents (11 total):**
-1. Market Research Agent (market trends, comp titles)
-2. Series Architect Agent (5-book structure)
-3. **NPE Series Validator Agent** (NEW - validates against 357 rules)
-4. Commercial Validator Agent (final viability check)
-5-11. Writing Team Agents (Miranda, Bailey, Tessa, Edna, Finn, Detective Logan, Dr. Viktor, Professor Mira)
+**Version 1.0 (Original):**
+- Basic Market-Driven Planning Skill
+- Hardcoded apocalyptic escalation
+- Romance assumed in all genres
+- Single NPE validator trying to do everything
+- MCP storage automatic after validation
 
-**Skills (6 total):**
-1. **Market-Driven Planning Skill** (orchestrates Phases 1-7)
-2. Series Planning Skill (used by Miranda)
-3. Book Planning Skill (used by Miranda)
-4. Chapter Planning Skill (used by Miranda)
-5. Scene Writing Skill (used by Bailey)
-6. Review QA Skill (used by Miranda)
+**Version 2.0 (Current):**
+- ✅ Genre pack creation capability
+- ✅ Deep trope research with required scenes
+- ✅ Genre-aware Series Architect (relationship-flexible)
+- ✅ Multi-layer NPE validation (big rocks + sand)
+- ✅ MCP storage only after user approval
+- ✅ 11-phase pipeline with proper gates
 
-**NPE (Narrative Physics Engine):**
-- 10 JSON rule files per genre pack
-- 357 rules total (for urban fantasy example)
-- Categories: Character Logic, Information Economy, Stakes Pressure, Plot Mechanics, POV Physics, Scene Architecture, Dialogue Physics, Pacing Rules, Offstage Narrative, Transitions
+---
 
-**MCP Database (PostgreSQL):**
-- 9 MCP servers for different data types
-- Stores character knowledge timelines
-- Stores relationship progressions
-- Stores setup/payoff registry
-- Stores NPE validation results
-- Single source of truth for all story data
+**ARCHITECTURE MAP COMPLETE**
 
-**Integration:**
-```
-User → Market-Driven Planning Skill
-  ↓
-Skill orchestrates: Market Research → Series Architect → NPE Validator → Commercial Validator
-  ↓
-NPE Validator stores validated data in MCP Database
-  ↓
-If approved → Writing Team (Miranda + agents)
-  ↓
-Writing Team queries MCP Database for precise information
-  ↓
-Result: Validated, consistent, NPE-compliant 5-book series
-```
-
-**Key Innovation:** Combining Agents + Skills + NPE validation + MCP database = Automated quality assurance with single source of truth, catching continuity errors before writing begins.
-
+For implementation details, see:
+- `MULTI_LAYER_NPE_VALIDATION_DESIGN.md`
+- `SERIES_ARCHITECT_ANALYSIS.md`
+- `.claude/agents/market-research-agent.md`
+- `.claude/agents/series-architect-agent.md`
+- `.claude/agents/npe-series-validator-agent.md`
