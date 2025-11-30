@@ -27,6 +27,7 @@ export interface MCPConfig {
     continuity: string;
     review: string;
     reporting: string;
+    npe: string;
   };
   authToken?: string;
 }
@@ -42,6 +43,7 @@ const DEFAULT_MCP_CONFIG: MCPConfig = {
     continuity: 'http://localhost:3007',
     review: 'http://localhost:3008',
     reporting: 'http://localhost:3009',
+    npe: 'http://localhost:3011',
   },
   authToken: process.env.MCP_AUTH_TOKEN,
 };
