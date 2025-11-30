@@ -11,7 +11,7 @@
 1. **Genre Pack Creation** - Market Research Agent creates genre packs for new genres
 2. **Trope Research with Required Scenes** - Deep research stored in MCP
 3. **Genre-Aware Series Architect** - Uses genre-specific patterns, relationship-flexible
-4. **Multi-Layer NPE Validation** - "Big rocks" validated before writing, "sand" during writing
+4. **Multi-Layer NPE Validation** - Structure validated before writing, details during writing
 5. **Corrected MCP Workflow** - Database commit only AFTER Writing Team review + user approval
 
 ---
@@ -25,9 +25,9 @@ Phase 1: Market Research + Trope Research
     ↓
 Phase 2: Genre Pack Selection
     ↓
-Phase 3: Series Architect (BIG ROCKS - genre-aware)
+Phase 3: Series Architect (Series Structure - genre-aware)
     ↓
-Phase 4: SERIES-LEVEL NPE VALIDATION (Big Rocks Gate)
+Phase 4: SERIES-LEVEL NPE VALIDATION (Structure Gate)
     ↓
 Phase 5: Commercial Validation
     ↓
@@ -37,9 +37,9 @@ Phase 7: User Review & Approval
     ↓
 Phase 8: MCP Database Commit (ONLY AFTER APPROVAL)
     ↓
-Phase 9: Writing Team Plans Chapters (SMALL ROCKS)
+Phase 9: Writing Team Plans Chapters (Chapter Structure)
     ↓
-Phase 10: SCENE-LEVEL NPE VALIDATION (Sand Validation)
+Phase 10: SCENE-LEVEL NPE VALIDATION (Scene Detail Validation)
     ↓
 Phase 11: Writing Execution
 ```
@@ -129,7 +129,7 @@ IF genre pack MISSING:
 
 ---
 
-### Phase 3: Series Architect (BIG ROCKS - Genre-Aware)
+### Phase 3: Series Architect (Series Structure - Genre-Aware)
 
 **Agent:** Series Architect Agent
 **Input:** Market research + genre pack + tropes from MCP
@@ -195,7 +195,7 @@ IF genre pack MISSING:
 
 ---
 
-### Phase 4: SERIES-LEVEL NPE VALIDATION (Big Rocks Gate) ⭐ NEW
+### Phase 4: SERIES-LEVEL NPE VALIDATION (Structure Gate) ⭐ NEW
 
 **Agent:** NPE Series Validator Agent
 **Input:** Series architecture + genre pack + tropes from MCP
@@ -410,7 +410,7 @@ mcp__series_planning__update_trope_instance({
 
 ---
 
-### Phase 9: Writing Team Plans Chapters (SMALL ROCKS)
+### Phase 9: Writing Team Plans Chapters (Chapter Structure)
 
 **Lead:** Miranda + Bailey + Writing Team
 **Input:** Approved series structure + data from MCP
@@ -440,7 +440,7 @@ mcp__series_planning__update_trope_instance({
 
 ---
 
-### Phase 10: SCENE-LEVEL NPE VALIDATION (Sand Validation) ⭐ DURING WRITING
+### Phase 10: SCENE-LEVEL NPE VALIDATION (Scene Detail Validation) ⭐ DURING WRITING
 
 **Process:** Happens during writing execution (Phase 11)
 **Tools:** Existing NPE MCP tools
@@ -550,7 +550,7 @@ Writing Team queries MCP constantly:
         │ - Uses genre escalation pattern│        │
         │ - Romance if genre requires   │        │
         │                                │        │
-        │ Plans BIG ROCKS:              │        │
+        │ Plans SERIES STRUCTURE:       │        │
         │ - Worldbuilding rules          │        │
         │ - Character arcs (motivations/│        │
         │   fears/flaws)                 │        │
@@ -567,7 +567,7 @@ Writing Team queries MCP constantly:
         │ PHASE 4: SERIES-LEVEL NPE     │        │
         │ NPE Series Validator Agent    │        │
         │                                │        │
-        │ Validates "BIG ROCKS":        │        │
+        │ Validates SERIES STRUCTURE:   │        │
         │ 1. Character arc logic (20%)  │        │
         │ 2. Relationship progression (15%)      │
         │ 3. Trope execution (20%)      │        │
@@ -646,7 +646,7 @@ Writing Team queries MCP constantly:
         │ PHASE 9: Writing Team Plans Chapters   │
         │ Miranda + Bailey + Team                │
         │                                        │
-        │ SMALL ROCKS:                           │
+        │ CHAPTER STRUCTURE:                     │
         │ - Chapter-level planning               │
         │ - Scene-by-scene breakdown             │
         │                                        │
@@ -669,7 +669,7 @@ Writing Team queries MCP constantly:
         │ - validate_causality_chain             │
         │ - analyze_chapter_pacing               │
         │                                        │
-        │ Validates "SAND" (357 detailed rules)  │
+        │ Validates SCENE DETAILS (357 rules)    │
         └────────────────┬───────────────────────┘
                          │
                          ▼
@@ -691,10 +691,10 @@ Writing Team queries MCP constantly:
 
 ## KEY ARCHITECTURAL PRINCIPLES
 
-### 1. Big Rocks First
+### 1. Hierarchical Planning
 
 ```
-BIG ROCKS (Series-Level):
+SERIES STRUCTURE (Book-Level):
 - Worldbuilding rules
 - Character arcs with motivations/fears/flaws
 - Relationships (all types) with trust progression
@@ -704,13 +704,13 @@ BIG ROCKS (Series-Level):
 
         ↓ Validated by Series-Level NPE
 
-SMALL ROCKS (Chapter-Level):
+CHAPTER STRUCTURE (Chapter-Level):
 - Chapter-by-chapter plans
 - Scene-by-scene breakdown
 
         ↓ Planned by Writing Team
 
-PEBBLES & SAND (Scene-Level):
+SCENE DETAILS (Scene-Level):
 - Dialogue exchanges
 - POV discipline
 - Sensory details
@@ -723,14 +723,14 @@ PEBBLES & SAND (Scene-Level):
 
 ```
 LAYER 1: Series-Level NPE (Phase 4)
-- Validates BIG ROCKS
+- Validates Series Structure
 - Book-level structure
 - 7 categories, score 0-100
 - Quality gate (≥80 to proceed)
 - NO database storage of validation
 
 LAYER 2: Scene-Level NPE (Phase 10)
-- Validates SAND
+- Validates Scene Details
 - Scene-level details
 - 357 detailed rules across 10 categories
 - During writing execution

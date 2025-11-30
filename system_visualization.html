@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FictionLab 11-Phase Architecture - Interactive Visualization</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: flex;
+            height: calc(100vh - 200px);
+        }
+        
+        .visualization-panel {
+            flex: 2;
+            padding: 20px;
+            overflow: auto;
+            background: #f9fafb;
+        }
+        
+        .details-panel {
+            flex: 1;
+            padding: 30px;
+            background: white;
+            border-left: 2px solid #e5e7eb;
+            overflow: auto;
+        }
+        
+        .details-panel h2 {
+            color: #1e40af;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3b82f6;
+        }
+        
+        .details-panel h3 {
+            color: #3b82f6;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .details-panel ul {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+        
+        .details-panel .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin: 5px 5px 5px 0;
+        }
+        
+        .badge.agent {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .badge.mcp {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .badge.gate {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .node {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .node:hover {
+            filter: brightness(1.1);
+        }
+        
+        .node.selected rect {
+            stroke: #f59e0b;
+            stroke-width: 4px;
+            fill: #fef3c7;
+        }
+        
+        .node.selected text {
+            fill: #1f2937;
+        }
+        
+        .user-node {
+            cursor: pointer;
+        }
+        
+        .user-node rect {
+            fill: #6366f1;
+            stroke: #4f46e5;
+            stroke-width: 3px;
+        }
+        
+        .user-node.selected rect {
+            stroke: #f59e0b;
+            stroke-width: 4px;
+            fill: #fef3c7;
+        }
+        
+        .user-node.selected text {
+            fill: #1f2937;
+        }
+        
+        .node-label {
+            font-size: 14px;
+            font-weight: 600;
+            pointer-events: none;
+            text-anchor: middle;
+        }
+        
+        .link {
+            fill: none;
+            stroke: #94a3b8;
+            stroke-width: 2;
+            marker-end: url(#arrowhead);
+        }
+        
+        .link.critical {
+            stroke: #f59e0b;
+            stroke-width: 3;
+        }
+        
+        .placeholder-text {
+            color: #94a3b8;
+            font-style: italic;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        footer {
+            background: #1f2937;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .legend {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎬 FictionLab 11-Phase Architecture</h1>
+            <p>Interactive Visualization - Click any phase to see details</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="visualization-panel">
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #3b82f6;"></div>
+                        <span>Planning Phase</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #f59e0b;"></div>
+                        <span>Quality Gate</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #10b981;"></div>
+                        <span>Writing Phase</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #8b5cf6;"></div>
+                        <span>User Control</span>
+                    </div>
+                </div>
+                <svg id="visualization" width="100%" height="900"></svg>
+            </div>
+            
+            <div class="details-panel">
+                <div id="details-content">
+                    <div class="placeholder-text">
+                        <h2>👈 Click any phase to see details</h2>
+                        <p>Select a phase from the visualization to view:</p>
+                        <ul style="text-align: left; display: inline-block; margin-top: 20px;">
+                            <li>Phase description</li>
+                            <li>Agents involved</li>
+                            <li>MCP server interactions</li>
+                            <li>Inputs and outputs</li>
+                            <li>Quality gates</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>FictionLab System Visualization | Based on SYSTEM_ARCHITECTURE_MAP.md v2.0 | Generated: <span id="timestamp"></span></p>
+        </footer>
+    </div>
+    
+    <script>
+        // Phase data from SYSTEM_ARCHITECTURE_MAP.md
+        const phases = [
+            {
+                id: -1,
+                name: "USER\nInvokes Skill\nwith Idea",
+                fullName: "User: Invokes market-driven-planning-skill",
+                type: "user",
+                agent: "User",
+                description: "The workflow begins when the user invokes the market-driven-planning-skill with their book series idea. This triggers the entire 11-phase pipeline.",
+                process: [
+                    "User has a book series concept",
+                    "User invokes: /market-driven-planning-skill",
+                    "Provides 1-3 sentence concept description",
+                    "System begins Phase 0 (Genre Pack Check)"
+                ],
+                output: "Workflow initiated, concept captured, system ready to begin planning",
+                mcp: "No database interaction (workflow initiation)",
+                gate: false,
+                isUser: true
+            },
+            {
+                id: 0,
+                name: "Phase 0\nGenre Pack Check",
+                fullName: "Phase 0: Genre Pack Check & Creation",
+                type: "planning",
+                agent: "Market Research Agent",
+                description: "Checks if genre pack exists for the concept's genre. If missing, creates a new genre pack with conventions, beat sheets, templates, and NPE physics.",
+                process: [
+                    "Check .claude/genre-packs/{genre-slug}/",
+                    "If missing, research genre conventions via WebSearch",
+                    "Analyze 5-10 comp titles for patterns",
+                    "Generate genre pack files (manifest, beat sheets, templates, style guides)",
+                    "Store in .claude/genre-packs/"
+                ],
+                output: "Genre pack loaded or created, escalation patterns available, templates ready",
+                mcp: "No database interaction (genre packs are files)",
+                gate: false
+            },
+            {
+                id: 1,
+                name: "Phase 1\nMarket Research\n+ Trope Research",
+                fullName: "Phase 1: Market Research + Trope Research",
+                type: "planning",
+                agent: "Market Research Agent",
+                description: "Conducts comprehensive market analysis and deep trope research. Researches required scenes for each trending trope and stores in MCP.",
+                process: [
+                    "Analyze concept and confirm genre",
+                    "Research 5-7 comp titles with performance data",
+                    "DEEP TROPE RESEARCH: Search MCP for existing tropes",
+                    "For each trope, research required scenes (opening/middle/closing)",
+                    "Document validation criteria and reader expectations",
+                    "Store/update tropes in MCP"
+                ],
+                output: "Market research report, 10-15 trending tropes with required scenes, commercial viability assessment",
+                mcp: "✅ Stores tropes with required scenes in series-planning-server",
+                gate: false
+            },
+            {
+                id: 2,
+                name: "Phase 2\nGenre Pack\nSelection",
+                fullName: "Phase 2: Genre Pack Selection",
+                type: "planning",
+                agent: "System",
+                description: "Confirms genre pack loaded from Phase 0 and validated in Phase 1.",
+                process: [
+                    "Genre characteristics confirmed",
+                    "Escalation pattern loaded",
+                    "Templates accessible"
+                ],
+                output: "Genre pack ready for Series Architect",
+                mcp: "No database interaction",
+                gate: false
+            },
+            {
+                id: 3,
+                name: "Phase 3\nSeries Architect\n(Series Structure)",
+                fullName: "Phase 3: Series Architect (Series Structure - Genre-Aware)",
+                type: "planning",
+                agent: "Series Architect Agent",
+                description: "Plans book-level structure using genre-aware patterns. Designs worldbuilding, character arcs, relationships, trope execution, and 5-book structure.",
+                process: [
+                    "Load genre pack manifest.json",
+                    "Plan WORLDBUILDING ARCHITECTURE with limitations",
+                    "Plan CHARACTER ARCS (motivation, fear, flaw, transformation)",
+                    "Plan RELATIONSHIP PROGRESSIONS (all types, not just romance)",
+                    "Plan TROPE EXECUTION with required scene placements",
+                    "Design 5-BOOK STRUCTURE with genre-specific escalation",
+                    "Build BOOK-LEVEL SETUP/PAYOFF REGISTRY"
+                ],
+                output: "Series architecture, worldbuilding rules, character arcs, relationship progressions, trope execution plan, 5-book structure, setup/payoff registry",
+                mcp: "✅ Records trope usage in series-planning-server | ❌ Does NOT store series structure yet (waits for approval)",
+                gate: false
+            },
+            {
+                id: 4,
+                name: "Phase 4\nSERIES-LEVEL\nNPE VALIDATION",
+                fullName: "Phase 4: SERIES-LEVEL NPE VALIDATION (Structure Gate)",
+                type: "gate",
+                agent: "NPE Series Validator Agent",
+                description: "⭐ QUALITY GATE: Validates 7 categories at series/book level. Score must be ≥80 to proceed. This is series structure validation, not scene-level.",
+                process: [
+                    "1. Character Arc Logic (20%): Motivation/fear/flaw defined, transformation earned",
+                    "2. Relationship Progression Logic (15%): Trust changes realistic, bridge events",
+                    "3. Trope Execution Validation (20%): Required scenes present, criteria met",
+                    "4. Plot Thread Coherence (15%): Setup/payoff complete, conflicts resolve",
+                    "5. Worldbuilding Consistency (10%): Rules defined, no violations",
+                    "6. Stakes Escalation Logic (10%): Genre-appropriate escalation",
+                    "7. Information Economy (10%): Revelation cascade, fair-play clues"
+                ],
+                output: "Validation report, overall score (0-100), violation list, PASS/FAIL decision",
+                mcp: "❌ No database storage (validation metadata not stored)",
+                gate: true,
+                gateCondition: "Score ≥ 80 to PASS → Proceed to Phase 5 | Score < 80 to FAIL → Return to Phase 3"
+            },
+            {
+                id: 5,
+                name: "Phase 5\nCommercial\nValidation",
+                fullName: "Phase 5: Commercial Validation",
+                type: "planning",
+                agent: "Commercial Validator Agent",
+                description: "Scores commercial viability across 5 categories using NPE score as input. Provides go/no-go recommendation.",
+                process: [
+                    "Score Market Fit (25%)",
+                    "Score Trope Execution (20%)",
+                    "Score Series Structure (25%) - uses NPE score",
+                    "Score Unique Angle (15%)",
+                    "Score Reader Satisfaction (15%)",
+                    "Risk assessment (Low/Medium/Critical)",
+                    "Go/no-go recommendation"
+                ],
+                output: "Commercial viability score (0-10), risk assessment, recommendation (APPROVE/REVISE/REJECT)",
+                mcp: "No database interaction",
+                gate: false
+            },
+            {
+                id: 6,
+                name: "Phase 6\nWriting Team\nReview",
+                fullName: "Phase 6: Writing Team Review & Refinement",
+                type: "writing",
+                agent: "Miranda (Showrunner) + Genre Specialists",
+                description: "Writing team reviews validated plan for writability and narrative quality. Genre specialists check accuracy.",
+                process: [
+                    "Miranda coordinates review of validated plan",
+                    "Genre Specialist Agents review for accuracy:",
+                    "  - Detective Logan (police procedural)",
+                    "  - Dr. Viktor (psychological authenticity)",
+                    "  - Professor Mira (worldbuilding consistency)",
+                    "Writing Team refines: character arcs, plot threads, scene possibilities, trope execution"
+                ],
+                output: "Refined series plan, Writing Team notes and recommendations, Status: READY FOR USER REVIEW",
+                mcp: "❌ No database storage yet (awaits user approval)",
+                gate: false
+            },
+            {
+                id: 7,
+                name: "Phase 7\nUSER REVIEW\n& APPROVAL",
+                fullName: "Phase 7: User Review & Approval",
+                type: "user",
+                agent: "User",
+                description: "⭐ CRITICAL GATE: User reviews all planning documents and authorizes MCP database storage. Nothing stored without explicit approval.",
+                process: [
+                    "User reviews:",
+                    "  - Market research report",
+                    "  - Series architecture",
+                    "  - NPE validation report (score, violations)",
+                    "  - Commercial viability assessment",
+                    "  - Writing Team refinement notes",
+                    "User decides: APPROVE / REQUEST REVISIONS / REJECT",
+                    "User authorizes MCP database storage"
+                ],
+                output: "User approval decision, authorization for database commit",
+                mcp: "This is USER CONTROL - Nothing stored without explicit approval",
+                gate: true,
+                gateCondition: "APPROVE → Phase 8 (MCP Commit) | REVISE → Return to appropriate phase | REJECT → End process"
+            },
+            {
+                id: 8,
+                name: "Phase 8\nMCP DATABASE\nCOMMIT",
+                fullName: "Phase 8: MCP Database Commit (ONLY AFTER APPROVAL)",
+                type: "user",
+                agent: "System",
+                description: "⭐ ONLY AFTER USER APPROVAL: Stores validated data (not validation metadata) in MCP servers. This is the single source of truth.",
+                process: [
+                    "Store character arcs → character-planning-server",
+                    "Store character knowledge timelines → character-planning-server",
+                    "Store relationships with trust progression → series-planning-server",
+                    "Store worldbuilding rules → series-planning-server",
+                    "Store setup/payoff registry → core-continuity-server",
+                    "Update trope instances with validation status → series-planning-server"
+                ],
+                output: "All validated data stored in MCP database",
+                mcp: "✅ Stores VALIDATED DATA in: character-planning-server, series-planning-server, core-continuity-server | ❌ Does NOT store: NPE scores, violation reports, commercial viability metadata",
+                gate: false
+            },
+            {
+                id: 9,
+                name: "Phase 9\nChapter Planning\n(Chapter Structure)",
+                fullName: "Phase 9: Writing Team Plans Chapters (Chapter Structure)",
+                type: "writing",
+                agent: "Miranda + Bailey + Writing Team",
+                description: "Writing team expands book-level structure to chapter-level detail. Queries MCP for context.",
+                process: [
+                    "Miranda coordinates chapter planning for Book 1",
+                    "Bailey/team expand to chapter-level (25 chapters)",
+                    "Use genre pack beat sheets for chapter structure",
+                    "Query MCP for: character knowledge states, relationship trust levels, trope required scenes, setup/payoff elements",
+                    "Plan scene-by-scene breakdown per chapter"
+                ],
+                output: "Chapter-level outlines for Book 1, scene-by-scene plans, ready for writing execution",
+                mcp: "✅ Queries data from MCP (character knowledge, relationships, tropes, setups)",
+                gate: false
+            },
+            {
+                id: 10,
+                name: "Phase 10\nSCENE-LEVEL\nNPE VALIDATION",
+                fullName: "Phase 10: SCENE-LEVEL NPE VALIDATION (Scene Detail Validation)",
+                type: "gate",
+                agent: "NPE Scene Validator (during writing)",
+                description: "Validates scene details during writing execution. Uses 357 detailed NPE rules across 10 categories. Different from Phase 4.",
+                process: [
+                    "validate_scene_architecture",
+                    "validate_dialogue_physics",
+                    "log_character_decision",
+                    "validate_causality_chain",
+                    "analyze_chapter_pacing",
+                    "validate_information_economy",
+                    "track_stakes_escalation",
+                    "track_relationship_tension",
+                    "calculate_npe_compliance",
+                    "get_npe_violations"
+                ],
+                output: "Scene-level compliance scores, dialogue/POV/pacing issues, character behavioral palette violations",
+                mcp: "✅ Uses existing NPE Config MCP Server (4 specialized servers)",
+                gate: false
+            },
+            {
+                id: 11,
+                name: "Phase 11\nWriting\nExecution",
+                fullName: "Phase 11: Writing Execution",
+                type: "writing",
+                agent: "Bailey (First Drafter) + Full Writing Team",
+                description: "Bailey writes scenes based on chapter plans. Full writing team collaborates with continuous MCP queries and scene-level NPE validation.",
+                process: [
+                    "Bailey writes scenes based on chapter plans",
+                    "Tessa (Continuity) validates consistency",
+                    "Edna (Editor) reviews pacing and quality",
+                    "Genre specialists provide expertise",
+                    "Scene-Level NPE validation runs continuously",
+                    "Miranda coordinates and approves",
+                    "Constant MCP queries: 'What does character know?', 'What's trust level?', 'What trope scene needed?'"
+                ],
+                output: "Written chapters/scenes, publication-ready book",
+                mcp: "✅ Heavy query usage (single source of truth for all validated data)",
+                gate: false
+            }
+        ];
+        
+        // Set up SVG
+        const svg = d3.select("#visualization");
+        const width = svg.node().getBoundingClientRect().width;
+        const height = 900;
+        
+        // Define arrow marker
+        svg.append("defs").append("marker")
+            .attr("id", "arrowhead")
+            .attr("viewBox", "0 -5 10 10")
+            .attr("refX", 25)
+            .attr("refY", 0)
+            .attr("markerWidth", 6)
+            .attr("markerHeight", 6)
+            .attr("orient", "auto")
+            .append("path")
+            .attr("d", "M0,-5L10,0L0,5")
+            .attr("fill", "#94a3b8");
+        
+        // Calculate positions - Flowing river layout (sequential, no skipping)
+        const nodeWidth = 140;
+        const nodeHeight = 80;
+        const horizontalSpacing = 180;
+        const verticalSpacing = 140;
+        
+        // Define positions in a flowing river pattern (left to right, then next row)
+        const layoutPositions = {
+            '-1': { x: 0.5, y: 0.5 },    // User - top center
+            
+            // Row 1: Planning phases (left to right)
+            '0': { x: 0.15, y: 1.8 },    // Genre Pack Check
+            '1': { x: 0.38, y: 1.8 },    // Market Research
+            '2': { x: 0.62, y: 1.8 },    // Genre Pack Selection
+            '3': { x: 0.85, y: 1.8 },    // Series Architect
+            
+            // Row 2: Quality Gate + Validation (right to left)
+            '4': { x: 0.85, y: 2.8 },    // NPE Validation - GATE
+            '5': { x: 0.62, y: 2.8 },    // Commercial Validation
+            '6': { x: 0.38, y: 2.8 },    // Writing Team Review
+            '7': { x: 0.15, y: 2.8 },    // User Approval - CRITICAL GATE
+            
+            // Row 3: Database + Writing (left to right)
+            '8': { x: 0.15, y: 3.8 },    // MCP Database Commit
+            '9': { x: 0.38, y: 3.8 },    // Chapter Planning
+            '10': { x: 0.62, y: 3.8 },   // Scene-Level NPE
+            '11': { x: 0.85, y: 3.8 }    // Writing Execution
+        };
+        
+        phases.forEach(phase => {
+            const pos = layoutPositions[phase.id.toString()];
+            phase.x = width * pos.x;
+            phase.y = 60 + (pos.y * verticalSpacing);
+        });
+        
+        // Draw links - Sequential flow (no parallel paths)
+        const linkPairs = [
+            [-1, 0],   // User to Phase 0
+            [0, 1],    // Phase 0 to 1
+            [1, 2],    // Phase 1 to 2
+            [2, 3],    // Phase 2 to 3
+            [3, 4],    // Phase 3 to 4
+            [4, 5],    // Phase 4 to 5
+            [5, 6],    // Phase 5 to 6
+            [6, 7],    // Phase 6 to 7
+            [7, 8],    // Phase 7 to 8
+            [8, 9],    // Phase 8 to 9
+            [9, 10],   // Phase 9 to 10
+            [10, 11]   // Phase 10 to 11
+        ];
+        
+        const links = svg.append("g").selectAll("path")
+            .data(linkPairs)
+            .enter()
+            .append("path")
+            .attr("class", d => {
+                const targetPhase = phases.find(p => p.id === d[1]);
+                return targetPhase && targetPhase.gate ? "link critical" : "link";
+            })
+            .attr("d", d => {
+                const source = phases.find(p => p.id === d[0]);
+                const target = phases.find(p => p.id === d[1]);
+                
+                const sx = source.x;
+                const sy = source.y + nodeHeight/2;
+                const tx = target.x;
+                const ty = target.y - nodeHeight/2;
+                
+                // Create smooth curved path
+                const dx = tx - sx;
+                const dy = ty - sy;
+                
+                // Use cubic bezier for smoother river-like flow
+                const cx1 = sx + dx * 0.5;
+                const cy1 = sy;
+                const cx2 = tx - dx * 0.5;
+                const cy2 = ty;
+                
+                return `M ${sx} ${sy} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${tx} ${ty}`;
+            });
+        
+        // Draw nodes
+        const nodes = svg.append("g").selectAll("g")
+            .data(phases)
+            .enter()
+            .append("g")
+            .attr("class", d => d.isUser ? "node user-node" : "node")
+            .attr("transform", d => `translate(${d.x - nodeWidth/2}, ${d.y - nodeHeight/2})`)
+            .on("click", function(event, d) {
+                // Remove previous selection
+                d3.selectAll(".node").classed("selected", false);
+                // Add selection to clicked node
+                d3.select(this).classed("selected", true);
+                // Show details
+                showDetails(d);
+            });
+        
+        // Node rectangles
+        nodes.append("rect")
+            .attr("width", nodeWidth)
+            .attr("height", nodeHeight)
+            .attr("rx", 8)
+            .attr("fill", d => {
+                if (d.type === "planning") return "#3b82f6";
+                if (d.type === "gate") return "#f59e0b";
+                if (d.type === "writing") return "#10b981";
+                if (d.type === "user") return "#8b5cf6";
+                return "#6b7280";
+            })
+            .attr("stroke", "#1f2937")
+            .attr("stroke-width", 2);
+        
+        // Node labels
+        nodes.append("text")
+            .attr("class", "node-label")
+            .attr("x", nodeWidth / 2)
+            .attr("y", nodeHeight / 2)
+            .attr("dy", "0.35em")
+            .attr("fill", "white")
+            .selectAll("tspan")
+            .data(d => d.name.split("\n"))
+            .enter()
+            .append("tspan")
+            .attr("x", nodeWidth / 2)
+            .attr("dy", (d, i) => i === 0 ? "-0.6em" : "1.2em")
+            .text(d => d);
+        
+        // Show details function
+        function showDetails(phase) {
+            const detailsDiv = document.getElementById("details-content");
+            
+            let html = `
+                <h2>${phase.fullName}</h2>
+                <p><strong>${phase.description}</strong></p>
+                
+                <h3>👤 Agent</h3>
+                <span class="badge agent">${phase.agent}</span>
+                
+                <h3>📋 Process</h3>
+                <ul>
+                    ${phase.process.map(p => `<li>${p}</li>`).join('')}
+                </ul>
+                
+                <h3>📤 Output</h3>
+                <p>${phase.output}</p>
+                
+                <h3>🔌 MCP Interaction</h3>
+                <p>${phase.mcp}</p>
+            `;
+            
+            if (phase.gate) {
+                html += `
+                    <h3>⭐ Quality Gate</h3>
+                    <span class="badge gate">QUALITY GATE</span>
+                    <p>${phase.gateCondition}</p>
+                `;
+            }
+            
+            detailsDiv.innerHTML = html;
+        }
+        
+        // Set timestamp
+        document.getElementById('timestamp').textContent = new Date().toLocaleString();
+        
+        // Auto-select first phase
+        setTimeout(() => {
+            d3.select(".node").dispatch("click");
+        }, 100);
+    </script>
+</body>
+</html>
