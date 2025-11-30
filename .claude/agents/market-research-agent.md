@@ -97,10 +97,16 @@ I'm the Market Research Agent for the BQ-Studio writing system. I analyze curren
 3. **Research Genre Conventions**
    - Web search: "[genre] conventions reader expectations"
    - Web search: "[genre] bestsellers structure analysis"
+   - Web search: "[genre] typical word count chapter count"
    - Analyze 5-10 comp titles for patterns
    - Extract common protagonist archetypes
    - Identify typical escalation patterns
    - Research genre-specific terminology
+   - **Research structure metrics:**
+     * Typical word count range (min, max, target)
+     * Typical chapter count range (min, max, target)
+     * Words per chapter (calculated or researched)
+     * Series structure (standalone, duet, trilogy, 5-book-series, ongoing)
 
 4. **Generate Genre Pack Files**
 
@@ -181,6 +187,9 @@ Generating genre pack files...
    - Protagonist archetype: Soldier/Officer rising through ranks
    - Escalation pattern: Squad → Battalion → Planetary → Galactic
    - Core conflict: Survival, loyalty, moral cost of war
+   - Structure: 80k-120k words (target: 100k), 25-40 chapters (target: 32)
+   - Words per chapter: 2500-4000 (target: 3125)
+   - Series structure: 5-book-series
 
 ✅ Created: beat-sheets/military-campaign-structure.md
    - 5-book escalation based on comp analysis

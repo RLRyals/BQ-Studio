@@ -206,7 +206,7 @@
 <body>
     <div class="container">
         <header>
-            <h1>🎬 FictionLab 11-Phase Architecture</h1>
+            <h1>🎬 FictionLab 12-Phase Architecture</h1>
             <p>Interactive Visualization - Click any phase to see details</p>
         </header>
         
@@ -510,6 +510,28 @@
                 output: "Written chapters/scenes, publication-ready book",
                 mcp: "✅ Heavy query usage (single source of truth for all validated data)",
                 gate: false
+            },
+            {
+                id: 12,
+                name: "Phase 12\\nBook Production\\nLoop (Books 2-5)",
+                fullName: "Phase 12: Book Production Loop (Books 2-5)",
+                type: "writing",
+                agent: "Miranda + Bailey + Writing Team",
+                description: "⭐ NEW: Iterates through Books 2-5, repeating Phases 9-11 for each book. Queries MCP for series state, plans chapters with genre-based counts, validates scenes, and executes writing. User approval gate between each book.",
+                process: [
+                    "FOR each book in [Book 2, Book 3, Book 4, Book 5]:",
+                    "  1. Query MCP for series state (character arcs, relationships, setups/payoffs)",
+                    "  2. Determine chapter count from genre pack structure",
+                    "  3. Plan chapters (repeat Phase 9 logic)",
+                    "  4. Validate scenes (repeat Phase 10 logic)",
+                    "  5. Execute writing (repeat Phase 11 logic)",
+                    "  6. User approval gate before next book",
+                    "  7. MCP commit for completed book",
+                    "Loop until all 5 books complete"
+                ],
+                output: "All 5 books written and validated, complete series with continuity tracking",
+                mcp: "✅ Heavy query and update usage (continuity tracking across books, book-specific data commits)",
+                gate: false
             }
         ];
         
@@ -557,7 +579,10 @@
             '8': { x: 0.15, y: 3.8 },    // MCP Database Commit
             '9': { x: 0.38, y: 3.8 },    // Chapter Planning
             '10': { x: 0.62, y: 3.8 },   // Scene-Level NPE
-            '11': { x: 0.85, y: 3.8 }    // Writing Execution
+            '11': { x: 0.85, y: 3.8 },   // Writing Execution
+            
+            // Row 4: Book Production Loop (center)
+            '12': { x: 0.5, y: 4.8 }     // Book Production Loop (Books 2-5)
         };
         
         phases.forEach(phase => {
@@ -579,7 +604,8 @@
             [7, 8],    // Phase 7 to 8
             [8, 9],    // Phase 8 to 9
             [9, 10],   // Phase 9 to 10
-            [10, 11]   // Phase 10 to 11
+            [10, 11],  // Phase 10 to 11
+            [11, 12]   // Phase 11 to 12
         ];
         
         const links = svg.append("g").selectAll("path")

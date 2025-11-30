@@ -1,47 +1,39 @@
 {
   "_comment_name": "Display name for your genre pack. This appears when listing available packs. Examples: 'Cozy Mystery', 'Paranormal Romance', 'Epic Fantasy', 'Contemporary Romance'",
   "name": "Your Genre Name",
-
   "_comment_version": "Version number using semantic versioning (major.minor.patch). Start with 1.0.0 and increment as you make updates. Example: 1.0.0 -> 1.1.0 (added beat sheet) -> 2.0.0 (major restructure)",
   "version": "1.0.0",
-
   "_comment_description": "One or two sentences explaining what this genre pack supports. Be specific about subgenre. This helps users know if the pack fits their needs.",
   "description": "A brief description of what this genre pack supports. Include target subgenre and key features.",
-
   "_comment_author": "Your name, penname, or organization. Optional but helpful for attribution if sharing the pack.",
   "author": "Your Name or Penname",
-
   "_comment_created": "Date you created this pack in ISO format (YYYY-MM-DD). Helps track when pack might need updating.",
   "created": "2025-11-21",
-
   "_comment_updated": "Date of last significant update (optional). Update this when you make major revisions.",
   "updated": "2025-11-21",
-
   "genre": {
     "_comment_primary": "Broad genre category. Options: Romance, Mystery, Fantasy, Science Fiction, Thriller, Horror, Literary Fiction, Historical Fiction, Women's Fiction, etc.",
     "primary": "Primary Genre",
-
     "_comment_subgenre": "Specific subgenre within primary category. Be as specific as needed. Examples: 'Cozy Mystery', 'Paranormal Romance', 'Epic Fantasy', 'Contemporary Romance', 'Urban Fantasy', 'Space Opera', 'Romantic Suspense'",
     "subgenre": "Specific Subgenre",
-
     "_comment_tags": "Keywords that describe your genre. Used for searchability and categorization. Include tropes, setting types, character archetypes common to your genre. Examples: ['small-town', 'amateur-sleuth', 'culinary'] for cozy mystery, or ['fated-mates', 'shifters', 'urban'] for paranormal romance",
-    "tags": ["tag1", "tag2", "tag3", "add-more-as-needed"]
+    "tags": [
+      "tag1",
+      "tag2",
+      "tag3",
+      "add-more-as-needed"
+    ]
   },
-
   "content_ratings": {
     "_comment_violence": "How graphic is violence in this genre? Options: 'none' (no violence), 'low' (implied or minimal), 'medium' (action scenes but not graphic), 'high' (graphic violence common). Examples: Cozy mystery = 'low', Thriller = 'high', Romance = 'none' to 'low'",
     "violence": "none|low|medium|high",
-
     "_comment_heat_level": "Romance/intimacy level. Options: 'none' (no romance or closed door), 'sweet' (kissing only), 'warm' (mild sensuality), 'hot' (explicit but not primary focus), 'explicit' (detailed intimate scenes). For non-romance: usually 'none' or 'sweet'. Romance varies by subgenre.",
     "heat_level": "none|sweet|warm|hot|explicit",
-
     "_comment_language": "Profanity level. Options: 'clean' (no profanity), 'moderate' (occasional mild swearing), 'explicit' (frequent strong language). Examples: Cozy mystery = 'clean', Urban fantasy = 'moderate', Thriller = 'moderate' to 'explicit'",
     "language": "clean|moderate|explicit",
-
     "_comment_dark_themes": "Does this genre typically include heavy themes like trauma, abuse, mental health struggles, addiction, etc.? Boolean: true or false. Examples: Cozy mystery = false, Thriller = often true, Dark romance = true",
     "dark_themes": false
   },
-
   "structure": {
     "typical_word_count": {
       "_comment_word_count": "Standard word count range for your genre. Research current market standards. This helps with pacing and planning. Examples: Romance 50k-90k, Cozy mystery 60k-80k, Epic fantasy 100k-150k, Thriller 80k-100k, Category romance 50k-65k",
@@ -49,42 +41,41 @@
       "max": 90000,
       "target": 70000
     },
-
     "typical_chapter_count": {
       "_comment_chapter_count": "How many chapters are typical? This varies by genre and author preference. Used for pacing estimates and chapter planning. Examples: Romance 20-30 chapters, Thriller 30-40 short chapters, Fantasy 25-40 chapters",
       "min": 15,
       "max": 30,
       "target": 20
     },
-
-    "_comment_series_structure": "How are books in this genre typically published? Options: 'standalone' (each book complete, like some romance/thrillers), 'duet' (two-book stories, some dark romance), 'trilogy' (three-book arcs, common in fantasy), 'ongoing' (open-ended series like cozy mystery/urban fantasy)",
-    "series_structure": "standalone|duet|trilogy|ongoing"
+    "words_per_chapter": {
+      "_comment_words_per_chapter": "Average words per chapter for this genre. Calculated from typical_word_count / typical_chapter_count but can be adjusted for genre pacing. Examples: Thriller 2000-3000 (fast pacing), Fantasy 3000-5000 (slower, more descriptive), Romance 2500-4000",
+      "min": 2000,
+      "max": 4000,
+      "target": 3500
+    },
+    "_comment_series_structure": "How are books in this genre typically published? Options: 'standalone' (each book complete, like some romance/thrillers), 'duet' (two-book stories, some dark romance), 'trilogy' (three-book arcs, common in fantasy), '5-book-series' (common in urban fantasy, romance series), 'ongoing' (open-ended series like cozy mystery/urban fantasy)",
+    "series_structure": "standalone|duet|trilogy|5-book-series|ongoing"
   },
-
   "files": {
     "_comment_files": "List all the files in your genre pack. Paths are relative to the genre pack folder. Update this list as you add or remove files. These tell BQ-Studio which resources are available.",
-
     "_comment_beat_sheets": "Story structure frameworks for your genre. Include at least one primary structure. Can add alternatives for variety or different story types (e.g., standalone vs. series, different tropes). Files should be in markdown format.",
     "beat_sheets": [
       "beat-sheets/primary-structure.md",
       "beat-sheets/alternative-structure.md",
       "beat-sheets/series-arc-framework.md"
     ],
-
     "_comment_style_guides": "Writing conventions, voice, and tone guidelines specific to your genre. Break into multiple files if helpful (conventions, voice, tropes). These help maintain genre-appropriate writing style.",
     "style_guides": [
       "style-guides/genre-conventions.md",
       "style-guides/voice-and-tone.md",
       "style-guides/common-tropes.md"
     ],
-
     "_comment_validation_rules": "Quality checklists and genre requirements. Use during planning and revision to ensure books meet genre standards. Can have multiple files for different validation aspects (requirements, market standards, trope execution).",
     "validation_rules": [
       "validation-rules/genre-requirements.md",
       "validation-rules/market-standards.md",
       "validation-rules/trope-checklist.md"
     ],
-
     "_comment_templates": "Planning document templates customized for your genre. Include character profiles, world-building frameworks, plot templates, series bibles - whatever your genre needs for thorough planning.",
     "templates": [
       "templates/character-template.md",
@@ -93,35 +84,32 @@
       "templates/series-bible-template.md"
     ]
   },
-
   "skills_integration": {
     "_comment_skills": "Which BQ-Studio skills should automatically use this genre pack? Usually all set to true. Set to false if a particular skill doesn't apply to your genre or planning style.",
-
     "_comment_series_planning": "Should series-planning skill use this pack? (Planning multi-book series, world-building, character arcs across books)",
     "series_planning": true,
-
     "_comment_book_planning": "Should book-planning skill use this pack? (Planning individual books, beat sheets, story structure)",
     "book_planning": true,
-
     "_comment_chapter_planning": "Should chapter-planning skill use this pack? (Breaking books into chapters, scene planning)",
     "chapter_planning": true,
-
     "_comment_scene_writing": "Should scene-writing skill use this pack? (Actual prose writing, style guide application)",
     "scene_writing": true,
-
     "_comment_review_qa": "Should review-qa skill use this pack? (Quality checks, validation rules, genre compliance)",
     "review_qa": true
   },
-
   "_comment_custom_fields": "You can add custom fields here for your own tracking or organization. BQ-Studio will ignore fields it doesn't recognize, so feel free to add whatever helps you. Examples: 'market_positioning', 'comp_titles', 'target_audience', etc.",
-
   "market_positioning": {
     "_comment_example": "This is an example custom field you could add. Not required, but might be useful.",
     "target_audience": "Who reads this genre? Age range, gender, preferences",
-    "comp_titles": ["Similar Book 1", "Similar Book 2", "Similar Book 3"],
-    "unique_selling_points": ["What makes your approach to this genre special"],
+    "comp_titles": [
+      "Similar Book 1",
+      "Similar Book 2",
+      "Similar Book 3"
+    ],
+    "unique_selling_points": [
+      "What makes your approach to this genre special"
+    ],
     "trends": "Current market trends in this genre (optional, update regularly)"
   },
-
   "notes": "Any additional notes about this genre pack. Could include your learning journey, why you created it, who you're targeting, what makes your interpretation of the genre unique, etc."
 }
