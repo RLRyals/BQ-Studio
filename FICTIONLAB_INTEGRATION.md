@@ -35,7 +35,8 @@ FictionLab Desktop App
 │   ├── scene-server (3006)
 │   ├── core-continuity-server (3007)
 │   ├── review-server (3008)
-│   └── reporting-server (3009)
+│   ├── reporting-server (3009)
+│   └── npe-server (3011)
 ├── Database Admin Interface (port 3010)
 ├── Typing Mind (web-based AI chat)
 └── Claude Desktop Integration
