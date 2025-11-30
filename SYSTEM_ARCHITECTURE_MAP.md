@@ -16,7 +16,7 @@
 
 ---
 
-## COMPLETE 11-PHASE PIPELINE
+## COMPLETE 13-PHASE PIPELINE
 
 ```
 Phase 0: Genre Pack Check & Creation (if needed)
@@ -37,11 +37,24 @@ Phase 7: User Review & Approval
     ↓
 Phase 8: MCP Database Commit (ONLY AFTER APPROVAL)
     ↓
-Phase 9: Writing Team Plans Chapters (SMALL ROCKS)
+Phase 8.5: Book Iteration Orchestrator (NEW - Multi-Book Loop Start)
     ↓
-Phase 10: SCENE-LEVEL NPE VALIDATION (Sand Validation)
+┌───▼──────────────────────────────────────┐
+│ FOR EACH BOOK (1-5):                     │
+│                                          │
+│  Phase 9: Chapter Planning (Dynamic)     │
+│      ↓                                   │
+│  Phase 10: Scene-Level NPE Validation    │
+│      ↓                                   │
+│  Phase 11: Writing Execution             │
+│      ↓                                   │
+│  Phase 11.5: Book Completion Check       │
+│      ↓                                   │
+│  IF more books: → Return to Phase 8.5    │
+│  IF complete: → Exit loop                │
+└──────────────────────────────────────────┘
     ↓
-Phase 11: Writing Execution
+Phase 12: Series Finalization
 ```
 
 ---
@@ -410,33 +423,111 @@ mcp__series_planning__update_trope_instance({
 
 ---
 
-### Phase 9: Writing Team Plans Chapters (SMALL ROCKS)
+### Phase 8.5: Book Iteration Orchestrator ⭐ NEW
 
-**Lead:** Miranda + Bailey + Writing Team
-**Input:** Approved series structure + data from MCP
+**Purpose:** Manage sequential book production workflow
+**Trigger:** After MCP database commit (Phase 8)
 **Process:**
 ```
-1. Miranda coordinates chapter planning for Book 1
-2. Bailey/team expand book-level structure to chapter-level:
-   - Book 1 (25 chapters) → Chapter 1: [what happens]
-   - Chapter 2: [what happens], etc.
+FOR EACH book in series (Books 1-5):
 
-3. Use genre pack beat sheets for chapter structure
-4. Query MCP for context:
-   - Character knowledge states
-   - Relationship trust levels
-   - Trope required scenes to include
-   - Setup/payoff elements
+1. Select next book from series plan
+2. Load book-level data from MCP:
+   - Character arcs for this book
+   - Relationship trust levels at this point
+   - Plot threads active in this book
+   - Trope required scenes for this book
+   - Setup/payoff elements for this book
 
-5. Plan scene-by-scene breakdown per chapter
+3. Load genre pack manifest
+
+4. Calculate dynamic chapter count:
+   chapter_count = calculate_chapter_count(
+     genre_pack_target = manifest.typical_chapter_count.target,
+     book_number = current_book,
+     book_complexity = analyze_plot_threads(current_book)
+   )
+
+   Example Logic:
+   - Book 1 (setup): target + 20% (e.g., 20 → 24 chapters)
+   - Books 2-4 (middle): target count (e.g., 20 chapters)
+   - Book 5 (conclusion): target + 10% (e.g., 20 → 22 chapters)
+
+   Always respect genre pack min/max limits.
+
+5. Set book context for Phases 9-11:
+   - current_book_number
+   - current_book_title
+   - chapter_count (calculated above)
+   - book_specific_data (from MCP)
+
+6. Proceed to Phase 9 (Chapter Planning) for current book
 ```
 
 **Output:**
-- Chapter-level outlines for Book 1
-- Scene-by-scene plans
-- Ready for writing execution
+- Current book selected
+- Dynamic chapter count calculated from genre pack
+- Book context loaded
+- Ready for chapter planning
 
-**MCP:** ✅ **Queries data** (character knowledge, relationships, tropes, setups)
+**MCP:** ✅ **Queries book-specific data** filtered by book_number
+
+**This phase solves:**
+- ❌ Hard-coded chapter counts → ✅ Genre-aware dynamic calculation
+- ❌ Only Book 1 processed → ✅ All 5 books processed sequentially
+- ❌ No iteration mechanism → ✅ Clear book-by-book workflow
+
+---
+
+### Phase 9: Chapter Planning (SMALL ROCKS) - Per Book
+
+**Lead:** Miranda + Bailey + Writing Team
+**Input:**
+- Current book from Phase 8.5
+- Dynamic chapter count (genre pack + book position)
+- Book-specific data from MCP
+
+**Process:**
+```
+1. Miranda coordinates chapter planning for CURRENT BOOK
+   (e.g., "Book 3: Shadow's Edge")
+
+2. Use calculated chapter count from Phase 8.5:
+   - NOT hard-coded 25 chapters
+   - Dynamically calculated based on genre pack
+   - Example: Romance Book 1 might be 24 chapters
+   - Example: Thriller Book 3 might be 40 chapters
+   - Example: Fantasy Book 5 might be 42 chapters
+
+3. Bailey/team expand book-level structure to chapter-level:
+   - Book [N] ([calculated_chapter_count] chapters)
+     → Chapter 1: [what happens]
+     → Chapter 2: [what happens]
+     → ... etc.
+
+4. Use genre pack beat sheets for chapter structure
+
+5. Query MCP for context SPECIFIC TO THIS BOOK:
+   - Character knowledge states at Book [N]
+   - Relationship trust levels at Book [N]
+   - Trope required scenes for Book [N]
+   - Setup/payoff elements for Book [N]
+
+6. Plan scene-by-scene breakdown per chapter
+```
+
+**Output:**
+- Chapter-level outlines for CURRENT BOOK
+- Scene-by-scene plans
+- Ready for writing execution (Phase 11)
+
+**MCP:** ✅ **Queries data** filtered by current_book_number
+
+**Genre Pack Integration:**
+- Loads typical_chapter_count from manifest.json
+- Applies book position modifiers (setup/conclusion bonuses)
+- Respects min/max limits
+- Adapts to genre conventions automatically
 
 ---
 
@@ -473,30 +564,111 @@ These validate WRITTEN SCENES (not planned structure).
 
 ---
 
-### Phase 11: Writing Execution
+### Phase 11: Writing Execution - Per Book
 
 **Lead:** Bailey (First Drafter) + Full Writing Team
+**Input:** Chapter plans for current book from Phase 9
 **Process:**
 ```
-1. Bailey writes scenes based on chapter plans
+1. Bailey writes scenes based on chapter plans for CURRENT BOOK
 2. Tessa (Continuity) validates consistency
 3. Edna (Editor) reviews pacing and quality
 4. Genre specialists provide expertise
 5. Scene-Level NPE validation runs continuously
 6. Miranda coordinates and approves
 
-Writing Team queries MCP constantly:
-- "What does Theodore know at Book 2, Ch 5?"
-- "What's trust level between characters here?"
-- "What trope scene needs to be in this chapter?"
-- "What setup from Book 1 needs to pay off now?"
+Writing Team queries MCP constantly with book context:
+- "What does Theodore know at Book [N], Ch 5?"
+- "What's trust level between characters at Book [N]?"
+- "What trope scene needs to be in Book [N], chapter X?"
+- "What setup from Book 1 needs to pay off in Book [N]?"
 ```
 
 **Output:**
-- Written chapters/scenes
-- Publication-ready book
+- Written chapters/scenes for CURRENT BOOK
+- Publication-ready book [N]
 
-**MCP:** ✅ **Heavy query usage** (single source of truth for all validated data)
+**MCP:** ✅ **Heavy query usage** (single source of truth, filtered by book_number)
+
+---
+
+### Phase 11.5: Book Completion Check ⭐ NEW
+
+**Trigger:** After current book writing completes (Phase 11)
+**Process:**
+```
+1. Validate book completion:
+   - All chapters written
+   - All scenes validated
+   - NPE compliance verified
+   - Continuity checked
+
+2. User review of completed book:
+   - Present finished book for approval
+   - Gather feedback
+   - Make final revisions if needed
+
+3. Mark book status in tracking:
+   - book_status = "complete"
+   - Record completion date
+   - Archive deliverable
+
+4. Check series progress:
+   IF more books remain (current_book < 5):
+      → Return to Phase 8.5 (next book)
+   ELSE:
+      → Proceed to Phase 12 (Series Finalization)
+```
+
+**Output:**
+- Completed book approved
+- Series progress updated
+- Next book triggered OR series complete
+
+**This phase ensures:**
+- Each book is fully completed before starting next
+- User approval at book level (in addition to series level)
+- Clear progress tracking
+- All 5 books get written
+
+---
+
+### Phase 12: Series Finalization
+
+**Trigger:** All 5 books completed (Phase 11.5 exits loop)
+**Process:**
+```
+1. Compile series-level artifacts:
+   - Complete series Bible
+   - Cross-book continuity report
+   - Character arc summaries (all 5 books)
+   - Relationship progression charts
+   - Worldbuilding reference
+
+2. Generate marketing materials:
+   - Series description
+   - Book blurbs (all 5 books)
+   - Trope lists per book
+   - Comp title analysis
+
+3. Final quality checks:
+   - Series-level continuity validation
+   - Setup/payoff registry verification
+   - Character arc completion
+   - Plot thread resolution
+
+4. Export deliverables:
+   - 5 publication-ready books
+   - Series Bible
+   - Marketing package
+   - Continuity documentation
+```
+
+**Output:**
+- Complete 5-book series ✅
+- Series Bible
+- Marketing materials
+- Production complete
 
 ---
 
@@ -864,6 +1036,7 @@ Only VALIDATED DATA is stored, not validation metadata.
 - Supports any genre via genre pack creation
 - Genre-aware escalation patterns
 - No forced romance in non-romance genres
+- **NEW:** Dynamic chapter counts match genre conventions
 
 ### 3. Trope Guidance
 - Required scenes guide Series Architect
@@ -874,16 +1047,36 @@ Only VALIDATED DATA is stored, not validation metadata.
 - MCP database prevents conflicting information
 - Writing Team queries validated data
 - No file searching, fast lookups
+- **NEW:** Book-specific context filtering
 
 ### 5. User Control
 - Nothing stored without approval
 - Writing Team reviews before commit
 - User authorizes database storage
+- **NEW:** Book-by-book approval gates
 
 ### 6. Multi-Layer Quality
 - Big rocks validated before writing
 - Sand validated during writing
 - Both structural and detail quality ensured
+
+### 7. Complete Series Production ⭐ NEW
+- **ALL 5 books** planned and written (not just Book 1)
+- Book iteration orchestrator manages workflow
+- Each book uses appropriate chapter count
+- Series finalization compiles deliverables
+- True commercial fiction production capability
+
+### 8. Genre-Aware Chapter Planning ⭐ NEW
+- No hard-coded chapter counts
+- Dynamic calculation from genre pack:
+  - Romance: 20-30 chapters (genre standard)
+  - Thriller: 30-50 shorter chapters (fast pacing)
+  - Fantasy: 25-45 chapters (worldbuilding space)
+- Book position modifiers:
+  - Book 1: +20% (setup needs space)
+  - Book 5: +10% (payoff needs space)
+- Respects genre pack min/max limits
 
 ---
 
@@ -895,20 +1088,43 @@ Only VALIDATED DATA is stored, not validation metadata.
 - Romance assumed in all genres
 - Single NPE validator trying to do everything
 - MCP storage automatic after validation
+- Single book production only
 
-**Version 2.0 (Current):**
+**Version 2.0 (November 2024):**
 - ✅ Genre pack creation capability
 - ✅ Deep trope research with required scenes
 - ✅ Genre-aware Series Architect (relationship-flexible)
 - ✅ Multi-layer NPE validation (big rocks + sand)
 - ✅ MCP storage only after user approval
 - ✅ 11-phase pipeline with proper gates
+- ❌ Only Book 1 planned/written
+- ❌ Hard-coded 25 chapters
+
+**Version 2.1 (November 30, 2024) - Current:**
+- ✅ ALL FEATURES FROM VERSION 2.0
+- ✅ Phase 8.5: Book Iteration Orchestrator (NEW)
+- ✅ Phase 11.5: Book Completion Check (NEW)
+- ✅ Phase 12: Series Finalization (NEW)
+- ✅ Dynamic chapter count calculation from genre packs
+- ✅ Multi-book production workflow (ALL 5 books)
+- ✅ Book-specific MCP context filtering
+- ✅ 13-phase pipeline with book iteration
+- ✅ Genre-aware chapter counts (no hard-coding)
+- ✅ Complete 5-book series production capability
+
+**Key Changes in Version 2.1:**
+1. **Removed hard-coded chapter counts** - Now dynamically calculated from genre pack
+2. **Added book iteration loop** - Phases 9-11 now process all 5 books sequentially
+3. **Added book orchestrator** - Phase 8.5 manages book-by-book workflow
+4. **Added completion gates** - Phase 11.5 validates each book before next
+5. **Added series finalization** - Phase 12 compiles complete series artifacts
 
 ---
 
 **ARCHITECTURE MAP COMPLETE**
 
 For implementation details, see:
+- `MULTI_BOOK_DYNAMIC_CHAPTERS_SOLUTION.md` (NEW - Version 2.1 design)
 - `MULTI_LAYER_NPE_VALIDATION_DESIGN.md`
 - `SERIES_ARCHITECT_ANALYSIS.md`
 - `.claude/agents/market-research-agent.md`
