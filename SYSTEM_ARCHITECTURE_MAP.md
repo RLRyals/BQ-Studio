@@ -1,13 +1,20 @@
 # MARKET-DRIVEN SERIES PRODUCTION SYSTEM
 ## Architecture Map & Updated Process Flow
 
-**Last Updated:** 2024-11-28
-**Version:** 2.0 (Genre-Aware + Multi-Layer NPE Validation)
+**Last Updated:** 2024-11-30
+**Version:** 2.1 (Series Production Loop + Chapter Review Gates)
 
 ---
 
-## KEY UPDATES IN VERSION 2.0
+## KEY UPDATES IN VERSION 2.1
 
+1. **Phase 12: Book Production Loop** - Iterates through Books 2-5 with inter-book continuity
+2. **Genre-Based Chapter Counts** - Chapter counts determined from genre pack research
+3. **Chapter-by-Chapter Review Gates** - User reviews each chapter plan for Book 1
+4. **Inter-Book Continuity Tracking** - MCP queries for character arcs, relationships, setups/payoffs
+5. **Book-Level Approval Gates** - User approval required between each book in series
+
+### Previous Updates (Version 2.0)
 1. **Genre Pack Creation** - Market Research Agent creates genre packs for new genres
 2. **Trope Research with Required Scenes** - Deep research stored in MCP
 3. **Genre-Aware Series Architect** - Uses genre-specific patterns, relationship-flexible
@@ -16,7 +23,7 @@
 
 ---
 
-## COMPLETE 11-PHASE PIPELINE
+## COMPLETE 12-PHASE PIPELINE
 
 ```
 Phase 0: Genre Pack Check & Creation (if needed)
@@ -38,10 +45,15 @@ Phase 7: User Review & Approval
 Phase 8: MCP Database Commit (ONLY AFTER APPROVAL)
     ↓
 Phase 9: Writing Team Plans Chapters (Chapter Structure)
+        [Book 1: Chapter-by-Chapter Review Gates]
     ↓
 Phase 10: SCENE-LEVEL NPE VALIDATION (Scene Detail Validation)
     ↓
-Phase 11: Writing Execution
+Phase 11: Writing Execution (Book 1)
+    ↓
+Phase 12: Book Production Loop (Books 2-5)
+        [Repeats Phases 9-11 for each book]
+        [Book-Level Approval Gates between books]
 ```
 
 ---
@@ -416,19 +428,34 @@ mcp__series_planning__update_trope_instance({
 **Input:** Approved series structure + data from MCP
 **Process:**
 ```
-1. Miranda coordinates chapter planning for Book 1
-2. Bailey/team expand book-level structure to chapter-level:
-   - Book 1 (25 chapters) → Chapter 1: [what happens]
+1. Miranda coordinates chapter planning for current book
+
+2. Determine chapter count from genre pack:
+   - Load genre pack manifest.json
+   - Extract structure.typical_chapter_count (min, max, target)
+   - Use target as default, adjust based on book complexity
+   - Example: Gothic Romance Horror = 20-35 chapters (target: 25)
+   - Example: Urban Fantasy Police Procedural = 25-35 chapters (target: 30)
+
+3. Bailey/team expand book-level structure to chapter-level:
+   - Book 1 ([genre-based count] chapters) → Chapter 1: [what happens]
    - Chapter 2: [what happens], etc.
 
-3. Use genre pack beat sheets for chapter structure
-4. Query MCP for context:
+4. Use genre pack beat sheets for chapter structure
+
+5. Query MCP for context:
    - Character knowledge states
    - Relationship trust levels
    - Trope required scenes to include
    - Setup/payoff elements
 
-5. Plan scene-by-scene breakdown per chapter
+6. Plan scene-by-scene breakdown per chapter
+
+7. FOR BOOK 1 ONLY: Chapter-by-Chapter Review Gate
+   - After each chapter is planned, present to user for review
+   - User approves or requests revisions
+   - Only proceed to next chapter after approval
+   - This ensures Book 1 foundation is solid before continuing
 ```
 
 **Output:**
@@ -497,6 +524,76 @@ Writing Team queries MCP constantly:
 - Publication-ready book
 
 **MCP:** ✅ **Heavy query usage** (single source of truth for all validated data)
+
+---
+
+### Phase 12: Book Production Loop (Books 2-5)
+
+**Lead:** Miranda + Bailey + Writing Team
+**Input:** Completed Book 1 + MCP series state
+**Process:**
+```
+FOR each book in [Book 2, Book 3, Book 4, Book 5]:
+
+  1. INTER-BOOK TRANSITION:
+     - Review book-level structure from Phase 3 (Series Architect)
+     - Query MCP for current series state:
+       * Character arcs progression (where are they now?)
+       * Relationship trust levels (current state)
+       * Setup/payoff registry (what needs to pay off this book?)
+       * Trope execution status (which required scenes are due?)
+     - Identify cliffhanger from previous book
+     - Plan opening that resolves/continues cliffhanger
+
+  2. CHAPTER PLANNING (Phase 9 repeated):
+     - Miranda coordinates chapter planning for current book
+     - Determine chapter count from genre pack (same as Phase 9 step 2)
+     - Bailey/team expand book-level structure to chapter-level
+     - Query MCP for context (character knowledge, relationships, tropes, setups)
+     - Plan scene-by-scene breakdown per chapter
+     - NOTE: No chapter-by-chapter review gate for Books 2-5
+       (only Book 1 has this gate)
+
+  3. SCENE-LEVEL NPE VALIDATION (Phase 10 repeated):
+     - Validate scene architecture during planning
+     - Run NPE compliance checks
+     - Ensure continuity with previous books
+
+  4. WRITING EXECUTION (Phase 11 repeated):
+     - Bailey writes scenes based on chapter plans
+     - Writing Team collaborates with MCP queries
+     - Scene-Level NPE validation runs continuously
+     - Miranda coordinates and approves
+
+  5. BOOK COMPLETION REVIEW GATE:
+     - Present completed book to user for review
+     - User approves or requests revisions
+     - Only proceed to next book after approval
+
+  6. MCP COMMIT FOR COMPLETED BOOK:
+     - Update character arcs progression
+     - Update relationship trust levels
+     - Mark setup/payoff elements as complete
+     - Update trope execution status
+     - Store book-specific data
+
+  LOOP continues until all 5 books are complete
+```
+
+**Output:**
+- Books 2-5 written and validated
+- Complete 5-book series with continuity tracking
+- All character arcs, relationships, and tropes executed across series
+
+**MCP:** ✅ **Heavy query and update usage**
+- Queries: Series state, character progression, relationship states, setup/payoff registry
+- Updates: Book completion data, character arc progression, relationship changes, trope execution status
+
+**Key Differences from Book 1:**
+- No chapter-by-chapter review gates (only book-level review)
+- Heavier MCP querying for inter-book continuity
+- Explicit inter-book transition planning
+- Book-level approval gates between each book
 
 ---
 
@@ -896,13 +993,21 @@ Only VALIDATED DATA is stored, not validation metadata.
 - Single NPE validator trying to do everything
 - MCP storage automatic after validation
 
-**Version 2.0 (Current):**
+**Version 2.0:**
 - ✅ Genre pack creation capability
 - ✅ Deep trope research with required scenes
 - ✅ Genre-aware Series Architect (relationship-flexible)
 - ✅ Multi-layer NPE validation (big rocks + sand)
 - ✅ MCP storage only after user approval
 - ✅ 11-phase pipeline with proper gates
+
+**Version 2.1 (Current):**
+- ✅ Phase 12: Book Production Loop for Books 2-5
+- ✅ Genre-based chapter count determination
+- ✅ Chapter-by-chapter review gates for Book 1
+- ✅ Inter-book continuity tracking via MCP
+- ✅ Book-level approval gates between books
+- ✅ 12-phase pipeline with series-wide production
 
 ---
 
