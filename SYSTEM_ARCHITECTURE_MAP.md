@@ -2,17 +2,20 @@
 ## Architecture Map & Updated Process Flow
 
 **Last Updated:** 2024-11-30
-**Version:** 2.1 (Series Production Loop + Chapter Review Gates)
+**Version:** 2.2 (Premise Development + Combined Genre Phase)
 
 ---
 
 ## KEY UPDATES IN VERSION 2.1
 
-1. **Phase 12: Book Production Loop** - Iterates through Books 2-5 with inter-book continuity
-2. **Genre-Based Chapter Counts** - Chapter counts determined from genre pack research
-3. **Chapter-by-Chapter Review Gates** - User reviews each chapter plan for Book 1
-4. **Inter-Book Continuity Tracking** - MCP queries for character arcs, relationships, setups/payoffs
-5. **Book-Level Approval Gates** - User approval required between each book in series
+1. **Phase 0: Premise Development** - "What if" brainstorming with broad trend analysis
+2. **Combined Genre Phase** - Genre pack check and selection merged into Phase 1
+3. **Deep Market Research** - Targeted research for specific concept (Phase 2)
+4. **Phase 12: Book Production Loop** - Iterates through Books 2-5 with inter-book continuity
+5. **Genre-Based Chapter Counts** - Chapter counts determined from genre pack research
+6. **Chapter-by-Chapter Review Gates** - User reviews each chapter plan for Book 1
+7. **Inter-Book Continuity Tracking** - MCP queries for character arcs, relationships, setups/payoffs
+8. **Book-Level Approval Gates** - User approval required between each book in series
 
 ### Previous Updates (Version 2.0)
 1. **Genre Pack Creation** - Market Research Agent creates genre packs for new genres
@@ -26,11 +29,11 @@
 ## COMPLETE 12-PHASE PIPELINE
 
 ```
-Phase 0: Genre Pack Check & Creation (if needed)
+Phase 0: Premise Development & Trend Analysis (NEW)
     ↓
-Phase 1: Market Research + Trope Research
+Phase 1: Genre Pack Management (Check/Create/Select)
     ↓
-Phase 2: Genre Pack Selection
+Phase 2: Deep Market Research + Trope Research
     ↓
 Phase 3: Series Architect (Series Structure - genre-aware)
     ↓
@@ -60,35 +63,63 @@ Phase 12: Book Production Loop (Books 2-5)
 
 ## PHASE-BY-PHASE DETAIL
 
-### Phase 0: Genre Pack Check & Creation (NEW)
+### Phase 0: Premise Development & Trend Analysis (NEW)
 
-**Agent:** Market Research Agent
-**Trigger:** User provides concept in genre without existing genre pack
+**Agent:** Brainstorming Agent (with Market Research capabilities)
+**Trigger:** Raw idea / "What if" question
+**Inputs:** Perplexity API (Real-time trends), Kindle Trends (Data)
 **Process:**
 ```
-Market Research Agent checks: `.claude/genre-packs/{genre-slug}/`
+1. BROAD TREND ANALYSIS:
+   - Identify currently hot genres/tropes using Perplexity/Kindle Trends
+   - Analyze seasonal patterns
 
-IF genre pack EXISTS:
-    → Load and proceed to Phase 1
+2. CONCEPT GENERATION:
+   - Analyze raw concept (e.g., "Willy Wonka but serial killer")
+   - Identify core hooks and potential conflicts
 
-IF genre pack MISSING:
-    → Ask user: "Create genre pack for [Genre]?"
-    → IF YES:
-        1. Research genre conventions (WebSearch)
-        2. Analyze 5-10 comp titles for patterns
-        3. Generate genre pack files:
-           - manifest.json (genre characteristics, escalation pattern)
-           - beat-sheets/series-arc-integration.md
-           - templates/protagonist-template.md
-           - templates/setting-template.md
-           - style-guides/genre-voice.md
-           - npe-physics/ (copy from _TEMPLATE_, customize)
-        4. Store in `.claude/genre-packs/{genre-slug}/`
-        5. Proceed to Phase 1
+3. PITCH DEVELOPMENT:
+   - Generate 3-5 pitches aligned with identified trends
+   - Explore different genre lenses for the same concept
+
+4. SELECTION:
+   - User selects preferred direction
+   - Define Target Genre
 ```
 
 **Output:**
-- ✅ Genre pack loaded or created
+- Refined Concept
+- Target Genre
+- Initial Commercial Potential Assessment
+
+**MCP:** No database interaction
+
+---
+
+### Phase 1: Genre Pack Management (Combined)
+
+**Agent:** Market Research Agent
+**Trigger:** Target Genre identified in Phase 0
+**Process:**
+```
+1. Check: `.claude/genre-packs/{genre-slug}/`
+
+2. IF genre pack EXISTS:
+   → Load pack
+   → Validate manifest with user (Review Gate)
+
+3. IF genre pack MISSING:
+   → Ask user: "Create genre pack for [Genre]?"
+   → IF YES:
+       a. Research genre conventions (WebSearch)
+       b. Analyze 5-10 comp titles for patterns
+       c. Generate genre pack files (manifest, beats, templates)
+       d. Present to user for approval
+       e. Store in `.claude/genre-packs/{genre-slug}/`
+```
+
+**Output:**
+- ✅ Loaded & Validated Genre Pack
 - ✅ Genre-specific escalation patterns available
 - ✅ Character/setting templates ready
 
@@ -96,48 +127,36 @@ IF genre pack MISSING:
 
 ---
 
-### Phase 1: Market Research + Trope Research
+### Phase 2: Deep Market Research + Trope Research
 
 **Agent:** Market Research Agent
-**Input:** Concept + genre pack (from Phase 0)
+**Input:** Refined Concept + Genre Pack
 **Process:**
 ```
-1. Analyze concept and confirm genre
-2. Research 5-7 comp titles with performance data
-3. DEEP TROPE RESEARCH (NEW):
-   For each trending trope:
+1. COMP TITLE RESEARCH:
+   - Find 5-7 specific comps for the *selected* premise
+   - Analyze performance data
+
+2. DEEP TROPE RESEARCH:
+   For each trending trope relevant to this specific story:
    a. Search MCP: mcp__list_tropes(search_query: "trope name")
    b. IF EXISTS: Update with new research
    c. IF NEW: Create with required scenes
-   d. Research required scenes:
-      - Opening scene (timing, validation criteria, examples)
-      - Middle scene(s) (timing, validation criteria, examples)
-      - Closing scene (timing, validation criteria, examples)
-   e. Document reader expectations and common pitfalls
-   f. Store/update in MCP:
-      mcp__create_trope() OR mcp__update_trope()
+   d. Research required scenes (Opening, Middle, Closing)
+   e. Document reader expectations
+   f. Store/update in MCP: mcp__create_trope()
 
-4. Identify market gaps and opportunities
-5. Score commercial viability (0-10)
+3. COMMERCIAL VALIDATION:
+   - Score the specific concept against the deep data
+   - Identify market gaps
 ```
 
 **Output:**
-- Market research report
-- 10-15 trending tropes with required scenes stored in MCP
-- Commercial viability assessment
+- Deep Market Research Report
+- Trope Catalog (stored in MCP)
+- Commercial Viability Score
 
 **MCP:** ✅ **Stores tropes with required scenes** in series-planning-server
-
----
-
-### Phase 2: Genre Pack Selection
-
-**Process:** Genre pack already loaded from Phase 0, confirmed in Phase 1
-
-**Output:**
-- Genre characteristics confirmed
-- Escalation pattern loaded
-- Templates accessible
 
 ---
 
@@ -467,36 +486,37 @@ mcp__series_planning__update_trope_instance({
 
 ---
 
-### Phase 10: SCENE-LEVEL NPE VALIDATION (Scene Detail Validation) ⭐ DURING WRITING
+### Phase 10: SCENE ARCHITECTURE VALIDATION (Structure Gate) ⭐ BEFORE WRITING
 
-**Process:** Happens during writing execution (Phase 11)
-**Tools:** Existing NPE MCP tools
+**Process:** Happens AFTER planning but BEFORE writing
+**Tools:** NPE Config MCP (Structure Validations)
 **Validation:**
 ```
-Uses 357 detailed NPE rules across 10 categories:
+Validates the BLUEPRINT of the scene (not the prose):
 
-- validate_scene_architecture
-- validate_dialogue_physics
-- log_character_decision
-- validate_causality_chain
-- analyze_chapter_pacing
-- validate_information_economy
-- track_stakes_escalation
-- track_relationship_tension
-- calculate_npe_compliance
-- get_npe_violations
+1. validate_scene_architecture:
+   - Does scene have Goal, Conflict, Disaster/Resolution?
+   - Is it a Scene or a Sequel?
 
-These validate WRITTEN SCENES (not planned structure).
+2. validate_causality_chain:
+   - Does this scene follow logically from the previous one?
+   - Is the "Because of..." link clear?
+
+3. validate_information_economy:
+   - Is the revelation timed correctly?
+   - Does it reveal too much or too little?
+
+4. log_character_decision:
+   - Is the character's choice consistent with their agency?
 ```
 
 **Output:**
-- Scene-level compliance scores
-- Dialogue/POV/pacing issues
-- Character behavioral palette violations
+- Validated Scene Beat Sheet
+- Green light to write prose
 
-**MCP:** ✅ **Uses existing NPE Config MCP Server** (4 specialized servers)
+**MCP:** ✅ **Uses NPE Config MCP Server** (Structure rules only)
 
-**This is SCENE VALIDATION** - Different from Phase 4 (series structure validation).
+**This is PLANNING VALIDATION** - Ensures the skeleton is solid.
 
 ---
 
@@ -505,18 +525,20 @@ These validate WRITTEN SCENES (not planned structure).
 **Lead:** Bailey (First Drafter) + Full Writing Team
 **Process:**
 ```
-1. Bailey writes scenes based on chapter plans
-2. Tessa (Continuity) validates consistency
-3. Edna (Editor) reviews pacing and quality
-4. Genre specialists provide expertise
-5. Scene-Level NPE validation runs continuously
-6. Miranda coordinates and approves
+1. Bailey writes scenes based on VALIDATED scene architecture (from Phase 10)
+2. PROSE PHYSICS VALIDATION (Real-time):
+   - validate_dialogue_physics (Voice, subtext)
+   - analyze_chapter_pacing (Sentence length, paragraph flow)
+   - track_relationship_tension (Micro-beats)
+   - validate_pov_physics (Deep POV consistency)
+
+3. Tessa (Continuity) validates consistency
+4. Edna (Editor) reviews pacing and quality
+5. Miranda coordinates and approves
 
 Writing Team queries MCP constantly:
 - "What does Theodore know at Book 2, Ch 5?"
 - "What's trust level between characters here?"
-- "What trope scene needs to be in this chapter?"
-- "What setup from Book 1 needs to pay off now?"
 ```
 
 **Output:**

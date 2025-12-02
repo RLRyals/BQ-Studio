@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FictionLab 11-Phase Architecture - Interactive Visualization</title>
+    <title>FictionLab Workflow Manager MCP - Interactive Visualization</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
         * {
@@ -206,8 +206,8 @@
 <body>
     <div class="container">
         <header>
-            <h1>🎬 FictionLab 12-Phase Architecture</h1>
-            <p>Interactive Visualization - Click any phase to see details</p>
+            <h1>🎬 FictionLab Workflow Manager MCP (v3.0)</h1>
+            <p>12-Phase Novel Writing Pipeline - Orchestrated by Workflow Manager MCP</p>
         </header>
         
         <div class="main-content">
@@ -229,6 +229,10 @@
                         <div class="legend-color" style="background: #8b5cf6;"></div>
                         <span>User Control</span>
                     </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ec4899;"></div>
+                        <span>Workflow Manager MCP</span>
+                    </div>
                 </div>
                 <svg id="visualization" width="100%" height="900"></svg>
             </div>
@@ -237,21 +241,23 @@
                 <div id="details-content">
                     <div class="placeholder-text">
                         <h2>👈 Click any phase to see details</h2>
-                        <p>Select a phase from the visualization to view:</p>
+                        <p>The <strong>Workflow Manager MCP</strong> orchestrates all 12 phases:</p>
                         <ul style="text-align: left; display: inline-block; margin-top: 20px;">
-                            <li>Phase description</li>
-                            <li>Agents involved</li>
-                            <li>MCP server interactions</li>
-                            <li>Inputs and outputs</li>
-                            <li>Quality gates</li>
+                            <li>Tracks workflow state and progress</li>
+                            <li>Enforces phase transitions and prerequisites</li>
+                            <li>Manages quality gates (NPE, Commercial)</li>
+                            <li>Coordinates user approval checkpoints</li>
+                            <li>Supports multiple clients (TypingMind, Claude Code, FictionLab)</li>
+                            <li>Provides real-time workflow updates</li>
                         </ul>
+                        <p style="margin-top: 20px;"><em>Click a phase to see how it integrates with the Workflow Manager</em></p>
                     </div>
                 </div>
             </div>
         </div>
         
         <footer>
-            <p>FictionLab System Visualization | Based on SYSTEM_ARCHITECTURE_MAP.md v2.0 | Generated: <span id="timestamp"></span></p>
+            <p>FictionLab Workflow Manager MCP | Based on SYSTEM_ARCHITECTURE_MAP.md v2.2 | Version 3.0 | Generated: <span id="timestamp"></span></p>
         </footer>
     </div>
     
@@ -278,55 +284,53 @@
             },
             {
                 id: 0,
-                name: "Phase 0\nGenre Pack Check",
-                fullName: "Phase 0: Genre Pack Check & Creation",
+                name: "Phase 0\nPremise\nDevelopment",
+                fullName: "Phase 0: Premise Development & Trend Analysis",
                 type: "planning",
-                agent: "Market Research Agent",
-                description: "Checks if genre pack exists for the concept's genre. If missing, creates a new genre pack with conventions, beat sheets, templates, and NPE physics.",
+                agent: "Brainstorming Agent",
+                description: "Analyzes broad market trends and generates high-concept pitches. Develops the initial premise before a specific genre is locked.",
                 process: [
-                    "Check .claude/genre-packs/{genre-slug}/",
-                    "If missing, research genre conventions via WebSearch",
-                    "Analyze 5-10 comp titles for patterns",
-                    "Generate genre pack files (manifest, beat sheets, templates, style guides)",
-                    "Store in .claude/genre-packs/"
+                    "Broad Trend Analysis (Perplexity/Kindle Trends)",
+                    "Concept Generation ('What If' scenarios)",
+                    "Pitch Development (Hooks & Loglines)",
+                    "User Selection of Target Genre"
                 ],
-                output: "Genre pack loaded or created, escalation patterns available, templates ready",
-                mcp: "No database interaction (genre packs are files)",
+                output: "Refined Concept, Target Genre, Initial Commercial Potential Assessment",
+                mcp: "No database interaction",
                 gate: false
             },
             {
                 id: 1,
-                name: "Phase 1\nMarket Research\n+ Trope Research",
-                fullName: "Phase 1: Market Research + Trope Research",
+                name: "Phase 1\nGenre Pack\nManagement",
+                fullName: "Phase 1: Genre Pack Management (Combined)",
                 type: "planning",
                 agent: "Market Research Agent",
-                description: "Conducts comprehensive market analysis and deep trope research. Researches required scenes for each trending trope and stores in MCP.",
+                description: "Ensures the correct genre pack is loaded or created. Combines previous Check and Selection phases.",
                 process: [
-                    "Analyze concept and confirm genre",
-                    "Research 5-7 comp titles with performance data",
-                    "DEEP TROPE RESEARCH: Search MCP for existing tropes",
-                    "For each trope, research required scenes (opening/middle/closing)",
-                    "Document validation criteria and reader expectations",
-                    "Store/update tropes in MCP"
+                    "Check .claude/genre-packs/{genre-slug}/",
+                    "IF MISSING: Create pack (Research conventions -> Generate files)",
+                    "IF EXISTS: Load pack",
+                    "Validate manifest with user (Review Gate)"
                 ],
-                output: "Market research report, 10-15 trending tropes with required scenes, commercial viability assessment",
-                mcp: "✅ Stores tropes with required scenes in series-planning-server",
+                output: "Loaded & Validated Genre Pack, Escalation patterns, Templates",
+                mcp: "No database interaction (genre packs are files)",
                 gate: false
             },
             {
                 id: 2,
-                name: "Phase 2\nGenre Pack\nSelection",
-                fullName: "Phase 2: Genre Pack Selection",
+                name: "Phase 2\nDeep Market\nResearch",
+                fullName: "Phase 2: Deep Market Research + Trope Research",
                 type: "planning",
-                agent: "System",
-                description: "Confirms genre pack loaded from Phase 0 and validated in Phase 1.",
+                agent: "Market Research Agent",
+                description: "Conducts deep research specific to the selected concept and genre. Focuses on comp titles and trope execution.",
                 process: [
-                    "Genre characteristics confirmed",
-                    "Escalation pattern loaded",
-                    "Templates accessible"
+                    "Comp Title Research (5-7 specific comps)",
+                    "DEEP TROPE RESEARCH: Search MCP for existing tropes",
+                    "Research required scenes for specific story tropes",
+                    "Commercial Validation of specific concept"
                 ],
-                output: "Genre pack ready for Series Architect",
-                mcp: "No database interaction",
+                output: "Deep Market Research Report, Trope Catalog, Commercial Viability Score",
+                mcp: "✅ Stores tropes with required scenes in series-planning-server",
                 gate: false
             },
             {
@@ -470,42 +474,35 @@
             },
             {
                 id: 10,
-                name: "Phase 10\nSCENE-LEVEL\nNPE VALIDATION",
-                fullName: "Phase 10: SCENE-LEVEL NPE VALIDATION (Scene Detail Validation)",
+                name: "Phase 10\nScene Architecture\nValidation",
+                fullName: "Phase 10: SCENE ARCHITECTURE VALIDATION (Structure Gate)",
                 type: "gate",
-                agent: "NPE Scene Validator (during writing)",
-                description: "Validates scene details during writing execution. Uses 357 detailed NPE rules across 10 categories. Different from Phase 4.",
+                agent: "NPE Scene Validator (Planning)",
+                description: "⭐ BEFORE WRITING: Validates the blueprint of the scene (Goal, Conflict, Causality) to ensure structural integrity before prose begins.",
                 process: [
-                    "validate_scene_architecture",
-                    "validate_dialogue_physics",
-                    "log_character_decision",
-                    "validate_causality_chain",
-                    "analyze_chapter_pacing",
-                    "validate_information_economy",
-                    "track_stakes_escalation",
-                    "track_relationship_tension",
-                    "calculate_npe_compliance",
-                    "get_npe_violations"
+                    "validate_scene_architecture (Goal/Conflict/Disaster)",
+                    "validate_causality_chain (Logic flow)",
+                    "validate_information_economy (Revelation timing)",
+                    "log_character_decision (Agency check)"
                 ],
-                output: "Scene-level compliance scores, dialogue/POV/pacing issues, character behavioral palette violations",
-                mcp: "✅ Uses existing NPE Config MCP Server (4 specialized servers)",
-                gate: false
+                output: "Validated Scene Beat Sheet, Green light to write prose",
+                mcp: "✅ Uses NPE Config MCP Server (Structure rules only)",
+                gate: true,
+                gateCondition: "Pass structural checks → Proceed to Writing"
             },
             {
                 id: 11,
-                name: "Phase 11\nWriting\nExecution",
-                fullName: "Phase 11: Writing Execution",
+                name: "Phase 11\nWriting Execution\n+ Prose Physics",
+                fullName: "Phase 11: Writing Execution + Prose Physics Validation",
                 type: "writing",
                 agent: "Bailey (First Drafter) + Full Writing Team",
-                description: "Bailey writes scenes based on chapter plans. Full writing team collaborates with continuous MCP queries and scene-level NPE validation.",
+                description: "Bailey writes scenes based on validated architecture. Prose Physics runs in real-time to check dialogue, pacing, and voice.",
                 process: [
-                    "Bailey writes scenes based on chapter plans",
+                    "Bailey writes scenes based on VALIDATED architecture",
+                    "PROSE PHYSICS (Real-time): validate_dialogue_physics, analyze_chapter_pacing",
                     "Tessa (Continuity) validates consistency",
                     "Edna (Editor) reviews pacing and quality",
-                    "Genre specialists provide expertise",
-                    "Scene-Level NPE validation runs continuously",
-                    "Miranda coordinates and approves",
-                    "Constant MCP queries: 'What does character know?', 'What's trust level?', 'What trope scene needed?'"
+                    "Miranda coordinates and approves"
                 ],
                 output: "Written chapters/scenes, publication-ready book",
                 mcp: "✅ Heavy query usage (single source of truth for all validated data)",
@@ -513,7 +510,7 @@
             },
             {
                 id: 12,
-                name: "Phase 12\\nBook Production\\nLoop (Books 2-5)",
+                name: "Phase 12\nBook Production\nLoop (Books 2-5)",
                 fullName: "Phase 12: Book Production Loop (Books 2-5)",
                 type: "writing",
                 agent: "Miranda + Bailey + Writing Team",
@@ -695,6 +692,14 @@
                 <h3>👤 Agent</h3>
                 <span class="badge agent">${phase.agent}</span>
                 
+                <h3>🔄 Workflow Manager MCP</h3>
+                <div style="background: #fef3c7; padding: 12px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #ec4899;">
+                    <p><strong>State Tracking:</strong> workflow_instances.current_phase = ${phase.id}</p>
+                    <p><strong>Phase Status:</strong> ${phase.id >= 4 && phase.gate ? 'waiting_quality_gate' : phase.id === 7 ? 'waiting_approval' : 'in_progress'}</p>
+                    ${phase.gate ? `<p><strong>Quality Gate:</strong> ${phase.gateCondition}</p>` : ''}
+                    <p><strong>MCP Tool:</strong> execute_phase(workflow_id, ${phase.id}, input)</p>
+                </div>
+                
                 <h3>📋 Process</h3>
                 <ul>
                     ${phase.process.map(p => `<li>${p}</li>`).join('')}
@@ -712,6 +717,7 @@
                     <h3>⭐ Quality Gate</h3>
                     <span class="badge gate">QUALITY GATE</span>
                     <p>${phase.gateCondition}</p>
+                    <p><strong>Workflow Manager Action:</strong> record_quality_gate() → check_gate_status()</p>
                 `;
             }
             
