@@ -162,6 +162,79 @@ CREATE INDEX idx_gates_workflow ON workflow_quality_gates(workflow_id);
 CREATE INDEX idx_gates_type ON workflow_quality_gates(gate_type);
 ```
 
+### production_metrics
+
+Tracks production metrics throughout the workflow lifecycle.
+
+```sql
+CREATE TABLE production_metrics (
+  id SERIAL PRIMARY KEY,
+  workflow_id INTEGER REFERENCES workflow_instances(id) ON DELETE CASCADE,
+  metric_type TEXT NOT NULL,
+    -- 'words_written', 'chapters_completed', 'scenes_validated',
+    -- 'planning_time_minutes', 'writing_time_minutes', 'revision_time_minutes',
+    -- 'npe_score', 'commercial_score', 'agent_invocations'
+  metric_value DECIMAL(10,2) NOT NULL,
+  phase_number INTEGER,
+  book_number INTEGER,
+  chapter_number INTEGER,
+  recorded_at TIMESTAMP DEFAULT NOW(),
+  metadata JSONB DEFAULT '{}'::jsonb
+);
+
+CREATE INDEX idx_metrics_workflow ON production_metrics(workflow_id);
+CREATE INDEX idx_metrics_type ON production_metrics(metric_type);
+CREATE INDEX idx_metrics_phase ON production_metrics(phase_number);
+CREATE INDEX idx_metrics_recorded ON production_metrics(recorded_at);
+```
+
+### daily_writing_stats
+
+Aggregated daily statistics for user dashboards.
+
+```sql
+CREATE TABLE daily_writing_stats (
+  id SERIAL PRIMARY KEY,
+  workflow_id INTEGER REFERENCES workflow_instances(id) ON DELETE CASCADE,
+  author_id INTEGER REFERENCES authors(id),
+  stat_date DATE NOT NULL,
+  words_written INTEGER DEFAULT 0,
+  chapters_completed INTEGER DEFAULT 0,
+  scenes_written INTEGER DEFAULT 0,
+  writing_time_minutes INTEGER DEFAULT 0,
+  phases_completed INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT NOW(),
+  metadata JSONB DEFAULT '{}'::jsonb,
+  UNIQUE(workflow_id, stat_date)
+);
+
+CREATE INDEX idx_daily_stats_workflow ON daily_writing_stats(workflow_id);
+CREATE INDEX idx_daily_stats_author ON daily_writing_stats(author_id);
+CREATE INDEX idx_daily_stats_date ON daily_writing_stats(stat_date);
+```
+
+### phase_performance
+
+Analytics for phase execution performance.
+
+```sql
+CREATE TABLE phase_performance (
+  id SERIAL PRIMARY KEY,
+  phase_number INTEGER NOT NULL,
+  phase_name TEXT NOT NULL,
+  total_executions INTEGER DEFAULT 0,
+  successful_executions INTEGER DEFAULT 0,
+  failed_executions INTEGER DEFAULT 0,
+  avg_duration_minutes DECIMAL(10,2),
+  avg_quality_score DECIMAL(5,2),
+  last_execution TIMESTAMP,
+  metadata JSONB DEFAULT '{}'::jsonb,
+  UNIQUE(phase_number)
+);
+
+CREATE INDEX idx_phase_perf_number ON phase_performance(phase_number);
+```
+
 ---
 
 ## MCP Tools
@@ -490,6 +563,258 @@ get_series_progress(
 
 ---
 
+### Production Metrics
+
+#### `record_production_metric`
+
+Records a production metric for a workflow.
+
+```typescript
+record_production_metric(
+  workflow_id: string,
+  metric_type: string,
+  metric_value: number,
+  context?: {
+    phase_number?: number,
+    book_number?: number,
+    chapter_number?: number,
+    metadata?: object
+  }
+) -> {
+  metric_id: string,
+  recorded_at: string
+}
+```
+
+**Example - Recording words written:**
+```typescript
+const metric = await mcp.call('workflow-manager', 'record_production_metric', {
+  workflow_id: 'workflow-789',
+  metric_type: 'words_written',
+  metric_value: 2847,
+  context: {
+    phase_number: 11,
+    book_number: 1,
+    chapter_number: 3
+  }
+});
+// Returns: { metric_id: 'metric-123', recorded_at: '2024-12-02T15:30:00Z' }
+```
+
+**Example - Recording planning time:**
+```typescript
+const metric = await mcp.call('workflow-manager', 'record_production_metric', {
+  workflow_id: 'workflow-789',
+  metric_type: 'planning_time_minutes',
+  metric_value: 45,
+  context: {
+    phase_number: 9,
+    book_number: 2,
+    metadata: { agent: 'chapter-planner', chapters_planned: 25 }
+  }
+});
+```
+
+**Common Metric Types:**
+- `words_written` - Words produced during writing phases
+- `chapters_completed` - Chapters finished
+- `scenes_validated` - Scenes passed NPE validation
+- `planning_time_minutes` - Time spent in planning phases
+- `writing_time_minutes` - Time spent in writing phases
+- `revision_time_minutes` - Time spent in revision passes
+- `npe_score` - NPE validation score
+- `commercial_score` - Commercial validation score
+- `agent_invocations` - Number of agent calls
+
+#### `get_workflow_metrics`
+
+Retrieves aggregated metrics for a workflow.
+
+```typescript
+get_workflow_metrics(
+  workflow_id: string,
+  metric_types?: string[], // Filter by specific metrics
+  date_range?: {
+    start: string,
+    end: string
+  }
+) -> {
+  workflow_id: string,
+  metrics: {
+    total_words_written: number,
+    total_chapters_completed: number,
+    total_scenes_validated: number,
+    total_writing_time_minutes: number,
+    avg_npe_score: number,
+    avg_commercial_score: number,
+    books_completed: number,
+    current_velocity: number // words per hour
+  },
+  by_book: Array<{
+    book_number: number,
+    words_written: number,
+    chapters_completed: number,
+    writing_time_minutes: number
+  }>,
+  by_phase: Array<{
+    phase_number: number,
+    phase_name: string,
+    duration_minutes: number,
+    quality_score: number | null
+  }>
+}
+```
+
+**Example:**
+```typescript
+const metrics = await mcp.call('workflow-manager', 'get_workflow_metrics', {
+  workflow_id: 'workflow-789'
+});
+// Returns comprehensive metrics for the entire workflow
+console.log(`Total words written: ${metrics.metrics.total_words_written}`);
+console.log(`Average velocity: ${metrics.metrics.current_velocity} words/hour`);
+```
+
+#### `get_phase_analytics`
+
+Gets performance analytics for specific phases across all workflows.
+
+```typescript
+get_phase_analytics(
+  phase_number?: number // Omit for all phases
+) -> Array<{
+  phase_number: number,
+  phase_name: string,
+  total_executions: number,
+  successful_executions: number,
+  failed_executions: number,
+  success_rate: number, // percentage
+  avg_duration_minutes: number,
+  avg_quality_score: number | null,
+  last_execution: string
+}>
+```
+
+**Example:**
+```typescript
+// Get analytics for all phases
+const analytics = await mcp.call('workflow-manager', 'get_phase_analytics', {});
+
+// Find bottleneck phases
+const slowPhases = analytics
+  .filter(p => p.avg_duration_minutes > 60)
+  .sort((a, b) => b.avg_duration_minutes - a.avg_duration_minutes);
+
+console.log('Slowest phases:', slowPhases.map(p =>
+  `Phase ${p.phase_number}: ${p.avg_duration_minutes} min`
+));
+```
+
+#### `get_daily_writing_stats`
+
+Gets daily writing statistics for a workflow or author.
+
+```typescript
+get_daily_writing_stats(
+  workflow_id?: string,
+  author_id?: string,
+  date_range?: {
+    start: string, // 'YYYY-MM-DD'
+    end: string
+  }
+) -> Array<{
+  stat_date: string,
+  words_written: number,
+  chapters_completed: number,
+  scenes_written: number,
+  writing_time_minutes: number,
+  phases_completed: number,
+  avg_words_per_hour: number
+}>
+```
+
+**Example - Last 7 days:**
+```typescript
+const stats = await mcp.call('workflow-manager', 'get_daily_writing_stats', {
+  workflow_id: 'workflow-789',
+  date_range: {
+    start: '2024-11-25',
+    end: '2024-12-02'
+  }
+});
+
+// Chart daily productivity
+stats.forEach(day => {
+  console.log(`${day.stat_date}: ${day.words_written} words, ${day.chapters_completed} chapters`);
+});
+```
+
+#### `get_workflow_velocity`
+
+Calculates writing velocity and productivity metrics.
+
+```typescript
+get_workflow_velocity(
+  workflow_id: string,
+  time_window?: 'day' | 'week' | 'all' // Default: 'all'
+) -> {
+  workflow_id: string,
+  time_window: string,
+  velocity: {
+    words_per_hour: number,
+    words_per_day: number,
+    chapters_per_day: number,
+    scenes_per_hour: number
+  },
+  efficiency: {
+    planning_to_writing_ratio: number, // planning time / writing time
+    revision_rate: number, // revision passes per chapter
+    npe_pass_rate: number // percentage of scenes passing on first try
+  },
+  projections: {
+    estimated_completion_date: string,
+    estimated_total_words: number,
+    books_remaining: number,
+    hours_remaining: number
+  }
+}
+```
+
+**Example:**
+```typescript
+const velocity = await mcp.call('workflow-manager', 'get_workflow_velocity', {
+  workflow_id: 'workflow-789',
+  time_window: 'week'
+});
+
+console.log(`Current velocity: ${velocity.velocity.words_per_hour} words/hour`);
+console.log(`Estimated completion: ${velocity.projections.estimated_completion_date}`);
+console.log(`Books remaining: ${velocity.projections.books_remaining}`);
+```
+
+#### `update_daily_stats`
+
+Internal tool to update daily writing statistics (auto-called by record_production_metric).
+
+```typescript
+update_daily_stats(
+  workflow_id: string,
+  date: string, // 'YYYY-MM-DD'
+  updates: {
+    words_written?: number,
+    chapters_completed?: number,
+    scenes_written?: number,
+    writing_time_minutes?: number,
+    phases_completed?: number
+  }
+) -> {
+  updated: boolean,
+  stat_date: string
+}
+```
+
+---
+
 ### Workflow Queries
 
 #### `get_phase_history`
@@ -605,6 +930,53 @@ workflow://{workflow_id}/gates/commercial
 
 Returns quality gate results.
 
+### Production Metrics
+
+```
+workflow://{workflow_id}/metrics/summary
+```
+
+Returns aggregated metrics summary for the workflow.
+
+```
+workflow://{workflow_id}/metrics/velocity
+```
+
+Returns current writing velocity and projections.
+
+```
+workflow://{workflow_id}/metrics/daily-stats
+workflow://{workflow_id}/metrics/daily-stats?range=7
+workflow://{workflow_id}/metrics/daily-stats?range=30
+```
+
+Returns daily writing statistics. Optional `range` parameter specifies number of days.
+
+```
+workflow://{workflow_id}/metrics/by-book
+```
+
+Returns metrics broken down by book.
+
+```
+workflow://{workflow_id}/metrics/by-phase
+```
+
+Returns metrics broken down by phase.
+
+```
+workflow://analytics/phase-performance
+workflow://analytics/phase-performance/{phase_number}
+```
+
+Returns system-wide phase performance analytics.
+
+```
+workflow://analytics/global-stats
+```
+
+Returns global statistics across all workflows (admin only).
+
 ---
 
 ## Client Integration Examples
@@ -685,18 +1057,18 @@ if (approvals.length > 0) {
 const WorkflowDashboard = () => {
   const [workflow, setWorkflow] = useState(null);
   const [progress, setProgress] = useState(null);
-  
+
   useEffect(() => {
     // Load active workflow
     const loadWorkflow = async () => {
       const workflows = await mcp.call('workflow-manager', 'list_active_workflows', {
         user_id: currentUser.id
       });
-      
+
       if (workflows.length > 0) {
         const wf = workflows[0];
         setWorkflow(wf);
-        
+
         // Get series progress
         const prog = await mcp.call('workflow-manager', 'get_series_progress', {
           workflow_id: wf.workflow_id
@@ -704,9 +1076,9 @@ const WorkflowDashboard = () => {
         setProgress(prog);
       }
     };
-    
+
     loadWorkflow();
-    
+
     // Subscribe to real-time updates
     websocket.on('workflow_updated', (data) => {
       if (data.workflow_id === workflow?.workflow_id) {
@@ -714,25 +1086,351 @@ const WorkflowDashboard = () => {
       }
     });
   }, []);
-  
+
   return (
     <div>
       <h2>Series Production Progress</h2>
-      <ProgressBar 
-        phases={12} 
+      <ProgressBar
+        phases={12}
         current={workflow?.current_phase}
         booksCompleted={progress?.books_completed}
         totalBooks={5}
       />
-      
-      <PhaseIndicator 
+
+      <PhaseIndicator
         phase={workflow?.current_phase}
         status={workflow?.phase_status}
       />
-      
+
       <ApprovalQueue workflow_id={workflow?.workflow_id} />
     </div>
   );
+};
+```
+
+### FictionLab Analytics Dashboard (with Production Metrics)
+
+```typescript
+// Comprehensive analytics dashboard with production metrics
+const AnalyticsDashboard = () => {
+  const [workflow, setWorkflow] = useState(null);
+  const [metrics, setMetrics] = useState(null);
+  const [velocity, setVelocity] = useState(null);
+  const [dailyStats, setDailyStats] = useState([]);
+  const [phaseAnalytics, setPhaseAnalytics] = useState([]);
+
+  useEffect(() => {
+    loadAnalytics();
+
+    // Refresh metrics every 30 seconds
+    const interval = setInterval(loadAnalytics, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const loadAnalytics = async () => {
+    // Get active workflow
+    const workflows = await mcp.call('workflow-manager', 'list_active_workflows', {
+      user_id: currentUser.id
+    });
+
+    if (workflows.length === 0) return;
+
+    const wf = workflows[0];
+    setWorkflow(wf);
+
+    // Load comprehensive metrics
+    const [metricsData, velocityData, statsData, phaseData] = await Promise.all([
+      mcp.call('workflow-manager', 'get_workflow_metrics', {
+        workflow_id: wf.workflow_id
+      }),
+      mcp.call('workflow-manager', 'get_workflow_velocity', {
+        workflow_id: wf.workflow_id,
+        time_window: 'week'
+      }),
+      mcp.call('workflow-manager', 'get_daily_writing_stats', {
+        workflow_id: wf.workflow_id,
+        date_range: {
+          start: getDateDaysAgo(30),
+          end: getTodayDate()
+        }
+      }),
+      mcp.call('workflow-manager', 'get_phase_analytics', {})
+    ]);
+
+    setMetrics(metricsData);
+    setVelocity(velocityData);
+    setDailyStats(statsData);
+    setPhaseAnalytics(phaseData);
+  };
+
+  return (
+    <div className="analytics-dashboard">
+      {/* Header Stats */}
+      <div className="stats-grid">
+        <StatCard
+          title="Total Words Written"
+          value={metrics?.metrics.total_words_written.toLocaleString()}
+          icon="📝"
+          trend={calculateWordsTrend(dailyStats)}
+        />
+        <StatCard
+          title="Current Velocity"
+          value={`${velocity?.velocity.words_per_hour} words/hr`}
+          icon="⚡"
+          subtitle={`${velocity?.velocity.words_per_day} words/day`}
+        />
+        <StatCard
+          title="Books Completed"
+          value={`${metrics?.metrics.books_completed} / 5`}
+          icon="📚"
+          progress={(metrics?.metrics.books_completed / 5) * 100}
+        />
+        <StatCard
+          title="Estimated Completion"
+          value={formatDate(velocity?.projections.estimated_completion_date)}
+          icon="🎯"
+          subtitle={`${velocity?.projections.hours_remaining} hours remaining`}
+        />
+      </div>
+
+      {/* Productivity Chart */}
+      <div className="chart-section">
+        <h3>30-Day Writing Productivity</h3>
+        <LineChart
+          data={dailyStats}
+          xKey="stat_date"
+          yKeys={['words_written', 'chapters_completed']}
+          colors={['#4f46e5', '#10b981']}
+          labels={['Words Written', 'Chapters Completed']}
+        />
+      </div>
+
+      {/* Velocity Metrics */}
+      <div className="velocity-section">
+        <h3>Writing Velocity</h3>
+        <div className="velocity-grid">
+          <MetricBox
+            label="Words per Hour"
+            value={velocity?.velocity.words_per_hour}
+            unit="words/hr"
+          />
+          <MetricBox
+            label="Words per Day"
+            value={velocity?.velocity.words_per_day}
+            unit="words/day"
+          />
+          <MetricBox
+            label="Chapters per Day"
+            value={velocity?.velocity.chapters_per_day.toFixed(1)}
+            unit="chapters/day"
+          />
+          <MetricBox
+            label="Scenes per Hour"
+            value={velocity?.velocity.scenes_per_hour.toFixed(1)}
+            unit="scenes/hr"
+          />
+        </div>
+      </div>
+
+      {/* Efficiency Metrics */}
+      <div className="efficiency-section">
+        <h3>Writing Efficiency</h3>
+        <div className="efficiency-grid">
+          <EfficiencyCard
+            title="Planning to Writing Ratio"
+            value={velocity?.efficiency.planning_to_writing_ratio}
+            format="ratio"
+            optimal={0.3} // 30% planning, 70% writing is optimal
+            description="Time spent planning vs. writing"
+          />
+          <EfficiencyCard
+            title="NPE Pass Rate"
+            value={velocity?.efficiency.npe_pass_rate}
+            format="percentage"
+            optimal={85} // 85%+ pass rate is good
+            description="Scenes passing validation first try"
+          />
+          <EfficiencyCard
+            title="Revision Rate"
+            value={velocity?.efficiency.revision_rate}
+            format="number"
+            optimal={1.2} // 1-2 revision passes per chapter
+            description="Average revision passes per chapter"
+          />
+        </div>
+      </div>
+
+      {/* Book Progress */}
+      <div className="books-section">
+        <h3>Progress by Book</h3>
+        <div className="books-grid">
+          {metrics?.by_book.map(book => (
+            <BookCard key={book.book_number}>
+              <h4>Book {book.book_number}</h4>
+              <ProgressBar
+                value={book.chapters_completed}
+                max={25}
+                label={`${book.chapters_completed} / 25 chapters`}
+              />
+              <div className="book-stats">
+                <span>{book.words_written.toLocaleString()} words</span>
+                <span>{formatDuration(book.writing_time_minutes)}</span>
+              </div>
+            </BookCard>
+          ))}
+        </div>
+      </div>
+
+      {/* Phase Performance */}
+      <div className="phase-analytics-section">
+        <h3>Phase Performance Analytics</h3>
+        <table className="phase-table">
+          <thead>
+            <tr>
+              <th>Phase</th>
+              <th>Success Rate</th>
+              <th>Avg Duration</th>
+              <th>Quality Score</th>
+              <th>Executions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {phaseAnalytics.map(phase => (
+              <tr key={phase.phase_number}>
+                <td>
+                  <span className="phase-number">{phase.phase_number}</span>
+                  {phase.phase_name}
+                </td>
+                <td>
+                  <SuccessRate value={phase.success_rate} />
+                </td>
+                <td>{formatDuration(phase.avg_duration_minutes)}</td>
+                <td>
+                  {phase.avg_quality_score
+                    ? <QualityScore value={phase.avg_quality_score} />
+                    : 'N/A'
+                  }
+                </td>
+                <td>{phase.total_executions}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Projections */}
+      <div className="projections-section">
+        <h3>Series Completion Projections</h3>
+        <div className="projection-cards">
+          <ProjectionCard
+            icon="📅"
+            title="Estimated Completion"
+            date={velocity?.projections.estimated_completion_date}
+            daysRemaining={calculateDaysRemaining(
+              velocity?.projections.estimated_completion_date
+            )}
+          />
+          <ProjectionCard
+            icon="📖"
+            title="Projected Total Words"
+            value={velocity?.projections.estimated_total_words.toLocaleString()}
+            subtitle="words across all 5 books"
+          />
+          <ProjectionCard
+            icon="⏱️"
+            title="Hours Remaining"
+            value={velocity?.projections.hours_remaining}
+            subtitle={`${(velocity?.projections.hours_remaining / 8).toFixed(1)} working days`}
+          />
+          <ProjectionCard
+            icon="📚"
+            title="Books Remaining"
+            value={velocity?.projections.books_remaining}
+            subtitle="to complete the series"
+          />
+        </div>
+      </div>
+
+      {/* Quality Gates Summary */}
+      <div className="gates-section">
+        <h3>Quality Gates History</h3>
+        <QualityGatesTimeline workflow_id={workflow?.workflow_id} />
+      </div>
+    </div>
+  );
+};
+
+// Helper components
+const StatCard = ({ title, value, icon, trend, subtitle, progress }) => (
+  <div className="stat-card">
+    <div className="stat-icon">{icon}</div>
+    <div className="stat-content">
+      <h4>{title}</h4>
+      <div className="stat-value">{value}</div>
+      {subtitle && <div className="stat-subtitle">{subtitle}</div>}
+      {progress !== undefined && <ProgressBar value={progress} max={100} />}
+      {trend && <TrendIndicator value={trend} />}
+    </div>
+  </div>
+);
+
+const EfficiencyCard = ({ title, value, format, optimal, description }) => {
+  const formatted =
+    format === 'percentage' ? `${value}%` :
+    format === 'ratio' ? `${value}:1` :
+    value;
+
+  const status =
+    format === 'percentage' ? (value >= optimal ? 'good' : 'needs-improvement') :
+    format === 'ratio' ? (value <= optimal ? 'good' : 'needs-improvement') :
+    'neutral';
+
+  return (
+    <div className={`efficiency-card ${status}`}>
+      <h4>{title}</h4>
+      <div className="efficiency-value">{formatted}</div>
+      <div className="efficiency-description">{description}</div>
+      {status === 'needs-improvement' && (
+        <div className="improvement-tip">
+          Target: {format === 'percentage' ? `${optimal}%` : `${optimal}:1`}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Utility functions
+const getDateDaysAgo = (days) => {
+  const date = new Date();
+  date.setDate(date.getDate() - days);
+  return date.toISOString().split('T')[0];
+};
+
+const getTodayDate = () => {
+  return new Date().toISOString().split('T')[0];
+};
+
+const formatDuration = (minutes) => {
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+};
+
+const calculateDaysRemaining = (completionDate) => {
+  const completion = new Date(completionDate);
+  const today = new Date();
+  const diffTime = completion - today;
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays;
+};
+
+const calculateWordsTrend = (dailyStats) => {
+  if (dailyStats.length < 2) return 0;
+  const recent = dailyStats.slice(-7);
+  const older = dailyStats.slice(-14, -7);
+  const recentAvg = recent.reduce((sum, d) => sum + d.words_written, 0) / recent.length;
+  const olderAvg = older.reduce((sum, d) => sum + d.words_written, 0) / older.length;
+  return ((recentAvg - olderAvg) / olderAvg * 100).toFixed(1);
 };
 ```
 
@@ -773,11 +1471,24 @@ const WorkflowDashboard = () => {
 18. All 5 books written and validated
 19. User can export manuscripts
 
-**Throughout the process:**
+**Throughout the process (with Production Metrics):**
 - User checks status in TypingMind: "What phase am I on?"
 - FictionLab UI shows real-time progress bar
 - Approval notifications sent when user input needed
 - All clients see same workflow state
+- **Metrics recorded at each step:**
+  - Words written per chapter (Phase 11)
+  - Time spent planning chapters (Phase 9)
+  - NPE validation scores (Phases 4, 10)
+  - Commercial assessment scores (Phase 5)
+  - Agent invocations per phase
+  - Writing velocity calculated continuously
+- **Analytics Dashboard shows:**
+  - Current velocity: 2,847 words/hour
+  - Estimated completion: 3 days from now
+  - Planning to writing ratio: 0.28 (optimal)
+  - NPE pass rate: 92% (excellent)
+  - Daily productivity trending +15% week-over-week
 
 ---
 
@@ -791,21 +1502,126 @@ const WorkflowDashboard = () => {
 6. **Resumable** - Pause and resume workflows across sessions
 7. **Scalable** - Supports subscription tiers and limits
 8. **Observable** - Real-time workflow state updates
+9. **Production Metrics** - Comprehensive analytics on writing productivity
+10. **Velocity Tracking** - Real-time calculations of writing speed and efficiency
+11. **Predictive Analytics** - Estimated completion dates based on current velocity
+12. **Performance Insights** - Identify bottleneck phases and optimize workflow
+13. **Quality Metrics** - Track NPE and commercial validation scores over time
+14. **User Dashboard** - Rich analytics UI for writers to track their progress
+
+---
+
+## Implementation Phases
+
+### Phase 1: Core Infrastructure (COMPLETE)
+✅ Database schema design
+✅ Workflow lifecycle tools
+✅ Phase execution tools
+✅ Quality gate coordination
+✅ User approval system
+
+### Phase 2: Book Production Loop (COMPLETE)
+✅ Multi-book iteration support
+✅ Book-level approval gates
+✅ Series progress tracking
+✅ Workflow queries and resources
+
+### Phase 3: Production Metrics (COMPLETE)
+✅ Production metrics database schema
+✅ Metrics recording tools
+✅ Analytics and velocity calculations
+✅ Daily writing statistics
+✅ Phase performance analytics
+✅ MCP Resources for metrics visualization
+✅ FictionLab Analytics Dashboard integration
+✅ Real-world usage examples with metrics
+
+---
+
+## Phase 3 Implementation Summary
+
+### Database Tables Added
+1. **production_metrics** - Records all production metrics throughout workflow
+2. **daily_writing_stats** - Aggregated daily statistics for dashboards
+3. **phase_performance** - Analytics on phase execution performance
+
+### MCP Tools Added
+1. **record_production_metric** - Records individual metrics
+2. **get_workflow_metrics** - Retrieves aggregated workflow metrics
+3. **get_phase_analytics** - Gets phase performance analytics
+4. **get_daily_writing_stats** - Returns daily writing statistics
+5. **get_workflow_velocity** - Calculates velocity and projections
+6. **update_daily_stats** - Internal tool for daily stat updates
+
+### MCP Resources Added
+- `workflow://{workflow_id}/metrics/summary` - Metrics summary
+- `workflow://{workflow_id}/metrics/velocity` - Velocity and projections
+- `workflow://{workflow_id}/metrics/daily-stats` - Daily statistics
+- `workflow://{workflow_id}/metrics/by-book` - Book-level metrics
+- `workflow://{workflow_id}/metrics/by-phase` - Phase-level metrics
+- `workflow://analytics/phase-performance` - System-wide analytics
+- `workflow://analytics/global-stats` - Global statistics
+
+### Key Features
+- **Real-time velocity tracking** - Calculates words/hour, words/day, chapters/day
+- **Predictive analytics** - Estimates completion dates and remaining hours
+- **Efficiency metrics** - Planning/writing ratio, NPE pass rate, revision rate
+- **Comprehensive dashboard** - Full analytics UI with charts and projections
+- **Performance insights** - Identifies bottleneck phases for optimization
+
+### Integration Points
+- FictionLab Analytics Dashboard renders rich metrics visualizations
+- TypingMind can query metrics via MCP tools
+- Claude Code can access metrics for status updates
+- Real-time updates via WebSocket for live dashboard
 
 ---
 
 ## Next Steps for Implementation
 
-1. Create database migrations for new tables
-2. Implement MCP server in TypeScript/Node.js
-3. Add to FictionLab's docker-compose.yml (port 3012)
-4. Update client MCP configurations
-5. Create UI components for FictionLab dashboard
-6. Write comprehensive tests
-7. Deploy to production
+1. **Database Setup**
+   - Create database migrations for all 7 tables
+   - Add indexes for query performance
+   - Set up foreign key constraints
+
+2. **MCP Server Implementation**
+   - Implement MCP server in TypeScript/Node.js
+   - Add all 17+ workflow tools
+   - Implement MCP Resources for state access
+   - Add WebSocket support for real-time updates
+
+3. **Infrastructure**
+   - Add to FictionLab's docker-compose.yml (port 3012)
+   - Configure PgBouncer connection pooling
+   - Set up monitoring and logging
+
+4. **Client Integration**
+   - Update TypingMind MCP configuration
+   - Update Claude Code MCP configuration
+   - Implement FictionLab UI dashboard components
+   - Create analytics dashboard with charts
+
+5. **Testing**
+   - Unit tests for all MCP tools
+   - Integration tests for workflow lifecycle
+   - End-to-end tests for full series workflow
+   - Load testing for concurrent workflows
+
+6. **Documentation**
+   - API documentation for MCP tools
+   - User guide for workflow management
+   - Analytics dashboard user guide
+   - Developer setup instructions
+
+7. **Deployment**
+   - Deploy to staging environment
+   - User acceptance testing
+   - Deploy to production
+   - Monitor for issues
 
 ---
 
-**Last Updated:** 2024-12-02  
-**Version:** 3.0 (Design Complete)  
-**Status:** Ready for Implementation
+**Last Updated:** 2025-12-03
+**Version:** 3.1 (Phase 3 Complete - Production Metrics)
+**Status:** Design Complete - Ready for Implementation
+**Phase 3 Status:** ✅ Complete
