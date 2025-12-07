@@ -1,9 +1,22 @@
-# Workflow Manager MCP Server
+# Workflow Manager MCP Server - Complete Design
 
-**Version:** 3.0  
-**Port:** 3012  
-**Purpose:** Orchestrates the 12-phase novel writing pipeline  
+**Version:** 3.1 (Phase 3 Complete - Production Metrics)
+**Port:** 3012
+**Purpose:** Orchestrates the 12-phase novel writing pipeline
 **Status:** Design Complete - Ready for Implementation
+
+---
+
+## Documentation Structure
+
+This complete design has been split into repo-specific documents:
+
+1. **[Overview](./WORKFLOW_MANAGER_OVERVIEW.md)** - System overview and architecture (start here)
+2. **[BQ-Studio Integration](./WORKFLOW_MANAGER_BQ_STUDIO.md)** - Claude Code slash commands and skills
+3. **[MCP Server Implementation](./WORKFLOW_MANAGER_MCP_SERVERS.md)** - Database, tools, and server code
+4. **[FictionLab Dashboard](./WORKFLOW_MANAGER_ELECTRON_APP.md)** - React UI components and analytics
+
+**This document** contains the complete technical specification for reference.
 
 ---
 
@@ -1625,3 +1638,20 @@ const calculateWordsTrend = (dailyStats) => {
 **Version:** 3.1 (Phase 3 Complete - Production Metrics)
 **Status:** Design Complete - Ready for Implementation
 **Phase 3 Status:** ✅ Complete
+
+---
+
+## Quick Navigation
+
+**Repository-Specific Implementations:**
+
+- 📋 [System Overview](./WORKFLOW_MANAGER_OVERVIEW.md) - Architecture and feature summary
+- 💻 [BQ-Studio](./WORKFLOW_MANAGER_BQ_STUDIO.md) - Claude Code integration guide
+- 🔧 [MCP-Writing-Servers](./WORKFLOW_MANAGER_MCP_SERVERS.md) - Server implementation specification
+- 🎨 [MCP-Electron-App](./WORKFLOW_MANAGER_ELECTRON_APP.md) - FictionLab dashboard components
+
+**Implementation Sequence:**
+1. Read the [Overview](./WORKFLOW_MANAGER_OVERVIEW.md) for system architecture
+2. Review [MCP Server specs](./WORKFLOW_MANAGER_MCP_SERVERS.md) for database and tool implementation
+3. Check [BQ-Studio guide](./WORKFLOW_MANAGER_BQ_STUDIO.md) for Claude Code integration
+4. See [Dashboard specs](./WORKFLOW_MANAGER_ELECTRON_APP.md) for UI components
