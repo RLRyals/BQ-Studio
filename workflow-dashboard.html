@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BQ-Studio Workflow Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        /* Series Selection */
+        .series-selector {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .series-selector h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .series-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .series-dropdown {
+            flex: 1;
+            min-width: 300px;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            background: white;
+            cursor: pointer;
+        }
+
+        .series-dropdown:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .series-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .series-button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .series-button.secondary {
+            background: #4caf50;
+        }
+
+        .series-button.secondary:hover {
+            background: #45a049;
+        }
+
+        .current-series-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .current-series-info h3 {
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 1.2em;
+        }
+
+        .current-series-info p {
+            color: #666;
+            margin: 5px 0;
+        }
+
+        /* Workflow Progress */
+        .workflow-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .workflow-container h2 {
+            color: #667eea;
+            margin-bottom: 25px;
+            font-size: 2em;
+        }
+
+        .phase-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .phase-card {
+            background: white;
+            border: 3px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .phase-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .phase-card.not-started {
+            opacity: 0.6;
+        }
+
+        .phase-card.not-started::before {
+            background: #9e9e9e;
+        }
+
+        .phase-card.in-progress {
+            border-color: #667eea;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+            transform: scale(1.05);
+        }
+
+        .phase-card.in-progress::before {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            animation: shimmer 2s infinite;
+        }
+
+        .phase-card.completed {
+            border-color: #4caf50;
+        }
+
+        .phase-card.completed::before {
+            background: #4caf50;
+        }
+
+        .phase-card.waiting-approval {
+            border-color: #ff9800;
+            animation: pulse 2s infinite;
+        }
+
+        .phase-card.waiting-approval::before {
+            background: #ff9800;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .phase-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .phase-card.completed .phase-number {
+            background: #4caf50;
+        }
+
+        .phase-card.waiting-approval .phase-number {
+            background: #ff9800;
+        }
+
+        .phase-card.not-started .phase-number {
+            background: #9e9e9e;
+        }
+
+        .phase-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .phase-status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .status-not-started {
+            background: #e0e0e0;
+            color: #666;
+        }
+
+        .status-in-progress {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .status-completed {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-waiting-approval {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .phase-description {
+            color: #666;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .legend {
+            display: flex;
+            gap: 30px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .legend-color {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+        }
+
+        .auto-refresh-notice {
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 20px;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+            font-size: 1.2em;
+        }
+
+        .error-message {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+            padding: 15px;
+            border-radius: 5px;
+            color: #c62828;
+            margin: 20px 0;
+        }
+
+        .info-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .info-box h3 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+        }
+
+        .info-box p {
+            color: #1b5e20;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 BQ-Studio Workflow Dashboard</h1>
+            <p class="subtitle">12-Phase Market-Driven Series Production System</p>
+        </header>
+
+        <div class="series-selector">
+            <h2>📚 Series Selection</h2>
+            <div class="series-controls">
+                <select id="seriesDropdown" class="series-dropdown">
+                    <option value="">Select a series...</option>
+                </select>
+                <button id="newSeriesBtn" class="series-button secondary">+ New Series</button>
+                <button id="refreshBtn" class="series-button">🔄 Refresh</button>
+            </div>
+            <div id="currentSeriesInfo" class="current-series-info" style="display: none;">
+                <h3 id="seriesTitle">No series selected</h3>
+                <p><strong>Author:</strong> <span id="seriesAuthor">-</span></p>
+                <p><strong>Current Phase:</strong> <span id="seriesPhase">-</span></p>
+                <p><strong>Status:</strong> <span id="seriesStatus">-</span></p>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>✨ Getting Started with BQ-Studio</h3>
+            <p><strong>Using Claude Code in Antigravity IDE:</strong></p>
+            <p>1. Make sure FictionLab is running (you're here, so it is! ✓)</p>
+            <p>2. In Claude Code, say: "I want to use the market-driven planning skill to develop a [genre] series."</p>
+            <p>3. Claude will orchestrate the 12-phase workflow automatically</p>
+            <p>4. Watch your progress here in this dashboard - it updates automatically every 10 seconds!</p>
+        </div>
+
+        <div class="workflow-container">
+            <h2>Current Workflow Progress</h2>
+            
+            <div id="loadingMessage" class="loading">
+                Loading workflow data...
+            </div>
+
+            <div id="errorMessage" class="error-message" style="display: none;">
+                Unable to load workflow data. Please ensure FictionLab is running and the Workflow Manager MCP is active.
+            </div>
+            
+            <div id="phaseGrid" class="phase-grid" style="display: none;">
+                <!-- Phases will be dynamically loaded here -->
+            </div>
+
+            <div class="legend" style="display: none;" id="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #9e9e9e;"></div>
+                    <span>Not Started</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(90deg, #667eea, #764ba2);"></div>
+                    <span>In Progress</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ff9800;"></div>
+                    <span>Waiting Approval</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #4caf50;"></div>
+                    <span>Completed</span>
+                </div>
+            </div>
+
+            <div class="auto-refresh-notice" id="autoRefreshNotice" style="display: none;">
+                🔄 Auto-refreshing every 10 seconds | Last updated: <span id="lastUpdated">Never</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Phase definitions matching the 12-phase workflow
+        const phases = [
+            { number: 0, name: 'Premise Development', description: 'Initial concept and premise creation' },
+            { number: 1, name: 'Genre Pack Management', description: 'Select or create genre-specific templates and beat sheets' },
+            { number: 2, name: 'Market Research', description: 'Analyze market trends, comp titles, and commercial viability' },
+            { number: 3, name: 'Series Architect', description: 'Design 5-book series structure with proper escalation' },
+            { number: 4, name: 'NPE Validation', description: 'Validate series structure against Narrative Physics Engine rules' },
+            { number: 5, name: 'Commercial Validation', description: 'Final commercial viability scoring and go/no-go decision' },
+            { number: 6, name: 'Writing Team Review', description: 'AI writing team reviews and prepares for execution' },
+            { number: 7, name: 'User Approval', description: 'User reviews and approves series plan before writing begins' },
+            { number: 8, name: 'MCP Commit', description: 'Commit approved plan to MCP servers for tracking' },
+            { number: 9, name: 'Chapter Planning', description: 'Detailed chapter-by-chapter planning for current book' },
+            { number: 10, name: 'Scene Validation', description: 'Validate individual scenes against NPE and genre rules' },
+            { number: 11, name: 'Writing Execution', description: 'AI-assisted writing of chapters and scenes' },
+            { number: 12, name: 'Book Production Loop', description: 'Revision, editing, and production for Books 2-5' }
+        ];
+
+        let currentWorkflowId = null;
+        let autoRefreshInterval = null;
+
+        function getPhaseStatus(phaseNumber, workflowState) {
+            if (!workflowState) return 'not-started';
+            
+            if (workflowState.completedPhases && workflowState.completedPhases.includes(phaseNumber)) {
+                return 'completed';
+            } else if (workflowState.waitingApproval && workflowState.waitingApproval.includes(phaseNumber)) {
+                return 'waiting-approval';
+            } else if (phaseNumber === workflowState.currentPhase) {
+                return 'in-progress';
+            } else {
+                return 'not-started';
+            }
+        }
+
+        function getStatusLabel(status) {
+            const labels = {
+                'not-started': 'Not Started',
+                'in-progress': 'In Progress',
+                'completed': 'Completed',
+                'waiting-approval': 'Waiting Approval'
+            };
+            return labels[status] || status;
+        }
+
+        function renderPhases(workflowState) {
+            const grid = document.getElementById('phaseGrid');
+            grid.innerHTML = '';
+            grid.style.display = 'grid';
+
+            phases.forEach(phase => {
+                const status = getPhaseStatus(phase.number, workflowState);
+                const card = document.createElement('div');
+                card.className = `phase-card ${status}`;
+                
+                card.innerHTML = `
+                    <div class="phase-number">${phase.number}</div>
+                    <div class="phase-title">${phase.name}</div>
+                    <div class="phase-status status-${status}">${getStatusLabel(status)}</div>
+                    <div class="phase-description">${phase.description}</div>
+                `;
+                
+                grid.appendChild(card);
+            });
+
+            document.getElementById('legend').style.display = 'flex';
+            document.getElementById('autoRefreshNotice').style.display = 'block';
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        async function loadWorkflowState() {
+            if (!currentWorkflowId) {
+                document.getElementById('loadingMessage').textContent = 'Please select a series to view workflow progress';
+                return;
+            }
+
+            try {
+                // In a real implementation, this would call the Workflow Manager MCP via IPC
+                // For now, we'll use mock data
+                const mockWorkflowState = {
+                    currentPhase: 2,
+                    phaseStatus: 'in_progress',
+                    completedPhases: [0, 1],
+                    waitingApproval: []
+                };
+
+                renderPhases(mockWorkflowState);
+                
+                // Update last updated time
+                const now = new Date();
+                document.getElementById('lastUpdated').textContent = now.toLocaleTimeString();
+                
+            } catch (error) {
+                console.error('Error loading workflow state:', error);
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('loadingMessage').style.display = 'none';
+            }
+        }
+
+        async function loadSeriesList() {
+            try {
+                // In a real implementation, this would call the Series MCP via IPC
+                // For now, we'll use mock data
+                const mockSeries = [
+                    { id: 1, title: 'The Clockwork Directive', author: 'Blake Merrick' },
+                    { id: 2, title: 'Vampire Detective Chronicles', author: 'Vin Dicktive' }
+                ];
+
+                const dropdown = document.getElementById('seriesDropdown');
+                dropdown.innerHTML = '<option value="">Select a series...</option>';
+                
+                mockSeries.forEach(series => {
+                    const option = document.createElement('option');
+                    option.value = series.id;
+                    option.textContent = `${series.title} (${series.author})`;
+                    dropdown.appendChild(option);
+                });
+                
+            } catch (error) {
+                console.error('Error loading series list:', error);
+            }
+        }
+
+        function updateCurrentSeriesInfo(seriesId) {
+            if (!seriesId) {
+                document.getElementById('currentSeriesInfo').style.display = 'none';
+                return;
+            }
+
+            // Mock data - in real implementation, fetch from Series MCP
+            const mockSeriesData = {
+                1: { title: 'The Clockwork Directive', author: 'Blake Merrick', phase: 'Market Research', status: 'In Progress' },
+                2: { title: 'Vampire Detective Chronicles', author: 'Vin Dicktive', phase: 'Premise Development', status: 'Not Started' }
+            };
+
+            const series = mockSeriesData[seriesId];
+            if (series) {
+                document.getElementById('seriesTitle').textContent = series.title;
+                document.getElementById('seriesAuthor').textContent = series.author;
+                document.getElementById('seriesPhase').textContent = series.phase;
+                document.getElementById('seriesStatus').textContent = series.status;
+                document.getElementById('currentSeriesInfo').style.display = 'block';
+            }
+        }
+
+        // Event listeners
+        document.getElementById('seriesDropdown').addEventListener('change', (e) => {
+            const seriesId = e.target.value;
+            currentWorkflowId = seriesId ? parseInt(seriesId) : null;
+            updateCurrentSeriesInfo(currentWorkflowId);
+            if (currentWorkflowId) {
+                loadWorkflowState();
+            } else {
+                document.getElementById('phaseGrid').style.display = 'none';
+                document.getElementById('legend').style.display = 'none';
+                document.getElementById('autoRefreshNotice').style.display = 'none';
+                document.getElementById('loadingMessage').textContent = 'Please select a series to view workflow progress';
+                document.getElementById('loadingMessage').style.display = 'block';
+            }
+        });
+
+        document.getElementById('newSeriesBtn').addEventListener('click', () => {
+            alert('To create a new series, use Claude Code:\n\n"I want to use the market-driven planning skill to develop a [genre] series. My concept is: [your concept]"');
+        });
+
+        document.getElementById('refreshBtn').addEventListener('click', () => {
+            loadSeriesList();
+            if (currentWorkflowId) {
+                loadWorkflowState();
+            }
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSeriesList();
+            
+            // Auto-refresh every 10 seconds
+            autoRefreshInterval = setInterval(() => {
+                if (currentWorkflowId) {
+                    loadWorkflowState();
+                }
+            }, 10000);
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+            }
+        });
+    </script>
+</body>
+</html>
