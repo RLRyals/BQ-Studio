@@ -1,5 +1,8 @@
-import { app, BrowserWindow } from 'electron';
-import path from 'path';
+import { app, BrowserWindow, dialog } from 'electron';
+import * as path from 'path';
+import { getWorkspaceService } from '../core/workspace-service';
+import { WorkspaceValidationState } from '../types/workspace';
+import { registerAllHandlers } from './ipc';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -49,7 +52,50 @@ function createWindow(): void {
 }
 
 // This method will be called when Electron has finished initialization
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+  // Register IPC handlers
+  registerAllHandlers();
+
+  // Initialize workspace service and check configuration
+  const workspaceService = getWorkspaceService();
+  await workspaceService.loadConfig();
+
+  const isFirstRun = await workspaceService.isFirstRun();
+
+  if (isFirstRun) {
+    // First run - workspace setup wizard will be shown by renderer
+    console.log('First run detected - workspace setup required');
+  } else {
+    // Validate existing workspace
+    const validation = await workspaceService.validate();
+
+    if (validation.state !== WorkspaceValidationState.VALID) {
+      console.warn('Workspace validation failed:', validation.error);
+
+      // Show dialog offering to reconfigure or exit
+      const choice = await dialog.showMessageBox({
+        type: 'warning',
+        title: 'Workspace Issue',
+        message: 'Your workspace is no longer accessible.',
+        detail: validation.error || 'Unknown error',
+        buttons: ['Reconfigure Workspace', 'Exit'],
+        defaultId: 0,
+        cancelId: 1,
+      });
+
+      if (choice.response === 1) {
+        // User chose to exit
+        app.quit();
+        return;
+      }
+
+      // User chose to reconfigure - setup wizard will be shown
+      console.log('Workspace reconfiguration required');
+    } else {
+      console.log('Workspace validated successfully:', validation.path);
+    }
+  }
+
   createWindow();
 
   // On macOS, re-create window when dock icon is clicked and no windows are open

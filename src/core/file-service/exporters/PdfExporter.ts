@@ -57,7 +57,7 @@ export class PdfExporter {
       const pdfOptions = options as PdfExportOptions;
 
       // Parse markdown to HTML
-      const htmlContent = marked(markdown);
+      const htmlContent = await marked(markdown);
 
       // Create complete HTML document with styling
       const html = this.createStyledHtml(htmlContent, pdfOptions);
@@ -100,7 +100,7 @@ export class PdfExporter {
   ): Promise<ExportResult> {
     try {
       // Parse markdown to HTML
-      const htmlContent = marked(markdown);
+      const htmlContent = await marked(markdown);
       const html = this.createStyledHtml(htmlContent, options);
 
       // Load HTML in browser window
@@ -171,7 +171,7 @@ ${content}
   /**
    * Generate CSS for the PDF
    */
-  private generateCSS(styling: any, options: PdfExportOptions): string {
+  private generateCSS(styling: any, _options: PdfExportOptions): string {
     return `
     /* Reset and base styles */
     * {

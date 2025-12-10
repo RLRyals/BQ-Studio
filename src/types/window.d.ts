@@ -4,7 +4,7 @@ export interface ElectronAPI {
   platform: string;
   send: (channel: string, data?: unknown) => void;
   receive: (channel: string, func: (...args: unknown[]) => void) => void;
-  invoke: (channel: string, data?: unknown) => Promise<unknown>;
+  invoke: (channel: string, ...args: unknown[]) => Promise<unknown>;
 }
 
 export interface AppVersion {

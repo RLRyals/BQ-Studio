@@ -3,6 +3,8 @@
  * Export all event bus components and types
  */
 
+import { EventBus } from './EventBus';
+
 export { EventBus } from './EventBus';
 export { EventLogger } from './EventLogger';
 

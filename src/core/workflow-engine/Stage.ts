@@ -8,7 +8,6 @@ import {
   StageData,
   StageStatus,
   ValidationResult,
-  ValidationFunction,
   StageError,
 } from './types';
 

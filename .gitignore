@@ -56,6 +56,15 @@ series-architect-2/outputs/
 user-data/
 plugins-data/
 
+# User workspace content (should be in separate repo)
+# The series-planning directory contains dev/test data and user-generated content
+series-planning/*
+!series-planning/.gitkeep
+!series-planning/README.md
+
+# Workspace configuration
+workspace-config.json
+
 # Build artifacts
 *.tsbuildinfo
 .claude/settings.local.json

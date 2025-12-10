@@ -115,7 +115,7 @@ export class EventBus implements TypedEventBus<BQStudioEvents> {
       const matchingSubscriptions = this.getMatchingSubscriptions(event as string);
 
       // Sort by priority (higher priority first)
-      matchingSubscriptions.sort((a, b) => b.options.priority - a.options.priority);
+      matchingSubscriptions.sort((a, b) => (b.options.priority || 0) - (a.options.priority || 0));
 
       // Execute handlers
       await this.executeHandlers(matchingSubscriptions, data, errors);
@@ -391,7 +391,7 @@ export class EventBus implements TypedEventBus<BQStudioEvents> {
     for (const subscription of subscriptions) {
       try {
         // Check if subscription has exceeded max calls
-        if (subscription.callCount >= subscription.options.maxCalls) {
+        if (subscription.options.maxCalls !== undefined && subscription.callCount >= subscription.options.maxCalls) {
           continue;
         }
 
@@ -400,14 +400,21 @@ export class EventBus implements TypedEventBus<BQStudioEvents> {
 
         // Execute handler with timeout
         if (subscription.options.async) {
-          await this.executeWithTimeout(
-            subscription.handler(data),
-            subscription.options.timeout
-          );
+          const promise = subscription.handler(data);
+          if (promise instanceof Promise) {
+            if (subscription.options.timeout !== undefined) {
+              await this.executeWithTimeout(
+                promise,
+                subscription.options.timeout
+              );
+            } else {
+              await promise;
+            }
+          }
         } else {
           const result = subscription.handler(data);
           // If handler returns a promise, wait for it
-          if (result instanceof Promise) {
+          if (result instanceof Promise && subscription.options.timeout !== undefined) {
             await this.executeWithTimeout(result, subscription.options.timeout);
           }
         }
@@ -478,7 +485,7 @@ export class EventBus implements TypedEventBus<BQStudioEvents> {
     for (const subscription of subscriptions) {
       if (
         subscription.once ||
-        subscription.callCount >= subscription.options.maxCalls
+        (subscription.options.maxCalls !== undefined && subscription.callCount >= subscription.options.maxCalls)
       ) {
         const subs = this.subscriptions.get(subscription.pattern);
         if (subs) {

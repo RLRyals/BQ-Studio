@@ -1,0 +1,33 @@
+# BQ-Studio Workspace .gitignore
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.bak
+
+# Build artifacts
+dist/
+build/
+
+# Logs
+*.log
+
+# Exports directory (uncomment to exclude exports from version control)
+# exports/
+
+# Personal notes (uncomment if you don't want to version personal notes)
+# personal-notes/
+
+# Workspace lock file
+.bq-studio.lock

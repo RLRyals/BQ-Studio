@@ -17,7 +17,6 @@ import {
   PluginActivationResult,
   PluginError,
   PluginErrorType,
-  CoreServices,
 } from './types';
 
 /**
@@ -304,7 +303,7 @@ export class PluginManager {
         name: metadata.manifest.name,
         version: metadata.manifest.version,
         description: metadata.manifest.description,
-        onActivate: async (ctx: PluginContext) => {
+        onActivate: async (_ctx: PluginContext) => {
           console.log(`[Plugin: ${pluginId}] Activated`);
         },
         onDeactivate: async () => {

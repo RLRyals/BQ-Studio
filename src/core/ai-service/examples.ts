@@ -4,7 +4,7 @@
  * This file demonstrates how to use the AI Service in BQ Studio
  */
 
-import { AIService, AIServiceConfig, StreamChunk } from './index';
+import { AIService, StreamChunk } from './index';
 
 /**
  * Example 1: Basic Setup

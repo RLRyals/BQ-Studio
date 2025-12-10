@@ -9,7 +9,6 @@ import {
   Paragraph,
   TextRun,
   HeadingLevel,
-  AlignmentType,
   UnderlineType,
   convertInchesToTwip,
   Table,
@@ -18,7 +17,7 @@ import {
   WidthType,
   BorderStyle,
 } from 'docx';
-import { marked } from 'marked';
+import { marked, Token, Tokens } from 'marked';
 import * as fs from 'fs/promises';
 import {
   ExportOptions,
@@ -26,23 +25,23 @@ import {
   ExportResult,
   FileServiceError,
   FileServiceErrorCode,
-  ParagraphStyle,
 } from '../types';
 
 /**
  * Default DOCX styling
+ * TODO: Use this in the future for custom styling
  */
-const DEFAULT_STYLING = {
-  fontSize: 24, // 12pt (half-points)
-  fontFamily: 'Calibri',
-  lineHeight: 1.15,
-  margins: {
-    top: 1440, // 1 inch in twips
-    right: 1440,
-    bottom: 1440,
-    left: 1440,
-  },
-};
+// const DEFAULT_STYLING = {
+//   fontSize: 24, // 12pt (half-points)
+//   fontFamily: 'Calibri',
+//   lineHeight: 1.15,
+//   margins: {
+//     top: 1440, // 1 inch in twips
+//     right: 1440,
+//     bottom: 1440,
+//     left: 1440,
+//   },
+// };
 
 /**
  * DocxExporter class
@@ -115,7 +114,7 @@ export class DocxExporter {
    * Convert markdown tokens to DOCX elements
    */
   private tokensToDocxElements(
-    tokens: marked.Token[],
+    tokens: Token[],
     options: DocxExportOptions
   ): (Paragraph | Table)[] {
     const elements: (Paragraph | Table)[] = [];
@@ -123,27 +122,27 @@ export class DocxExporter {
     for (const token of tokens) {
       switch (token.type) {
         case 'heading':
-          elements.push(this.createHeading(token, options));
+          elements.push(this.createHeading(token as Tokens.Heading, options));
           break;
 
         case 'paragraph':
-          elements.push(this.createParagraph(token, options));
+          elements.push(this.createParagraph(token as Tokens.Paragraph, options));
           break;
 
         case 'list':
-          elements.push(...this.createList(token, options));
+          elements.push(...this.createList(token as Tokens.List, options));
           break;
 
         case 'code':
-          elements.push(this.createCodeBlock(token, options));
+          elements.push(this.createCodeBlock(token as Tokens.Code, options));
           break;
 
         case 'blockquote':
-          elements.push(this.createBlockquote(token, options));
+          elements.push(this.createBlockquote(token as Tokens.Blockquote, options));
           break;
 
         case 'table':
-          elements.push(this.createTable(token, options));
+          elements.push(this.createTable(token as Tokens.Table, options));
           break;
 
         case 'hr':
@@ -172,7 +171,7 @@ export class DocxExporter {
   /**
    * Create heading paragraph
    */
-  private createHeading(token: marked.Tokens.Heading, options: DocxExportOptions): Paragraph {
+  private createHeading(token: Tokens.Heading, _options: DocxExportOptions): Paragraph {
     const headingLevels = [
       HeadingLevel.HEADING_1,
       HeadingLevel.HEADING_2,
@@ -198,7 +197,7 @@ export class DocxExporter {
   /**
    * Create paragraph with inline formatting
    */
-  private createParagraph(token: marked.Tokens.Paragraph, options: DocxExportOptions): Paragraph {
+  private createParagraph(token: Tokens.Paragraph, options: DocxExportOptions): Paragraph {
     const runs = this.tokensToTextRuns(token.tokens, options);
 
     return new Paragraph({
@@ -214,8 +213,8 @@ export class DocxExporter {
    * Create list items
    */
   private createList(
-    token: marked.Tokens.List,
-    options: DocxExportOptions
+    token: Tokens.List,
+    _options: DocxExportOptions
   ): Paragraph[] {
     const paragraphs: Paragraph[] = [];
 
@@ -242,7 +241,7 @@ export class DocxExporter {
   /**
    * Create code block
    */
-  private createCodeBlock(token: marked.Tokens.Code, options: DocxExportOptions): Paragraph {
+  private createCodeBlock(token: Tokens.Code, _options: DocxExportOptions): Paragraph {
     return new Paragraph({
       children: [
         new TextRun({
@@ -264,7 +263,7 @@ export class DocxExporter {
   /**
    * Create blockquote
    */
-  private createBlockquote(token: marked.Tokens.Blockquote, options: DocxExportOptions): Paragraph {
+  private createBlockquote(token: Tokens.Blockquote, _options: DocxExportOptions): Paragraph {
     const text = this.extractText(token.tokens);
 
     return new Paragraph({
@@ -294,13 +293,13 @@ export class DocxExporter {
   /**
    * Create table
    */
-  private createTable(token: marked.Tokens.Table, options: DocxExportOptions): Table {
+  private createTable(token: Tokens.Table, _options: DocxExportOptions): Table {
     const rows: TableRow[] = [];
 
     // Header row
     if (token.header && token.header.length > 0) {
       const headerCells = token.header.map(
-        (cell) =>
+        (cell: Tokens.TableCell) =>
           new TableCell({
             children: [
               new Paragraph({
@@ -324,7 +323,7 @@ export class DocxExporter {
     // Data rows
     for (const row of token.rows) {
       const cells = row.map(
-        (cell) =>
+        (cell: Tokens.TableCell) =>
           new TableCell({
             children: [
               new Paragraph({
@@ -370,8 +369,8 @@ export class DocxExporter {
    * Convert inline tokens to TextRuns with formatting
    */
   private tokensToTextRuns(
-    tokens: marked.Token[],
-    options: DocxExportOptions
+    tokens: Token[],
+    _options: DocxExportOptions
   ): TextRun[] {
     const runs: TextRun[] = [];
 
@@ -445,7 +444,7 @@ export class DocxExporter {
   /**
    * Extract plain text from tokens
    */
-  private extractText(tokens?: marked.Token[]): string {
+  private extractText(tokens?: Token[]): string {
     if (!tokens) return '';
 
     let text = '';

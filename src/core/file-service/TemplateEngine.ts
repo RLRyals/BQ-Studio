@@ -166,21 +166,21 @@ export class TemplateEngine {
 
       // Process if blocks
       const ifPattern = /\{\{#if\s+(\w+)\}\}(.*?)\{\{\/if\}\}/gs;
-      content = content.replace(ifPattern, (match, variableName, blockContent) => {
+      content = content.replace(ifPattern, (_match, variableName, blockContent) => {
         const value = this.getNestedValue(variables, variableName);
         return this.isTruthy(value) ? blockContent : '';
       });
 
       // Process unless blocks
       const unlessPattern = /\{\{#unless\s+(\w+)\}\}(.*?)\{\{\/unless\}\}/gs;
-      content = content.replace(unlessPattern, (match, variableName, blockContent) => {
+      content = content.replace(unlessPattern, (_match, variableName, blockContent) => {
         const value = this.getNestedValue(variables, variableName);
         return !this.isTruthy(value) ? blockContent : '';
       });
 
       // Process each blocks (simple array iteration)
       const eachPattern = /\{\{#each\s+(\w+)\}\}(.*?)\{\{\/each\}\}/gs;
-      content = content.replace(eachPattern, (match, variableName, itemTemplate) => {
+      content = content.replace(eachPattern, (_match, variableName, itemTemplate) => {
         const array = this.getNestedValue(variables, variableName);
         if (!Array.isArray(array)) return '';
 

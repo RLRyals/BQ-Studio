@@ -9,8 +9,9 @@
     "allowImportingTsExtensions": false,
     "noEmit": false,
     "outDir": "dist/main",
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "esModuleInterop": true
   },
-  "include": ["src/main/**/*"],
+  "include": ["src/main/**/*", "src/core/**/*", "src/types/**/*"],
   "exclude": ["node_modules", "dist", "src/renderer", "src/tests"]
 }

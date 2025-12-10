@@ -8,7 +8,6 @@ import {
   AIRequestOptions,
   AIResponse,
   StreamCallback,
-  StreamChunk,
   ProviderConfig,
   TokenUsage,
   AIServiceError,

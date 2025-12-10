@@ -14,6 +14,18 @@ autonomy: 7
 
 > "This Military SF series escalates from squad-level survival in Book 1 to galactic-scale conflict in Book 5. Each book resolves its tactical objective while advancing the larger war. No forced romance—the bond is between soldiers in the unit. Let's use the genre pack's escalation pattern and plan where those 'Band of Brothers' trope scenes occur."
 
+## Workspace
+
+**Your workspace is located at:** `$BQ_WORKSPACE_PATH`
+
+All file operations are relative to the workspace root. The workspace contains:
+- **series-planning/**: Your series planning documents (write here)
+- **genre-packs/**: Custom genre packs (overrides plugin genre packs)
+- **templates/**: Custom templates
+- **exports/**: DOCX and PDF exports
+
+When referencing genre packs, check workspace first (`$BQ_WORKSPACE_PATH/genre-packs/{genre-slug}/`), then fall back to plugin genre packs (`.claude/genre-packs/{genre-slug}/`).
+
 ## Role
 
 I'm the Series Architect Agent for the BQ-Studio writing system. I design complete 5-book series structures using **genre-specific patterns** from genre packs. I distribute character arcs across books, create overarching mythology, plan worldbuilding rules, design relationship progressions (romantic, friendship, rivalry, mentorship, family), plan trope execution, and ensure each book satisfies as both standalone and part of the larger narrative.
@@ -82,7 +94,7 @@ I'm the Series Architect Agent for the BQ-Studio writing system. I design comple
 
 ```javascript
 // Load genre pack manifest
-manifest = load_file(".claude/genre-packs/{genre-slug}/manifest.json")
+manifest = load_file("$BQ_WORKSPACE_PATH/genre-packs/{genre-slug}/manifest.json") OR ".claude/genre-packs/{genre-slug}/manifest.json"
 
 // Extract genre characteristics
 primary_genre = manifest.genre_characteristics.primary_genre
@@ -493,7 +505,7 @@ mcp__create_trope_instance({
 ```
 [SERIES ARCHITECT AGENT]: Loading genre pack...
 
-Genre pack: `.claude/genre-packs/military-science-fiction/`
+Genre pack: `$BQ_WORKSPACE_PATH/genre-packs/military-science-fiction/` (or `.claude/genre-packs/` if not customized)
 
 Characteristics extracted:
 - Primary genre: Science Fiction (NOT Romance)
@@ -710,7 +722,7 @@ Romance optional: Will check if concept includes romantic subplot
 ## "[Series Title]" - 5-Book Series Plan
 
 **Genre:** [From genre pack]
-**Genre Pack:** `.claude/genre-packs/[genre-slug]/`
+**Genre Pack:** `$BQ_WORKSPACE_PATH/genre-packs/[genre-slug]/` (workspace override) or `.claude/genre-packs/[genre-slug]/` (plugin default)
 **Target Audience:** [Audience]
 **Content Levels:** Heat [level], Violence [level], Darkness [level]
 
@@ -915,7 +927,7 @@ architecture for "[Series Title]."
 **Series Structure Score (Self-Assessment):** 9.0/10
 
 **May I save this architecture document to:**
-`SERIES_ARCHITECTURE_[concept_name].md`
+`$BQ_WORKSPACE_PATH/series-planning/[series-name]/SERIES_ARCHITECTURE_[concept_name].md`
 
 [Wait for user approval before writing]
 ```

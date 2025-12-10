@@ -4,9 +4,8 @@
  */
 
 import * as fs from 'fs/promises';
-import * as fsSync from 'fs';
 import * as path from 'path';
-import { watch, FSWatcher } from 'chokidar';
+import { watch } from 'chokidar';
 import {
   FileServiceConfig,
   FileServiceError,
@@ -33,7 +32,7 @@ const DEFAULT_CONFIG: Partial<FileServiceConfig> = {
   maxFileSize: 100 * 1024 * 1024, // 100MB
   enableWatcher: true,
   watcherOptions: {
-    ignored: /(^|[\/\\])\../,
+    ignored: '/(^|[\\/\\\\])\\../',
     persistent: true,
     ignoreInitial: true,
   },
@@ -563,7 +562,7 @@ export class FileService {
       case 'html':
         // Simple HTML export using marked (could be enhanced)
         const { marked } = await import('marked');
-        const html = marked(content);
+        const html = await marked(content);
         await this.writeFile(options.outputPath, html, { overwrite: true });
         return {
           success: true,

@@ -17,7 +17,7 @@ BQ Studio is a **specialized writing application** that depends on **FictionLab*
 
 **Repository:** https://github.com/RLRyals/MCP-Electron-App
 **Installation:** Windows Start Menu → FictionLab
-**Technology:** Electron + React + TypeScript + Docker
+**Technology:** Electron + TypeScript + Docker
 
 ### What FictionLab Provides
 
@@ -26,7 +26,7 @@ BQ Studio is a **specialized writing application** that depends on **FictionLab*
 FictionLab Desktop App
 ├── PostgreSQL Database (Docker)
 ├── PgBouncer Connection Pooler (port 6432)
-├── 9 MCP Writing Servers (ports 3001-3009)
+├── 9 MCP Writing Servers (ports 3001-3011)
 │   ├── author-server (3001)
 │   ├── series-planning-server (3002)
 │   ├── book-planning-server (3003)
@@ -36,7 +36,8 @@ FictionLab Desktop App
 │   ├── core-continuity-server (3007)
 │   ├── review-server (3008)
 │   ├── reporting-server (3009)
-│   └── npe-server (3011)
+│   |── npe-server (3011)
+│   └── workflow-manager (3012) - BQ Studio
 ├── Database Admin Interface (port 3010)
 ├── Typing Mind (web-based AI chat)
 └── Claude Desktop Integration
@@ -54,13 +55,26 @@ FictionLab Desktop App
 
 ## What is BQ Studio?
 
-**BQ Studio** is a **specialized UI application** for series planning and manuscript writing workflows.
+**BQ Studio** is a **Plugin for FictionLab** that provides specialized UI for series planning and manuscript writing workflows.
 
 **Repository:** https://github.com/RLRyals/BQ-Studio
 **Status:** In development
-**Technology:** Electron + React + TypeScript
+**Technology:** HTML + AI Agents + Agent Skills + FictionLab
 
 ### What BQ Studio Provides
+
+#### Current Functionality
+
+- HTML dashboard to visualize progress of series planning and manuscript writing 
+- AI Agents for series planning and manuscript writing in CLaude Code
+- Agent Skills for phase-based workflows in CLaude Code
+**Key Features:**
+- ✅ Visual workflow of process
+- ✅ Integration with FictionLab's data
+
+#### Future Functionality
+- Chat interface with agents
+
 
 **Specialized Writing Tools:**
 ```
@@ -74,11 +88,11 @@ BQ Studio Desktop App
 │   ├── 9 AI agents (Miranda, Bailey, Tessa, etc.)
 │   ├── 5 Agent Skills (phase-based workflows)
 │   └── Chat interface with agents
-├── Manuscript Writer Plugin
+├── Manuscript Writer
 │   ├── Chapter-by-chapter writing
 │   ├── Scene editor with AI assistance
 │   └── Continuity tracking
-└── Penname Manager Plugin
+└── Penname Manager
     ├── Multi-author identity management
     └── Voice profile tracking
 ```
@@ -100,10 +114,20 @@ BQ Studio Desktop App
 │                                                │
 │  Provides:                                     │
 │  • Postgres database                           │
-│  • 9 MCP servers (API layer)                   │
+│  • 10 MCP servers (API layer)                  │
+│   - author-server (3001)                       │
+│   - series-planning-server (3002)              │
+│   - book-planning-server (3003)                │
+│   - chapter-planning-server (3004)             │
+│   - character-planning-server (3005)           │
+│   - scene-server (3006)                        │
+│   - core-continuity-server (3007)              │
+│   - review-server (3008)                       │
+│   - reporting-server (3009)                    │
+│   - npe-server (3011)                          │
 │  • PgBouncer (connection pooling)              │
-│  • Typing Mind (general AI chat)               │
-│  • Database admin interface                    │
+│  • Typing Mind (general AI API keys chat)      │
+│  • Database admin interface (3012)             │
 └────────────────────────────────────────────────┘
                         ↓
             Shared infrastructure
@@ -115,7 +139,7 @@ BQ Studio Desktop App
 │  Consumes:                                     │
 │  • FictionLab's Postgres (via PgBouncer)       │
 │  • FictionLab's MCP servers                    │
-│  • Shared series/character/scene data          │
+│   - Shared series/character/scene data         │
 │                                                │
 │  Adds:                                         │
 │  • Specialized series planning UI              │
@@ -125,8 +149,8 @@ BQ Studio Desktop App
 ```
 
 **Analogy:**
-- **FictionLab** = Database server + API backend (like AWS RDS + Lambda)
-- **BQ Studio** = Frontend application (like a React admin dashboard)
+- **FictionLab** = Database server + API backend that provides shared infrastructure for multiple writing tools
+- **BQ Studio** = Plugin to FictionLab - Frontend  monitoring for AI Agent's specialized planning and writing workflows.
 
 ---
 

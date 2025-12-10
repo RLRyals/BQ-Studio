@@ -8,7 +8,6 @@ import {
   AIRequestOptions,
   AIResponse,
   StreamCallback,
-  StreamChunk,
   ProviderConfig,
   TokenUsage,
   AIServiceError,
@@ -251,9 +250,9 @@ export class AnthropicProvider implements AIProviderInterface {
         code = ErrorCode.INVALID_API_KEY;
       } else if (error.status === 429) {
         code = ErrorCode.RATE_LIMIT_EXCEEDED;
-      } else if (error.status >= 400 && error.status < 500) {
+      } else if (error.status !== undefined && error.status >= 400 && error.status < 500) {
         code = ErrorCode.INVALID_REQUEST;
-      } else if (error.status >= 500) {
+      } else if (error.status !== undefined && error.status >= 500) {
         code = ErrorCode.SERVER_ERROR;
       }
     } else if (error.name === 'AbortError' || error.code === 'ETIMEDOUT') {
