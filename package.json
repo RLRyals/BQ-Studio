@@ -1,10 +1,10 @@
 {
   "name": "bq-studio",
   "version": "0.1.0",
-  "description": "AI-Powered Publishing House ERP with Plugin Architecture",
+  "description": "AI-Powered Publishing House App Plugin for FictionLab",
   "main": "dist/main/app.js",
   "author": "BQ Studio Team",
-  "license": "MIT",
+  "license": "proprietary",
   "repository": {
     "type": "git",
     "url": "https://github.com/RLRyals/BQ-Studio.git"
