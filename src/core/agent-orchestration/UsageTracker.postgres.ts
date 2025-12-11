@@ -280,7 +280,12 @@ export class UsageTracker {
     outputTokens: number;
   }> {
     try {
-      return await this.database.getMonthlyTokenUsage();
+      const result = await this.database.getMonthlyTokenUsage();
+      return {
+        totalTokens: result.total_tokens,
+        inputTokens: result.input_tokens,
+        outputTokens: result.output_tokens,
+      };
     } catch (error) {
       console.error('Failed to get monthly usage summary:', error);
       return {

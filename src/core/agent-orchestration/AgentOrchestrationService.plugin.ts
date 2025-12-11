@@ -429,6 +429,7 @@ export class AgentOrchestrationService extends EventEmitter {
       jobId,
       progress,
       phase,
+      message: `Phase ${phase} at ${progress}%`,
     });
   }
 
@@ -439,7 +440,7 @@ export class AgentOrchestrationService extends EventEmitter {
     await this.database.updateJobStatus(jobId, 'completed');
     await this.database.addJobLog(jobId, 'info', 'Job completed successfully');
 
-    await this.queueManager.completeJob(jobId);
+    this.queueManager.completeJob(jobId, result);
 
     // Complete workflow
     const workflowId = this.workflowIdMap.get(jobId);
@@ -457,6 +458,7 @@ export class AgentOrchestrationService extends EventEmitter {
         type: 'job-completed',
         jobId,
         job,
+        result,
       });
     }
 
@@ -501,10 +503,11 @@ export class AgentOrchestrationService extends EventEmitter {
       job.status = 'pending';
       job.retryCount = retryCount;
 
-      await this.queueManager.retryJob(jobId);
+      // Re-queue the job for retry (add back to pending queue)
+      await this.queueManager.enqueue(job);
 
       this.emitEvent({
-        type: 'job-retry',
+        type: 'job-retrying',
         jobId,
         job,
         retryCount,
@@ -587,7 +590,7 @@ export class AgentOrchestrationService extends EventEmitter {
    * Get job by ID
    */
   getJob(jobId: string): ExecutionJob | null {
-    return this.queueManager.getJob(jobId);
+    return this.queueManager.getJob(jobId) || null;
   }
 
   /**

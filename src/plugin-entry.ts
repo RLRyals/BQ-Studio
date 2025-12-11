@@ -9,7 +9,7 @@ import type {
   FictionLabPlugin,
   PluginContext,
 } from '@fictionlab/plugin-api';
-import { AgentOrchestrationService } from './core/agent-orchestration/AgentOrchestrationService';
+import { AgentOrchestrationService } from './core/agent-orchestration/AgentOrchestrationService.plugin';
 import { ClaudeCodeInstaller } from './core/agent-orchestration/ClaudeCodeInstaller';
 import { PluginDatabase } from './core/database/PluginDatabase';
 import { SessionManager } from './core/agent-orchestration/SessionManager.postgres';
@@ -67,11 +67,14 @@ export default class BQStudioPlugin implements FictionLabPlugin {
       this.claudeCodeInstaller = ClaudeCodeInstaller.getInstance();
 
       // Initialize orchestration service with injected dependencies
-      // TODO: Update AgentOrchestrationService to accept these dependencies
-      this.orchestrationService = new AgentOrchestrationService(
-        context.workspace.root,
-        context.config.get('maxConcurrentJobs', 3)
-      );
+      this.orchestrationService = new AgentOrchestrationService({
+        workspaceRoot: context.workspace.root,
+        maxConcurrent: context.config.get('maxConcurrentJobs', 3),
+        database: this.pluginDatabase,
+        sessionManager: this.sessionManager,
+        usageTracker: this.usageTracker,
+        logger: context.logger,
+      });
 
       // Forward agent execution events to renderer via IPC
       this.orchestrationService.on('agent-execution', (event: AgentExecutionEvent) => {
@@ -311,6 +314,7 @@ export default class BQStudioPlugin implements FictionLabPlugin {
         },
         {
           id: 'bq-separator',
+          label: '-',
           type: 'separator',
         },
         {
@@ -409,11 +413,11 @@ export default class BQStudioPlugin implements FictionLabPlugin {
       expiresAt?: string;
     }
   ): Promise<void> {
-    if (!this.orchestrationService) {
-      throw new Error('Orchestration service not initialized');
+    if (!this.sessionManager) {
+      throw new Error('Session manager not initialized');
     }
 
-    await this.orchestrationService.authenticate(
+    await this.sessionManager.saveSession(
       params.sessionToken,
       params.userId,
       params.subscriptionTier,
@@ -422,27 +426,27 @@ export default class BQStudioPlugin implements FictionLabPlugin {
   }
 
   private async handleLogout(): Promise<void> {
-    if (!this.orchestrationService) {
-      throw new Error('Orchestration service not initialized');
+    if (!this.sessionManager) {
+      throw new Error('Session manager not initialized');
     }
 
-    this.orchestrationService.logout();
+    await this.sessionManager.clearSession();
   }
 
   private async handleIsAuthenticated(): Promise<boolean> {
-    if (!this.orchestrationService) {
+    if (!this.sessionManager) {
       return false;
     }
 
-    return this.orchestrationService.isAuthenticated();
+    return this.sessionManager.isAuthenticated();
   }
 
   private async handleGetSessionInfo(): Promise<ClaudeSession | null> {
-    if (!this.orchestrationService) {
+    if (!this.sessionManager) {
       return null;
     }
 
-    return this.orchestrationService.getSessionInfo();
+    return this.sessionManager.getSession();
   }
 
   private async handleGetUsageSummary(): Promise<{
@@ -450,7 +454,7 @@ export default class BQStudioPlugin implements FictionLabPlugin {
     monthlyUsage: number;
     usagePercentage: number;
   }> {
-    if (!this.orchestrationService) {
+    if (!this.usageTracker || !this.sessionManager) {
       return {
         totalTokens: 0,
         monthlyUsage: 0,
@@ -458,17 +462,15 @@ export default class BQStudioPlugin implements FictionLabPlugin {
       };
     }
 
-    const usageTracker = this.orchestrationService.getUsageTracker();
-    const summary = usageTracker.getTotalUsage();
-    const session = this.orchestrationService.getSessionInfo();
+    const summary = await this.usageTracker.getTotalUsage();
+    const monthlyUsage = await this.usageTracker.getCurrentMonthUsage();
+    const session = this.sessionManager.getSession();
     const tier = session?.subscriptionTier || 'pro';
 
     return {
       totalTokens: summary.totalTokens,
-      monthlyUsage: usageTracker.getTotalTokensForPeriod(
-        usageTracker.getCurrentMonthUsage()
-      ),
-      usagePercentage: usageTracker.getUsagePercentage(tier),
+      monthlyUsage: this.usageTracker.getTotalTokensForPeriod(monthlyUsage),
+      usagePercentage: await this.usageTracker.getUsagePercentage(tier),
     };
   }
 

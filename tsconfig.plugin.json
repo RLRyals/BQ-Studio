@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "commonjs",
+    "lib": ["es2020"],
+    "outDir": "./dist-plugin",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "@fictionlab/plugin-api": ["./src/types/fictionlab-plugin-api.d.ts"]
+    }
+  },
+  "include": [
+    "src/plugin-entry.ts",
+    "src/core/**/*.ts",
+    "src/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "dist-plugin",
+    "src/main",
+    "src/renderer",
+    "src/core/plugin-manager"
+  ]
+}

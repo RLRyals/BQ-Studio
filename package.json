@@ -18,7 +18,7 @@
     "build:main": "tsc -p tsconfig.main.json",
     "build:plugin": "npm run build:plugin:clean && npm run build:plugin:main && npm run build:plugin:renderer && npm run build:plugin:package",
     "build:plugin:clean": "node -e \"require('fs-extra').removeSync('dist-plugin')\"",
-    "build:plugin:main": "tsc src/plugin-entry.ts --outDir dist-plugin --module commonjs --target es2020 --esModuleInterop --skipLibCheck --resolveJsonModule --declaration false",
+    "build:plugin:main": "tsc -p tsconfig.plugin.json",
     "build:plugin:renderer": "vite build --mode plugin",
     "build:plugin:package": "node scripts/package-plugin.js",
     "install:plugin:local": "node scripts/install-plugin-local.js",
@@ -37,20 +37,21 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.30.0",
     "docx": "^8.5.0",
-    "electron-squirrel-startup": "^1.0.1",
-    "electron-store": "^8.1.0",
     "fs-extra": "^11.2.0",
     "lucide-react": "^0.554.0",
     "markdown-it": "^14.1.0",
     "marked": "^17.0.1",
     "openai": "^4.70.0",
-    "pg": "^8.16.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-grid-layout": "^1.5.2",
     "react-router-dom": "^7.9.6",
     "simple-git": "^3.25.0",
     "zustand": "^4.5.0"
+  },
+  "optionalDependencies": {
+    "electron-squirrel-startup": "^1.0.1",
+    "pg": "^8.16.3"
   },
   "devDependencies": {
     "@testing-library/react": "^14.1.2",
