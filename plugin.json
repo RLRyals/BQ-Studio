@@ -1,0 +1,131 @@
+{
+  "id": "bq-studio",
+  "name": "BQ Studio - Publishing Workflow Engine",
+  "version": "1.0.0",
+  "description": "AI-powered publishing workflows using Claude Code in headless mode. Orchestrates series planning, manuscript writing, and publishing operations using your Claude Pro/Max subscription.",
+  "author": "BQ Studio Team",
+  "fictionLabVersion": ">=0.1.0",
+  "pluginType": "execution-engine",
+
+  "entry": {
+    "main": "dist/plugin-entry.js",
+    "renderer": "dist/renderer/index.html"
+  },
+
+  "permissions": {
+    "database": ["public", "plugin_bq_studio"],
+    "mcp": ["workflow-manager"],
+    "fileSystem": true,
+    "network": false,
+    "childProcesses": true,
+    "docker": false,
+    "clipboard": false,
+    "dialogs": true
+  },
+
+  "dependencies": {
+    "mcpServers": [
+      {
+        "id": "workflow-manager",
+        "version": ">=1.0.0"
+      }
+    ],
+    "fictionlabApi": "^1.0.0"
+  },
+
+  "ui": {
+    "mainView": "StudioDashboard",
+    "menuItems": [
+      {
+        "label": "BQ Studio",
+        "submenu": [
+          {
+            "label": "New Series Workflow",
+            "accelerator": "CmdOrCtrl+Shift+N",
+            "action": "new-series"
+          },
+          {
+            "label": "Active Jobs",
+            "accelerator": "CmdOrCtrl+Shift+J",
+            "action": "show-jobs"
+          },
+          {
+            "label": "Token Usage",
+            "action": "show-usage"
+          },
+          "separator",
+          {
+            "label": "Settings",
+            "action": "show-settings"
+          }
+        ]
+      }
+    ],
+    "sidebarWidget": "StudioQuickActions",
+    "settingsPanel": "StudioSettings",
+    "statusBarItems": [
+      {
+        "id": "active-jobs-count",
+        "position": "right",
+        "priority": 10
+      },
+      {
+        "id": "token-usage-indicator",
+        "position": "right",
+        "priority": 9
+      }
+    ]
+  },
+
+  "mcpIntegration": {
+    "workflow-manager": {
+      "required": true,
+      "endpoint": "http://localhost:3012"
+    }
+  },
+
+  "configSchema": {
+    "maxConcurrentJobs": {
+      "type": "number",
+      "default": 3,
+      "description": "Maximum number of concurrent Claude Code executions",
+      "required": false
+    },
+    "autoRetryFailedJobs": {
+      "type": "boolean",
+      "default": true,
+      "description": "Automatically retry failed jobs with exponential backoff",
+      "required": false
+    },
+    "maxRetries": {
+      "type": "number",
+      "default": 3,
+      "description": "Maximum number of retry attempts for failed jobs",
+      "required": false
+    },
+    "claudeCodePath": {
+      "type": "string",
+      "default": "",
+      "description": "Custom path to Claude Code CLI (leave empty for auto-detection)",
+      "required": false
+    },
+    "workspaceRoot": {
+      "type": "string",
+      "default": "",
+      "description": "Root directory for series workspaces (leave empty to use FictionLab workspace)",
+      "required": false
+    },
+    "enableDetailedLogging": {
+      "type": "boolean",
+      "default": false,
+      "description": "Enable detailed logging for debugging (may impact performance)",
+      "required": false
+    },
+    "tokenUsageWarningThreshold": {
+      "type": "number",
+      "default": 80,
+      "description": "Show warning when token usage exceeds this percentage (0-100)",
+      "required": false
+    }
+  }
+}
