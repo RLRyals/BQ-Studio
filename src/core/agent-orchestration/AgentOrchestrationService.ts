@@ -100,7 +100,7 @@ export class AgentOrchestrationService extends EventEmitter {
       console.warn('Failed to create workflow in WorkflowManager:', error);
       this.queueManager.addLog(
         job.id,
-        'warning',
+        'warn',
         'Failed to create workflow in WorkflowManager - execution will proceed without persistence'
       );
     }

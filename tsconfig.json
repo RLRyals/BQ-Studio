@@ -30,6 +30,6 @@
       "@types/*": ["./src/types/*"]
     }
   },
-  "include": ["src/renderer/**/*", "src/core/**/*", "src/types/**/*"],
+  "include": ["src/renderer/**/*"],
   "references": [{ "path": "./tsconfig.main.json" }]
 }

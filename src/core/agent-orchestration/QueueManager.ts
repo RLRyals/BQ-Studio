@@ -361,7 +361,7 @@ export class QueueManager {
     );
 
     this.queue.failed = this.queue.failed.filter(
-      (job) => job.lastActivityAt > cutoffDate
+      (job) => job.lastActivityAt && job.lastActivityAt > cutoffDate
     );
   }
 }

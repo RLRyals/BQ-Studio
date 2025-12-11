@@ -100,7 +100,7 @@ const SKILLS: SkillInfo[] = [
       'You have a series structure and need to plan the next book',
       'You want detailed chapter-by-chapter breakdown',
       'You need scene-level planning before writing',
-      'You're working within an established world',
+      'You\'re working within an established world',
     ],
     outputs: [
       'Three-act structure with major beats',
@@ -123,7 +123,7 @@ const SKILLS: SkillInfo[] = [
       'You have a book outline and need chapter details',
       'You want to plan before writing each chapter',
       'You need to ensure chapter pacing and structure',
-      'You're ready to write but want guidance',
+      'You\'re ready to write but want guidance',
     ],
     outputs: [
       'Scene-by-scene breakdown',
@@ -146,7 +146,7 @@ const SKILLS: SkillInfo[] = [
       'You have chapter/scene plans ready',
       'You want AI assistance with prose generation',
       'You need dialogue or description help',
-      "You're ready to produce actual manuscript pages",
+      'You\'re ready to produce actual manuscript pages',
     ],
     outputs: [
       'Scene prose draft',

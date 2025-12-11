@@ -115,7 +115,7 @@ export class WorkflowManagerClient {
       throw new Error(`MCP call failed: ${response.statusText}`);
     }
 
-    const result = await response.json();
+    const result: any = await response.json();
 
     if (result.error) {
       throw new Error(`MCP error: ${result.error.message}`);
@@ -418,7 +418,7 @@ export class WorkflowManagerClient {
     if (!response.ok) {
       throw new Error(`Health check failed: ${response.statusText}`);
     }
-    return response.json();
+    return response.json() as Promise<{ status: string; database: any }>;
   }
 }
 
