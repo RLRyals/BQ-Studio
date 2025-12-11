@@ -10,6 +10,7 @@ import { SessionManager } from './SessionManager';
 import { ClaudeCodeExecutor } from './ClaudeCodeExecutor';
 import { OutputParser } from './OutputParser';
 import { UsageTracker } from './UsageTracker';
+import { WorkflowManagerClient } from '../../services/WorkflowManagerClient';
 import {
   ExecutionJob,
   ExecutionQueue,
@@ -25,7 +26,9 @@ export class AgentOrchestrationService extends EventEmitter {
   private claudeCodeExecutor: ClaudeCodeExecutor;
   private outputParser: OutputParser;
   private usageTracker: UsageTracker;
+  private workflowClient: WorkflowManagerClient;
   private workspaceRoot: string;
+  private workflowIdMap: Map<string, number>; // jobId -> workflowId
 
   constructor(workspaceRoot: string, maxConcurrent?: number) {
     super();
@@ -35,6 +38,8 @@ export class AgentOrchestrationService extends EventEmitter {
     this.claudeCodeExecutor = new ClaudeCodeExecutor();
     this.outputParser = new OutputParser();
     this.usageTracker = new UsageTracker();
+    this.workflowClient = new WorkflowManagerClient();
+    this.workflowIdMap = new Map();
   }
 
   /**
@@ -72,6 +77,33 @@ export class AgentOrchestrationService extends EventEmitter {
       retryCount: 0,
       maxRetries: 3,
     };
+
+    // Create workflow in WorkflowManager (for persistence)
+    try {
+      const session = this.sessionManager.getSession();
+      const workflow = await this.workflowClient.createWorkflow({
+        series_id: seriesId,
+        user_id: session?.userId ? parseInt(session.userId) : 1,
+        concept: userPrompt,
+      });
+
+      // Store workflow ID mapping
+      this.workflowIdMap.set(job.id, workflow.workflow_id);
+
+      this.queueManager.addLog(
+        job.id,
+        'info',
+        `Created workflow ${workflow.workflow_id} in WorkflowManager`
+      );
+    } catch (error) {
+      // Log error but don't fail job creation
+      console.warn('Failed to create workflow in WorkflowManager:', error);
+      this.queueManager.addLog(
+        job.id,
+        'warning',
+        'Failed to create workflow in WorkflowManager - execution will proceed without persistence'
+      );
+    }
 
     // Enqueue job
     await this.queueManager.enqueue(job);
@@ -246,8 +278,22 @@ export class AgentOrchestrationService extends EventEmitter {
   /**
    * Handle progress updates
    */
-  private handleProgress(jobId: string, progress: number, phase: string): void {
+  private async handleProgress(jobId: string, progress: number, phase: string): Promise<void> {
     this.queueManager.updateJobProgress(jobId, progress, phase);
+
+    // Update workflow phase in WorkflowManager
+    const workflowId = this.workflowIdMap.get(jobId);
+    if (workflowId) {
+      try {
+        // Determine phase number from phase name (simplified)
+        const phaseNumber = this.getPhaseNumberFromName(phase);
+        if (phaseNumber > 0) {
+          await this.workflowClient.advanceToPhase(workflowId, phaseNumber);
+        }
+      } catch (error) {
+        console.warn('Failed to update workflow phase:', error);
+      }
+    }
 
     this.emitEvent({
       type: 'phase-progress',
@@ -259,10 +305,53 @@ export class AgentOrchestrationService extends EventEmitter {
   }
 
   /**
+   * Get phase number from phase name (simplified mapping)
+   */
+  private getPhaseNumberFromName(phaseName: string): number {
+    const phaseMap: Record<string, number> = {
+      'Genre Identification': 1,
+      'Market Research': 2,
+      'Genre Pack Selection': 3,
+      'Series Architecture': 4,
+      'Book Planning': 5,
+      'Commercial Validation': 6,
+      'Handoff Documentation': 7,
+      'Series Concept Analysis': 1,
+      'Character Arc Planning': 2,
+      'World Building': 3,
+      'Plot Structure': 4,
+      'Documentation': 5,
+      'Story Structure': 1,
+      'Chapter Breakdown': 2,
+      'Scene Planning': 3,
+      'Scene List': 1,
+      'Beat Planning': 2,
+      'Scene Draft': 1,
+      'Review': 2,
+    };
+    return phaseMap[phaseName] || 0;
+  }
+
+  /**
    * Complete a job
    */
   private async completeJob(jobId: string, result: ClaudeCodeExecutionResult): Promise<void> {
     this.queueManager.addLog(jobId, 'info', 'Execution completed successfully');
+
+    // Mark workflow as completed in WorkflowManager
+    const workflowId = this.workflowIdMap.get(jobId);
+    if (workflowId) {
+      try {
+        await this.workflowClient.completeCurrentPhase(workflowId, result.output);
+        this.queueManager.addLog(
+          jobId,
+          'info',
+          `Marked workflow ${workflowId} as completed in WorkflowManager`
+        );
+      } catch (error) {
+        console.warn('Failed to mark workflow as completed:', error);
+      }
+    }
 
     await this.queueManager.completeJob(jobId, result);
 

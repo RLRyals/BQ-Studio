@@ -10,3 +10,5 @@ export { ClaudeCodeExecutor } from './ClaudeCodeExecutor';
 export { OutputParser } from './OutputParser';
 export { UsageTracker } from './UsageTracker';
 export { AgentOrchestrationService } from './AgentOrchestrationService';
+export { ClaudeCodeInstaller } from './ClaudeCodeInstaller';
+export { MockClaudeCodeExecutor } from './MockClaudeCodeExecutor';

@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Dashboard } from './layouts/Dashboard';
 import { Workspace } from './layouts/Workspace';
+import { AgentExecutionDashboard } from './components/AgentExecution';
 import { useThemeStore } from './stores/themeStore';
 
 export function App() {
@@ -21,6 +22,7 @@ export function App() {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/workspace" element={<Workspace />} />
+        <Route path="/agent-execution" element={<AgentExecutionDashboard />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
