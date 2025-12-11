@@ -11,6 +11,9 @@ import type {
 } from '@fictionlab/plugin-api';
 import { AgentOrchestrationService } from './core/agent-orchestration/AgentOrchestrationService';
 import { ClaudeCodeInstaller } from './core/agent-orchestration/ClaudeCodeInstaller';
+import { PluginDatabase } from './core/database/PluginDatabase';
+import { SessionManager } from './core/agent-orchestration/SessionManager.postgres';
+import { UsageTracker } from './core/agent-orchestration/UsageTracker.postgres';
 import type {
   ExecutionJob,
   ExecutionQueue,
@@ -33,6 +36,9 @@ export default class BQStudioPlugin implements FictionLabPlugin {
   private context: PluginContext | null = null;
   private orchestrationService: AgentOrchestrationService | null = null;
   private claudeCodeInstaller: ClaudeCodeInstaller | null = null;
+  private pluginDatabase: PluginDatabase | null = null;
+  private sessionManager: SessionManager | null = null;
+  private usageTracker: UsageTracker | null = null;
 
   /**
    * Plugin activation
@@ -47,10 +53,21 @@ export default class BQStudioPlugin implements FictionLabPlugin {
       // Create plugin database schema
       await this.initializeDatabase(context);
 
+      // Initialize Plugin Database wrapper
+      this.pluginDatabase = new PluginDatabase(context.services.database);
+
+      // Initialize SessionManager with PostgreSQL
+      this.sessionManager = new SessionManager(this.pluginDatabase);
+      await this.sessionManager.initialize();
+
+      // Initialize UsageTracker with PostgreSQL
+      this.usageTracker = new UsageTracker(this.pluginDatabase);
+
       // Initialize Claude Code installer
       this.claudeCodeInstaller = ClaudeCodeInstaller.getInstance();
 
       // Initialize orchestration service with injected dependencies
+      // TODO: Update AgentOrchestrationService to accept these dependencies
       this.orchestrationService = new AgentOrchestrationService(
         context.workspace.root,
         context.config.get('maxConcurrentJobs', 3)
