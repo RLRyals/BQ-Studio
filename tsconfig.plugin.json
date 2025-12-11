@@ -28,6 +28,7 @@
     "dist-plugin",
     "src/main",
     "src/renderer",
-    "src/core/plugin-manager"
+    "src/core/plugin-manager",
+    "src/core/ai-service"
   ]
 }

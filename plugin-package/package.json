@@ -1,0 +1,11 @@
+{
+  "name": "bq-studio-plugin",
+  "version": "0.1.0",
+  "description": "AI-Powered Publishing House App Plugin for FictionLab",
+  "author": "BQ Studio Team",
+  "license": "proprietary",
+  "main": "dist/plugin-entry.js",
+  "dependencies": {
+    "simple-git": "^3.25.0"
+  }
+}

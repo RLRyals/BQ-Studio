@@ -31,15 +31,24 @@ async function packagePlugin() {
       path.join(distDir, 'plugin-entry.js')
     );
 
-    // Copy core services (compiled TypeScript)
+    // Copy core services (compiled TypeScript from plugin build)
     console.log('📋 Copying core services...');
-    const coreSourceDir = path.join(ROOT_DIR, 'dist/main/src/core');
+    const coreSourceDir = path.join(DIST_PLUGIN_DIR, 'core');
     const coreDestDir = path.join(distDir, 'core');
 
     if (await fs.pathExists(coreSourceDir)) {
       await fs.copy(coreSourceDir, coreDestDir);
     } else {
-      console.warn('⚠️  Warning: Core services not built. Run npm run build:main first.');
+      console.warn('⚠️  Warning: Core services not built. Run npm run build:plugin:main first.');
+    }
+
+    // Copy types directory
+    console.log('📋 Copying types...');
+    const typesSourceDir = path.join(DIST_PLUGIN_DIR, 'types');
+    const typesDestDir = path.join(distDir, 'types');
+
+    if (await fs.pathExists(typesSourceDir)) {
+      await fs.copy(typesSourceDir, typesDestDir);
     }
 
     // Copy renderer (if built)
