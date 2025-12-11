@@ -4,7 +4,7 @@
  */
 
 import { EventEmitter } from 'events';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 import { QueueManager } from './QueueManager';
 import { SessionManager } from './SessionManager';
 import { ClaudeCodeExecutor } from './ClaudeCodeExecutor';
@@ -58,7 +58,7 @@ export class AgentOrchestrationService extends EventEmitter {
 
     // Create job
     const job: ExecutionJob = {
-      id: uuidv4(),
+      id: randomUUID(),
       seriesId,
       seriesName,
       workspaceDir: `series-${seriesId}`,

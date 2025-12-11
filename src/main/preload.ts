@@ -23,6 +23,22 @@ contextBridge.exposeInMainWorld('electron', {
     }
   },
 
+  // Expose ipcRenderer with limited methods for agent execution
+  ipcRenderer: {
+    on: (channel: string, func: (...args: unknown[]) => void) => {
+      const validChannels = ['agent-execution:event'];
+      if (validChannels.includes(channel)) {
+        ipcRenderer.on(channel, func);
+      }
+    },
+    removeListener: (channel: string, func: (...args: unknown[]) => void) => {
+      const validChannels = ['agent-execution:event'];
+      if (validChannels.includes(channel)) {
+        ipcRenderer.removeListener(channel, func);
+      }
+    },
+  },
+
   invoke: async (channel: string, ...args: unknown[]) => {
     const validChannels = [
       'plugin:list',
@@ -65,6 +81,16 @@ contextBridge.exposeInMainWorld('electron', {
       'genrepack:copy',
       'genrepack:checkUpdates',
       'genrepack:invalidateCache',
+      // Agent execution operations
+      'agent-execution:start',
+      'agent-execution:pause',
+      'agent-execution:resume',
+      'agent-execution:cancel',
+      'agent-execution:getQueue',
+      'agent-execution:getJobDetails',
+      'agent-execution:checkCLI',
+      'agent-execution:installCLI',
+      'agent-execution:getCLIPath',
     ];
     if (validChannels.includes(channel)) {
       return await ipcRenderer.invoke(channel, ...args);

@@ -42,7 +42,8 @@ function createWindow(): void {
     mainWindow.webContents.openDevTools();
   } else {
     // Production mode - load from built files
-    mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
+    // __dirname is dist/main/src/main, we need to go to dist/renderer
+    mainWindow.loadFile(path.join(__dirname, '../../../renderer/index.html'));
   }
 
   // Handle window closed
