@@ -1,0 +1,213 @@
+{
+  "id": "book-planning-workflow-v1",
+  "name": "Book Planning Workflow",
+  "description": "7-phase structured workflow for planning individual books within a series using Claude Code and book-planning-skill. Includes foundation, beat sheets, act structure, case planning, series arc integration, character milestones, and validation.",
+  "version": "1.0.0",
+  "author": "BQ Studio Team",
+  "tags": ["book-planning", "urban-fantasy", "police-procedural", "series-writing"],
+  "target_type": "series",
+
+  "variables": [
+    {
+      "id": "series_id",
+      "name": "Series ID",
+      "type": "string",
+      "required": true,
+      "description": "ID of the series this book belongs to"
+    },
+    {
+      "id": "book_number",
+      "name": "Book Number",
+      "type": "number",
+      "required": true,
+      "description": "Position of this book in the series (e.g., 1, 2, 3)"
+    },
+    {
+      "id": "workspace",
+      "name": "Workspace Directory",
+      "type": "string",
+      "required": false,
+      "description": "Custom workspace directory (defaults to ~/FictionLab)"
+    }
+  ],
+
+  "steps": [
+    {
+      "id": "phase-1-foundation",
+      "name": "Phase 1: Book Foundation",
+      "pluginId": "claude-code-executor",
+      "action": "execute-skill",
+      "config": {
+        "skillPath": ".claude/skills/book-planning-skill.md",
+        "phase": 1,
+        "seriesId": "{{series_id}}",
+        "bookNumber": "{{book_number}}",
+        "workspace": "{{workspace}}"
+      },
+      "outputMapping": {
+        "book_id": "$.result.book_id",
+        "foundation_file": "$.result.outputs[0]",
+        "thematic_focus": "$.result.metadata.thematicFocus"
+      },
+      "retry": {
+        "maxAttempts": 3,
+        "backoff": "exponential"
+      }
+    },
+    {
+      "id": "phase-2-beat-sheet",
+      "name": "Phase 2: Beat Sheet Selection",
+      "pluginId": "claude-code-executor",
+      "action": "execute-skill",
+      "config": {
+        "skillPath": ".claude/skills/book-planning-skill.md",
+        "phase": 2,
+        "seriesId": "{{series_id}}",
+        "bookId": "{{phase-1-foundation.book_id}}",
+        "bookNumber": "{{book_number}}",
+        "previousPhaseOutput": "{{phase-1-foundation.foundation_file}}",
+        "workspace": "{{workspace}}"
+      },
+      "dependencies": ["phase-1-foundation"],
+      "outputMapping": {
+        "beat_sheet_file": "$.result.outputs[0]",
+        "beat_structure": "$.result.metadata.beatStructure"
+      },
+      "retry": {
+        "maxAttempts": 3,
+        "backoff": "exponential"
+      }
+    },
+    {
+      "id": "phase-3-act-structure",
+      "name": "Phase 3: Act Structure Development",
+      "pluginId": "claude-code-executor",
+      "action": "execute-skill",
+      "config": {
+        "skillPath": ".claude/skills/book-planning-skill.md",
+        "phase": 3,
+        "seriesId": "{{series_id}}",
+        "bookId": "{{phase-1-foundation.book_id}}",
+        "bookNumber": "{{book_number}}",
+        "foundationFile": "{{phase-1-foundation.foundation_file}}",
+        "beatSheetFile": "{{phase-2-beat-sheet.beat_sheet_file}}",
+        "beatStructure": "{{phase-2-beat-sheet.beat_structure}}",
+        "workspace": "{{workspace}}"
+      },
+      "dependencies": ["phase-2-beat-sheet"],
+      "outputMapping": {
+        "act_structure_file": "$.result.outputs[0]",
+        "act_count": "$.result.metadata.actCount"
+      },
+      "retry": {
+        "maxAttempts": 3,
+        "backoff": "exponential"
+      }
+    },
+    {
+      "id": "phase-4-case-planning",
+      "name": "Phase 4: Case-of-the-Week Planning",
+      "pluginId": "claude-code-executor",
+      "action": "execute-skill",
+      "config": {
+        "skillPath": ".claude/skills/book-planning-skill.md",
+        "phase": 4,
+        "seriesId": "{{series_id}}",
+        "bookId": "{{phase-1-foundation.book_id}}",
+        "bookNumber": "{{book_number}}",
+        "actStructureFile": "{{phase-3-act-structure.act_structure_file}}",
+        "workspace": "{{workspace}}"
+      },
+      "dependencies": ["phase-3-act-structure"],
+      "outputMapping": {
+        "case_details_file": "$.result.outputs[0]",
+        "case_type": "$.result.metadata.caseType"
+      },
+      "retry": {
+        "maxAttempts": 3,
+        "backoff": "exponential"
+      }
+    },
+    {
+      "id": "phase-5-series-arc",
+      "name": "Phase 5: Series Arc Integration",
+      "pluginId": "claude-code-executor",
+      "action": "execute-skill",
+      "config": {
+        "skillPath": ".claude/skills/book-planning-skill.md",
+        "phase": 5,
+        "seriesId": "{{series_id}}",
+        "bookId": "{{phase-1-foundation.book_id}}",
+        "bookNumber": "{{book_number}}",
+        "caseDetailsFile": "{{phase-4-case-planning.case_details_file}}",
+        "workspace": "{{workspace}}"
+      },
+      "dependencies": ["phase-4-case-planning"],
+      "outputMapping": {
+        "arc_integration_file": "$.result.outputs[0]",
+        "arc_threads": "$.result.metadata.arcThreads"
+      },
+      "retry": {
+        "maxAttempts": 3,
+        "backoff": "exponential"
+      }
+    },
+    {
+      "id": "phase-6-character-milestones",
+      "name": "Phase 6: Character Development Milestones",
+      "pluginId": "claude-code-executor",
+      "action": "execute-skill",
+      "config": {
+        "skillPath": ".claude/skills/book-planning-skill.md",
+        "phase": 6,
+        "seriesId": "{{series_id}}",
+        "bookId": "{{phase-1-foundation.book_id}}",
+        "bookNumber": "{{book_number}}",
+        "arcIntegrationFile": "{{phase-5-series-arc.arc_integration_file}}",
+        "workspace": "{{workspace}}"
+      },
+      "dependencies": ["phase-5-series-arc"],
+      "outputMapping": {
+        "character_milestones_file": "$.result.outputs[0]",
+        "milestone_count": "$.result.metadata.milestoneCount"
+      },
+      "retry": {
+        "maxAttempts": 3,
+        "backoff": "exponential"
+      }
+    },
+    {
+      "id": "phase-7-validation",
+      "name": "Phase 7: Validation & Review",
+      "pluginId": "claude-code-executor",
+      "action": "execute-skill",
+      "config": {
+        "skillPath": ".claude/skills/book-planning-skill.md",
+        "phase": 7,
+        "seriesId": "{{series_id}}",
+        "bookId": "{{phase-1-foundation.book_id}}",
+        "bookNumber": "{{book_number}}",
+        "characterMilestonesFile": "{{phase-6-character-milestones.character_milestones_file}}",
+        "workspace": "{{workspace}}"
+      },
+      "dependencies": ["phase-6-character-milestones"],
+      "outputMapping": {
+        "validation_report": "$.result.outputs[0]",
+        "validation_status": "$.result.metadata.validationStatus",
+        "completion_percentage": "$.result.metadata.completionPercentage"
+      },
+      "retry": {
+        "maxAttempts": 3,
+        "backoff": "exponential"
+      }
+    }
+  ],
+
+  "metadata": {
+    "estimatedDuration": "2-4 hours",
+    "requiredPlugins": ["claude-code-executor"],
+    "requiredMCPs": ["book-planning-server", "series-planning-server", "character-planning-server"],
+    "requiredSkills": [".claude/skills/book-planning-skill.md"],
+    "genre": "Urban Fantasy Police Procedural"
+  }
+}
